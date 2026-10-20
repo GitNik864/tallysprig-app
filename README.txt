@@ -1,18 +1,22 @@
-TALLYSPRIG HEALTH MODE 6.1 — V7-COMPATIBLE UPDATE
-=================================================
-This is a complete GitHub Pages update based on Tallysprig V7, not a separate replacement for the Fitness tab.
+TALLYSPRIG V7.2 — FITNESS PLANNING + RESULTS (WITH HEALTH MODE 6.1)
+===================================================================
+Complete GitHub Pages update package based on the latest V7 + Health Mode 6.1 files.
 
-NEW: Settings -> Health Mode -> Save a complete ADULT profile (age 18+) to see illustrative 20%/50%/30% macro references, with a button to copy those values into your existing protein / carbohydrate / fat references. The app asks for confirmation before replacing them. You can freely edit the references later. This is an example distribution, not an individual nutrition prescription or calorie ceiling.
-For users under 18, Health Mode shows general educational macronutrient ranges rather than numeric recommendations.
+NEW IN V7.2
+1. Fitness navigation icon is a monochrome outlined dumbbell, matching the other tab icons.
+2. Copy any workout to a different date (from Fitness History, Recent or workout editor). The copied session is PLANNED, not completed; the exercise list and planned sets/weights/reps are copied, but actual logged results and completion flags are reset. Your original record is never changed.
+3. Planned vs. actual per set: enter a target weight and reps, then enter the actual weight and reps performed. Mark a set complete once actual reps are entered. View sets completed / sets planned, recorded reps / planned reps, and sets reaching both planned load and reps.
+4. Planned workouts can be started later from Fitness Overview or History. Unfinished sessions still autosave. Full JSON backup/restore includes planned workouts and per-set target/actual data.
+5. Existing V7 workout sets are migrated locally: original weight/reps become targets, and completed rows also keep their previous actual data. Previously saved workouts and V7 JSON backups remain compatible.
 
-PRIVACY: No new external API, server, or field collection. Values are calculated locally from the existing optional profile. Medical Disclaimer updated to v1.3, requiring reacknowledgment; Privacy Policy v1.2 is unchanged. Food/workout records and V7 functionality remain in place.
+RETAINED
+All nutrition logging, barcode scanner, cached products, rate controls, macro charts, Health Mode 6.1 suggestions, privacy agreement, custom exercises, light/dark themes, and complete backup functions.
 
-DEPLOY:
-1. From your current app, export a FULL JSON backup and keep it private.
-2. Unzip and upload the CONTENTS to your existing tallysprig-app GitHub repository root, replacing matching paths.
-3. Commit. Wait for GitHub Pages; open the app while online to let offline cache update. Do not clear storage or uninstall.
-4. Review and acknowledge the updated Medical Disclaimer.
-5. Settings -> Health Mode -> turn on -> save your profile -> review example macro values -> optionally press Use these as my macro references.
-6. Test a meal, workout, barcode scan, backup export and offline reopen on your phone.
+DEPLOY
+1. In your current Tallysprig app, download a FULL JSON backup and store it privately.
+2. Extract this ZIP, upload its contents to your existing GitHub repository root (overwrite matching files), then commit.
+3. Wait for GitHub Pages deployment. Open installed app while online to refresh the offline cache. Do not uninstall or clear site data.
+4. Test copying a session, editing planned and actual reps, opening it after a restart, and exporting/restoring a backup.
 
-If you have not yet deployed V7, this update also contains its full Fitness tab and features.
+NOTE
+Privacy Policy v1.2 and Medical Disclaimer v1.3 are unchanged because workout logs were already covered. No new remote service is involved; records stay on-device unless exported.
