@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A simple, private food journal for meals and nutrients.">
-  <title>Tallysprig V3 — Food journal</title>
+  <title>Tallysprig V3.1 — Food journal</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" type="image/png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -174,6 +174,11 @@
     .scan-sidebar { width:100%; margin-top:11px; text-align:center; }
     .scan-status { margin-top:12px; padding:12px 13px; border-radius:11px; font-size:12px; line-height:1.55; background:#eef6ed; color:#365b49; }
     .scan-status.error { background:#fff1e9; color:#9a4d38; }
+    /* V3.2: discreet and readable rate-limit explanation in the scanner. */
+    .scan-rate-note { display:flex; align-items:flex-start; gap:9px; background:#f5f8f3; border:1px solid #e0e9df; padding:12px 13px; margin-top:12px; border-radius:11px; color:#5d7769; font-size:11px; line-height:1.6; }
+    .scan-rate-note .scan-rate-icon { color:#477760; font-size:15px; flex-shrink:0; }
+    .scan-rate-note strong { color:#335743; }
+    .scan-rate-note a { color:#276951; text-decoration:underline; text-underline-offset:2px; }
     .scan-camera-frame { border:1px solid #d4e4d6; background:#f7faf5; overflow:hidden; border-radius:14px; margin:15px 0; padding:9px; }
     .scan-camera-frame[hidden] { display:none; }
     #barcode-reader { width:100%; min-height:130px; overflow:hidden; }
@@ -185,6 +190,18 @@
     .off-credit { font-size:11px; color:#809687; margin-top:16px; line-height:1.7; }
     .scan-preview-title { font-size:17px; font-weight:850; line-height:1.35; }
     .review-source { display:inline-block; background:#e9f6ec; color:#32654b; border-radius:30px; padding:5px 9px; font-size:10px; font-weight:800; margin-top:7px; }
+    /* V3.1: transparent nutrition data review, without disrupting original UI. */
+    .nutrition-notice { display:flex; align-items:flex-start; gap:11px; padding:14px 15px; border:1px solid #dfe9df; background:#f6f8f4; border-radius:13px; margin:0 0 17px; line-height:1.55; }
+    .nutrition-notice-icon { color:#426653; font-size:18px; font-weight:800; line-height:1; margin-top:2px; flex-shrink:0; }
+    .nutrition-notice-title { display:block; font-size:12px; font-weight:850; color:#264a3c; margin-bottom:3px; }
+    .nutrition-notice-text { margin:0; font-size:11px; color:#506d5e; }
+    .incomplete-notice { background:#fcf7ed; border:1px solid #e9dbba; color:#655339; border-radius:12px; padding:12px 14px; margin-bottom:16px; }
+    .incomplete-notice strong { display:block; font-size:12px; margin-bottom:4px; }
+    .incomplete-notice p { margin:0; font-size:11px; line-height:1.6; }
+    .field-missing label { color:#80643e; }
+    .field-missing input { background:#fffcf7; border-color:#cdb88c; }
+    .field-missing .missing-tag { font-size:10px; color:#927040; font-weight:800; }
+    .scanned-library-source { color:#6e8777; font-size:10px; line-height:1.5; padding-top:4px; }
     .scan-checkbox { font-size:12px; color:#4b6455; display:flex; align-items:flex-start; gap:9px; line-height:1.5; padding:10px 0; }
     .scan-checkbox input { width:18px; height:18px; flex-shrink:0; accent-color:#245b45; }
     .barcode-field input { letter-spacing:1.5px; font-variant-numeric:tabular-nums; }
@@ -224,6 +241,12 @@
   'use strict';
   const KEY='dayplate_v1';
   const OFF_CACHE_KEY='tallysprig_off_products_v3';
+  // The API permits 15 read-product requests per minute per public IP.
+  // Keep 3 in reserve for concurrent/shared-IP usage. This limit is local to this browser.
+  const OFF_RATE_KEY='tallysprig_off_lookup_times_v3_2';
+  const OFF_COOLDOWN_KEY='tallysprig_off_cooldown_v3_2';
+  const OFF_RATE_MAX=12, OFF_RATE_WINDOW_MS=60000;
+  let offRateFallback=[],offCooldownFallback=0;
   const OFF_API='https://world.openfoodfacts.org/api/v3/product/';
   const SCANNER_LIB='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
   const DB=[
@@ -301,7 +324,7 @@
     return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+referenceHtml+statHtml+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
-  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
+  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
@@ -328,7 +351,7 @@
     if(idx<0){closeModal();showToast('Entry was not found.');return}
     store.entries.splice(idx,1);save();closeModal();render();showToast('Entry removed.');
   }
-  function chooseFood(id){const f=getFood(id);if(!f)return;chosenFood=f;const content=`<div class="modal-header"><h3 id="modalTitle">Add to your day</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><div class="modal-food"><span class="food-icon">${esc(f.emoji)}</span><div><strong style="font-size:14px">${esc(f.name)}</strong><div class="helper">${esc(f.serving)} · ${fmt(f.cal)} kcal each</div></div></div><div class="field"><label for="quantity">Servings</label><div class="counter"><button data-action="qtydown" aria-label="Decrease servings">−</button><input id="quantity" type="number" min="0.1" max="100" step="0.25" value="1"><button data-action="qtyup" aria-label="Increase servings">+</button></div></div><div class="field"><label for="mealSelect">Meal</label><select id="mealSelect">${MEALS.map(m=>`<option ${chosenMeal===m.id?'selected':''}>${m.id}</option>`).join('')}</select></div><p class="helper">For ${esc(prettyDate(selectedDate))} · Protein ${dec(f.p)}g · Carbs ${dec(f.c)}g · Fat ${dec(f.f)}g per serving</p><div class="modal-foot"><div><div class="preview-label">Estimated energy</div><div class="preview-cal"><span id="previewCal">${fmt(f.cal)}</span> <span style="font-size:12px;color:#91a39a">kcal</span></div></div><button class="button-primary" data-action="confirmadd">Add food →</button></div>`;openModal(content)}
+  function chooseFood(id){const f=getFood(id);if(!f)return;chosenFood=f;const content=`<div class="modal-header"><h3 id="modalTitle">Add to your day</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><div class="modal-food"><span class="food-icon">${esc(f.emoji)}</span><div><strong style="font-size:14px">${esc(f.name)}</strong><div class="helper">${esc(f.serving)} · ${fmt(f.cal)} kcal each</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">Originally from Open Food Facts · verify with package</div>':''}</div></div><div class="field"><label for="quantity">Servings</label><div class="counter"><button data-action="qtydown" aria-label="Decrease servings">−</button><input id="quantity" type="number" min="0.1" max="100" step="0.25" value="1"><button data-action="qtyup" aria-label="Increase servings">+</button></div></div><div class="field"><label for="mealSelect">Meal</label><select id="mealSelect">${MEALS.map(m=>`<option ${chosenMeal===m.id?'selected':''}>${m.id}</option>`).join('')}</select></div><p class="helper">For ${esc(prettyDate(selectedDate))} · Protein ${dec(f.p)}g · Carbs ${dec(f.c)}g · Fat ${dec(f.f)}g per serving</p><div class="modal-foot"><div><div class="preview-label">Estimated energy</div><div class="preview-cal"><span id="previewCal">${fmt(f.cal)}</span> <span style="font-size:12px;color:#91a39a">kcal</span></div></div><button class="button-primary" data-action="confirmadd">Add food →</button></div>`;openModal(content)}
   // Older V1 entries contain totals but no per-serving nutrition. Reconstruct their
   // per-serving values without modifying the logged history. New entries store a basis.
   function entryBasis(e){if(e.basis&&['cal','p','c','f'].every(k=>Number.isFinite(e.basis[k])))return e.basis;
@@ -379,6 +402,7 @@
     <div class="scan-camera-frame" id="cameraFrame" hidden><div id="barcode-reader"></div><button class="button-secondary" data-action="stopcamera" style="width:100%;margin-top:10px">Stop camera</button></div>
     <input type="file" id="barcodeImageFile" accept="image/*" hidden>
     <div id="scanStatus" class="scan-status" role="status" aria-live="polite">Tip: Hold the entire barcode inside the camera frame. You can always enter the number manually.</div>
+    <div class="scan-rate-note" role="note"><span class="scan-rate-icon" aria-hidden="true">ⓘ</span><div><strong>New product lookup limits</strong><br>Open Food Facts permits 15 product requests per minute per IP address — <strong>not per day</strong>. Tallysprig automatically paces its own uncached lookups to 12 per minute on this device. Repeat scans use your local cache when available. <a href="https://openfoodfacts.github.io/openfoodfacts-server/api/" target="_blank" rel="noopener noreferrer">API limits</a>.</div></div>
     <p class="scan-footnote">Camera access requires your permission and HTTPS. For product data, <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a> is contacted only when a barcode is submitted. Verify product labels, including allergen information.</p>`);
   }
   function loadScannerLib(){
@@ -466,6 +490,47 @@
       localStorage.setItem(OFF_CACHE_KEY,JSON.stringify(Object.fromEntries(recent)));
     }catch(_){ /* caching is optional, never block logging */ }
   }
+  // Sliding 60-second window persisted across reloads. Only actual network attempts count.
+  // localStorage isn't a cross-device/IP limiter, and other devices can use the same IP.
+  function recentOffRequests(now=Date.now()){
+    let recent=offRateFallback;
+    try{
+      const stored=JSON.parse(localStorage.getItem(OFF_RATE_KEY)||'[]');
+      if(Array.isArray(stored))recent=stored;
+    }catch(_){ /* fall back to memory when browser storage is restricted */ }
+    return recent.filter(t=>Number.isFinite(t)&&t<=now&&t>now-OFF_RATE_WINDOW_MS).sort((a,b)=>a-b).slice(-OFF_RATE_MAX);
+  }
+  function saveOffRequests(times){
+    offRateFallback=times;
+    try{localStorage.setItem(OFF_RATE_KEY,JSON.stringify(times))}catch(_){ /* in-memory protection still works for this tab */ }
+  }
+  function getOffCooldown(now=Date.now()){
+    let until=offCooldownFallback;
+    try{until=Math.max(until,Number(localStorage.getItem(OFF_COOLDOWN_KEY))||0)}catch(_){ }
+    return until>now?until-now:0;
+  }
+  function setOffCooldown(milliseconds){
+    offCooldownFallback=Date.now()+milliseconds;
+    try{localStorage.setItem(OFF_COOLDOWN_KEY,String(offCooldownFallback))}catch(_){ }
+  }
+  function reserveOffRequest(now=Date.now()){
+    const cooldown=getOffCooldown(now);
+    if(cooldown>0)return cooldown;
+    const recent=recentOffRequests(now);
+    if(recent.length>=OFF_RATE_MAX)return Math.max(250,recent[0]+OFF_RATE_WINDOW_MS-now+250);
+    recent.push(now);saveOffRequests(recent);
+    return 0;
+  }
+  async function waitForOffSlot(seq,code){
+    while(seq===barcodeRequestSeq&&document.getElementById('barcodeForm')){
+      if(!navigator.onLine)throw Error('You are offline. Connect to the internet for a new barcode. Cached products are still available.');
+      const wait=reserveOffRequest();
+      if(!wait)return true;
+      scanNote('New lookup queued. Waiting about '+Math.ceil(wait/1000)+'s to respect the food database limit. Close this window to cancel.');
+      await new Promise(resolve=>setTimeout(resolve,Math.min(1000,wait)));
+    }
+    return false;
+  }
   function numOrNull(val){if(val===null||val===undefined||val==='')return null;const n=Number(val);return Number.isFinite(n)&&n>=0?n:null}
   function energyAt(n,suffix){
     const kcal=numOrNull(n['energy-kcal_'+suffix]);if(kcal!==null)return kcal;
@@ -506,6 +571,9 @@
     try{
       let product=readOffCache(code);
       if(!product){
+        if(!(await waitForOffSlot(seq,code)))return;
+        if(seq!==barcodeRequestSeq||!document.getElementById('barcodeForm'))return;
+        scanNote('Looking up '+code+' in Open Food Facts…');
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),13000);
         let response;
         try{
@@ -515,7 +583,11 @@
           });
         }finally{clearTimeout(timer)}
         if(response.status===404)throw Error('No product found for this barcode. Try creating a custom food.');
-        if(response.status===429)throw Error('Open Food Facts is limiting requests. Try again later.');
+        if(response.status===429||response.status===503){
+          // A shared IP or a global API cap may still be reached, even below our own limit.
+          setOffCooldown(60000);
+          throw Error('Open Food Facts is busy or limiting requests. Wait about a minute and try again. Previously cached foods still work.');
+        }
         if(!response.ok)throw Error('Food database unavailable (HTTP '+response.status+'). Try again later.');
         const data=await response.json();
         if(!data.product||typeof data.product!=='object'||!Object.keys(data.product).length)throw Error('No product found for this barcode. Try creating a custom food.');
@@ -528,27 +600,29 @@
     }catch(e){if(seq!==barcodeRequestSeq)return;
       const msg=e?.name==='AbortError'?'Product lookup timed out. Try again.':(!navigator.onLine?'You are offline. Connect to the internet to look up a new barcode.':(e?.message||'Lookup failed.'));
       scanNote(msg,true);
-    }finally{const btn=document.getElementById('barcodeLookupButton');if(btn)btn.disabled=false}
+    }finally{if(lookupButton&&lookupButton.isConnected)lookupButton.disabled=false}
   }
   function showProductReview(product){
     activeProduct=product;
     const val=k=>product[k]===null||product[k]===undefined?'':Number(product[k].toFixed(2));
     const missing=product.missing.length>0;
+    const fieldNames={cal:'Calories',p:'Protein',c:'Carbohydrates',f:'Fat'};
+    const missingText=product.missing.map(k=>fieldNames[k]).join(', ');
+    const nutrientField=(key,id,label,max)=>`<div class="field ${product.missing.includes(key)?'field-missing':''}"><label for="${id}">${label}${product.missing.includes(key)?' <span class="missing-tag">· Missing</span>':''}</label><input id="${id}" type="number" inputmode="decimal" min="0" max="${max}" step="any" required ${product.missing.includes(key)?`placeholder="Check the package" aria-describedby="missingNutritionNote"`:''} value="${val(key)}"></div>`;
     openModal(`<div class="modal-header"><h3 id="modalTitle">Review this product</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div>
-      <div class="modal-food"><span class="food-icon">🛒</span><div><div class="scan-preview-title">${esc(product.name)}</div><div class="helper">${esc(product.brands||'Packaged food')} · Barcode ${esc(product.code)}</div><span class="review-source">Open Food Facts</span></div></div>
-      <div class="scan-empty" style="margin-bottom:17px">${missing?'Some nutrition values are missing. Use the package label to fill in every field before logging.':'Check these values against the package label before logging.'} ${product.estimated?'Serving defaults to 100 g or 100 mL because no clear serving size was found.':''}</div>
+      <div class="modal-food"><span class="food-icon">🛒</span><div><div class="scan-preview-title">${esc(product.name)}</div><div class="helper">${esc(product.brands||'Packaged food')} · Barcode ${esc(product.code)}</div><span class="review-source">Data from Open Food Facts</span></div></div>
+      <div class="nutrition-notice" role="note"><span class="nutrition-notice-icon" aria-hidden="true">ⓘ</span><div><strong class="nutrition-notice-title">Nutrition information may be inaccurate</strong><p class="nutrition-notice-text">Open Food Facts is community-maintained. Compare the serving size, calories, and nutrients with the product's packaging before logging. Check the label for allergens too.</p></div></div>
+      ${missing?`<div class="incomplete-notice" id="missingNutritionNote" role="status"><strong>⚠ Information incomplete</strong><p>Missing from the database: ${esc(missingText)}. These fields are blank, not zero. Check the package and fill them in to continue.</p></div>`:''}
+      ${product.estimated?'<div class="scan-empty" style="margin-bottom:17px">Serving size could not be confirmed. Values default to 100 g / 100 mL; check the package and adjust the serving information.</div>':''}
       <form id="productReviewForm"><div class="field"><label for="reviewName">Product name</label><input id="reviewName" maxlength="90" required value="${esc(product.name)}"></div>
       <div class="field"><label for="reviewServing">Serving size (check product label)</label><input id="reviewServing" maxlength="80" required value="${esc(product.serving)}"></div>
-      <div class="field-row"><div class="field"><label for="reviewCal">Calories (kcal)</label><input id="reviewCal" type="number" inputmode="decimal" min="0" max="20000" step="any" required value="${val('cal')}"></div>
-      <div class="field"><label for="reviewP">Protein (g)</label><input id="reviewP" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('p')}"></div>
-      <div class="field"><label for="reviewC">Carbs (g)</label><input id="reviewC" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('c')}"></div>
-      <div class="field"><label for="reviewF">Fat (g)</label><input id="reviewF" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('f')}"></div></div>
+      <div class="field-row">${nutrientField('cal','reviewCal','Calories (kcal)',20000)}${nutrientField('p','reviewP','Protein (g)',2000)}${nutrientField('c','reviewC','Carbs (g)',2000)}${nutrientField('f','reviewF','Fat (g)',2000)}</div>
       <div class="field"><label for="reviewQuantity">How many servings?</label><input id="reviewQuantity" type="number" inputmode="decimal" min="0.1" max="100" step="any" required value="1"></div>
       <div class="field"><label for="reviewMeal">Meal</label><select id="reviewMeal">${MEALS.map(m=>`<option ${m.id===chosenMeal?'selected':''}>${m.id}</option>`).join('')}</select></div>
       <label class="scan-checkbox"><input type="checkbox" id="reviewRemember" checked> Save this reviewed product in My Foods for future use</label>
-      <p class="helper">For ${esc(prettyDate(selectedDate))}. Existing logged meals will not be altered. Scanned details are community-maintained and might be inaccurate.</p>
+      <p class="helper">For ${esc(prettyDate(selectedDate))}. Existing logged meals will not be altered. Verify the product label before saving.</p>
       <div class="dialog-actions"><button type="button" class="button-secondary" data-action="scan">← Back to scan</button><button type="submit" class="button-primary">Add food →</button></div></form>
-      <p class="off-credit">Data: <a href="https://world.openfoodfacts.org/" rel="noopener noreferrer" target="_blank">Open Food Facts</a> (ODbL). Check packaging for allergens.</p>`);
+      <p class="off-credit">Source: <a href="https://world.openfoodfacts.org/product/${encodeURIComponent(product.code)}" rel="noopener noreferrer" target="_blank">Open Food Facts product listing</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" rel="noopener noreferrer" target="_blank">ODbL</a>. The app does not verify product data independently.</p>`);
   }
   function logReviewedProduct(){
     if(!activeProduct)return;

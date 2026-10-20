@@ -1,6 +1,14 @@
-TALLYSPRIG V3 — BARCODE SCANNING & OPEN FOOD FACTS
+TALLYSPRIG V3.2 — NUTRITION DATA TRANSPARENCY
 
-WHAT'S NEW
+WHAT'S NEW IN V3.1
+- Displays an accuracy disclaimer every time a scanned food is reviewed.
+- Clearly names Open Food Facts as the source and links to the specific product page.
+- Shows "Information incomplete" when calories or any macro value is missing.
+- Marks missing nutrient fields, keeps them blank, and requires a value before logging.
+- Marks saved scanned foods as originally sourced from Open Food Facts.
+- All V3 scanning, favorites, offline PWA, food editing and history features are retained.
+
+EXISTING V3 FEATURES
 - Scan EAN/UPC grocery barcodes with a phone camera.
 - Scan a barcode from a saved image, or manually enter 8–14 numeric digits.
 - Look up packaged-food nutrition using the Open Food Facts v3 API.
@@ -16,7 +24,7 @@ PUBLISH AN UPDATE TO YOUR EXISTING GITHUB PAGES SITE
 3. Upload the CONTENTS of this ZIP, not the ZIP itself. Keep index.html, sw.js, manifest.webmanifest and icons folder at the repository root.
 4. Confirm the replacement of index.html and sw.js and commit the changes.
 5. GitHub Pages deploys from main / (root). Wait for completion under Actions; then refresh your installed Tallysprig app while online.
-6. If the old interface persists, fully close and reopen it, or reload online. The service-worker cache version was incremented to V3.
+6. If the old interface persists, fully close and reopen it, or reload online. The service-worker cache version was incremented to V3.1.
 7. Check an existing food entry remains before testing scanning. You should NOT uninstall the PWA or clear site data to update it.
 8. Open Foods → Scan barcode. Test a known packaged barcode while connected to the internet, confirm its data, then log a serving.
 
@@ -48,3 +56,16 @@ PRIVACY
 - Food logs are kept in the browser's localStorage and can be deleted by clearing browser app/site data. Regular CSV exports are recommended until robust full backup/restore is available.
 
 The Tallysprig name and code are not represented as trademark-cleared; verify before formal public launch.
+
+
+V3.2 — RATE-LIMIT SAFEGUARDS
+- Open Food Facts publishes a 15 product-read requests/minute limit per public IP address. It is NOT 15 new foods per day.
+- The scanner displays a short explanation of this limit.
+- Tallysprig automatically queues uncached lookups after its own conservative threshold of 12 requests in a rolling 60-second window on this device. The countdown updates until the request is automatically sent, unless the scan dialog is closed.
+- Previously cached barcodes are retrieved instantly without consuming another network request.
+- Local pacing carries across refreshes when browser storage is available. It cannot monitor other devices sharing your public IP address.
+- HTTP 429 or 503 responses trigger a 60-second browser-side cooldown; the message explains what happened.
+- This release does not change saved foods, food logs, scanned-product cache format, or barcode scanner library.
+- The Open Food Facts API asks clients to identify via a custom User-Agent. Browser-based requests cannot set this header directly; full API identification compliance will require an approved approach or small backend before public scaling.
+
+Read the provider's current limits at: https://openfoodfacts.github.io/openfoodfacts-server/api/
