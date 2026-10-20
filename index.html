@@ -406,6 +406,24 @@
     .fx-complete-notice{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
     .fx-danger-button{color:#b54f4a!important}
     @media(max-width:480px){.fx-set-body{grid-template-columns:1fr}.fx-set-card{padding:10px}.fx-set-controls{gap:7px}}
+    /* V7.5: accessible drag handles for exercise and set ordering. */
+    .fx-exercise-titleline,.fx-set-titleline{display:flex;align-items:center;gap:9px;min-width:0}
+    .fx-exercise-titleline>div{min-width:0}
+    .fx-drag-handle{display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:37px;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:23px;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+    .fx-nudge{display:inline-flex;gap:2px;align-items:center}
+    .fx-nudge button{border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);min-width:27px;min-height:32px;padding:4px 6px;font-size:13px;cursor:pointer}
+    .fx-nudge button:disabled{opacity:.28;cursor:not-allowed}
+    .fx-nudge button:focus-visible{outline:2px solid #65a989;outline-offset:1px}
+    .fx-drag-handle:hover{background:var(--surface, var(--paper));border-color:var(--ink)}
+    .fx-drag-handle:focus-visible{outline:3px solid #65a989;outline-offset:2px}
+    .fx-drag-handle:active,.fx-drag-handle[aria-grabbed="true"]{cursor:grabbing;background:var(--paper)}
+    .fx-exercise.fx-sort-source,.fx-set-card.fx-sort-source{opacity:.43}
+    .fx-exercise.fx-sort-before,.fx-set-card.fx-sort-before{box-shadow:0 -4px 0 #4c9873}
+    .fx-exercise.fx-sort-after,.fx-set-card.fx-sort-after{box-shadow:0 4px 0 #4c9873}
+    .fx-drag-ghost{position:fixed;z-index:9999;pointer-events:none;display:flex;align-items:center;gap:9px;max-width:min(85vw,360px);min-width:150px;box-sizing:border-box;padding:11px 16px;border:2px solid #4c9873;border-radius:12px;box-shadow:0 12px 35px #071a1538;background:var(--paper);color:var(--ink);font-weight:850;font-size:13px;opacity:.97}
+    .fx-drag-ghost span{color:#4c9873;font-size:22px}
+    .fx-reorder-tip{margin:12px 0 5px;font-size:11px;color:var(--muted);line-height:1.5}
+    @media(prefers-reduced-motion:reduce){.fx-drag-ghost{transition:none}}
   </style>
 </head>
 <body>
@@ -825,7 +843,7 @@
   function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="home">← Fitness home</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':'Editing completed session · autosaved'}</span></div>
     <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div><div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div></div>
     <div class="fx-field"><label for="fxWorkoutNotes">Session notes (optional)</label><textarea class="fx-note" id="fxWorkoutNotes" data-fx-field="notes" maxlength="1200" placeholder="How did the session feel?">${esc(w.notes)}</textarea></div>
-    <p class="fx-help">Strength sets use weight and reps. Cardio intervals use time (minutes) and distance (miles). Plan a target, then record actual results separately. All numbers are optional; blank values remain unrecorded. Add optional notes and rest times as needed.</p></section>
+    <p class="fx-help">Strength sets use weight and reps. Cardio intervals use time (minutes) and distance (miles). Plan a target, then record actual results separately. All numbers are optional; blank values remain unrecorded. Add optional notes and rest times as needed.</p><p class="fx-reorder-tip">⠿ Drag an exercise or set by its grip, or tap ↑ ↓ for one-position moves. Keyboard: focus a grip and press ↑ or ↓. Your order saves automatically.</p></section>
     ${w.exercises.map((x,ei)=>renderFxExerciseBlock(x,ei)).join('')}
     <div class="fx-rowgap"><button class="button-secondary" data-action="fxpick">＋ Add exercise</button>${w.status==='draft'?'<button class="button-primary" data-action="fxfinish">✓ Finish workout</button>':w.status==='planned'?'<button class="button-primary" data-action="fxstartplanned" data-id="'+esc(w.id)+'">Start this workout</button>':'<button class="button-primary" data-action="fxsavedone">✓ Done editing</button>'}<button class="button-secondary" data-action="fxcopy" data-id="${esc(w.id)}">Copy to another day</button><button class="button-secondary" data-action="fxnav" data-screen="home">Keep for later</button><button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(w.id)}">${w.status==='draft'?'Discard workout':'Delete workout'}</button></div><p class="fx-help" style="margin:13px 0">Your progress is autosaved. Copied sessions keep the plan but start with no actual results.</p>`}
   function fxTotals(x){
@@ -887,16 +905,138 @@
     const value=plan?set.targetWeightKg:set.actualWeightKg;
     return `<div class="fx-set-group"><h4>${plan?'Planned target':'Actually achieved'}</h4><div class="fx-set-pair"><div><label>Weight (${fitness.unit})</label><input data-fx-field="${weight}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="0" max="${fitness.unit==='lb'?4400:2000}" step="any" inputmode="decimal" value="${fxUnits(value)}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} weight"></div><div><label>Reps</label><input data-fx-field="${reps}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="1" max="1000" inputmode="numeric" value="${set[reps]??''}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} reps"></div></div></div>`;
   }
-  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x),cardio=isCardio(x),unitLabel=cardio?'interval':'set';return `<section class="fx-exercise"><div class="fx-exercise-head"><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${cardio?'Cardio · time & miles · ':''}${totals.done} / ${x.sets.length} ${unitLabel}s completed</p></div><div class="fx-actions"><button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
+  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x),cardio=isCardio(x),unitLabel=cardio?'interval':'set';return `<section class="fx-exercise" data-fx-sort-item="exercise" data-fx-id="${esc(x.id)}"><div class="fx-exercise-head"><div class="fx-exercise-titleline"><button type="button" class="fx-drag-handle" data-fx-drag="exercise" data-ex="${esc(x.id)}" aria-label="Move ${esc(x.name)}. Drag to reorder, or use up and down arrow keys." title="Drag to reorder exercise; ↑ and ↓ work too" aria-grabbed="false">⠿</button><span class="fx-nudge"><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="up" aria-label="Move ${esc(x.name)} up" ${ei===0?'disabled':''}>↑</button><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="down" aria-label="Move ${esc(x.name)} down" ${ei===editingWorkout()?.exercises.length-1?'disabled':''}>↓</button></span><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${cardio?'Cardio · time & miles · ':''}${totals.done} / ${x.sets.length} ${unitLabel}s completed</p></div></div><div class="fx-actions"><button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
     <div class="fx-rest-default"><label for="fxExRest${esc(x.id)}">Exercise default rest (seconds)</label><input id="fxExRest${esc(x.id)}" type="number" data-fx-field="exerciseRest" data-ex="${esc(x.id)}" value="${x.restSeconds??''}" min="0" max="3600" step="5" inputmode="numeric" placeholder="Optional"><span class="fx-meta">Leave blank for no default. Each ${unitLabel} may override it.</span></div>
     <div class="fx-set-progress">${fxProgressHtml(totals)}</div>
-    ${x.sets.map((set,i)=>`<div class="fx-set-card"><div class="fx-set-top"><strong>${cardio?'Interval':'Set'} ${i+1}</strong><div class="fx-set-controls"><select data-fx-field="type" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} type"><option value="work" ${set.type==='work'?'selected':''}>Work</option><option value="warmup" ${set.type==='warmup'?'selected':''}>Warm-up</option></select><label><input type="checkbox" data-fx-field="done" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} completed" ${set.done?'checked':''}> Completed</label><button class="fx-tiny" data-action="fxremoveset" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Remove ${unitLabel} ${i+1}" title="Remove ${unitLabel}">×</button></div></div>
+    ${x.sets.map((set,i)=>`<div class="fx-set-card" data-fx-sort-item="set" data-fx-id="${esc(set.id)}" data-fx-parent="${esc(x.id)}"><div class="fx-set-top"><div class="fx-set-titleline"><button type="button" class="fx-drag-handle" data-fx-drag="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Move ${cardio?'interval':'set'} ${i+1} in ${esc(x.name)}. Drag to reorder, or use up and down arrow keys." title="Drag to reorder ${unitLabel}; ↑ and ↓ work too" aria-grabbed="false">⠿</button><span class="fx-nudge"><button type="button" data-action="fxmove" data-kind="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" data-dir="up" aria-label="Move ${unitLabel} ${i+1} up" ${i===0?'disabled':''}>↑</button><button type="button" data-action="fxmove" data-kind="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" data-dir="down" aria-label="Move ${unitLabel} ${i+1} down" ${i===x.sets.length-1?'disabled':''}>↓</button></span><strong>${cardio?'Interval':'Set'} ${i+1}</strong></div><div class="fx-set-controls"><select data-fx-field="type" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} type"><option value="work" ${set.type==='work'?'selected':''}>Work</option><option value="warmup" ${set.type==='warmup'?'selected':''}>Warm-up</option></select><label><input type="checkbox" data-fx-field="done" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} completed" ${set.done?'checked':''}> Completed</label><button class="fx-tiny" data-action="fxremoveset" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Remove ${unitLabel} ${i+1}" title="Remove ${unitLabel}">×</button></div></div>
     <div class="fx-set-body">${cardio?fxCardioInputs(set,x.id,i,true)+fxCardioInputs(set,x.id,i,false):fxStrengthInputs(set,x.id,i,true)+fxStrengthInputs(set,x.id,i,false)}</div>
     <div class="fx-set-footer"><div class="fx-rest-inline"><label for="fxRest${esc(set.id)}">Rest after ${unitLabel} (sec)</label><input id="fxRest${esc(set.id)}" data-fx-field="setRest" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="0" max="3600" step="5" inputmode="numeric" value="${set.restSeconds??''}" placeholder="${x.restSeconds??'Default'}" aria-label="${unitLabel} ${i+1} rest seconds"><span class="fx-meta">${set.restSeconds===null?'Exercise default: ':'Set-specific: '}${esc(fxRestLabel(fxEffectiveRest(x,set)))}</span></div><button class="fx-mini-button" data-action="fxresttimer" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${fxRestTimer?.setId===set.id?'Stop rest':'Start rest'}</button><span class="fx-rest-clock" data-fx-rest-display="${esc(set.id)}">${fxRestTimer?.setId===set.id?fxFormatClock((fxRestTimer.ends-Date.now())/1000):''}</span></div>
     <div class="fx-set-footer"><button class="fx-mini-button" data-action="fxsetcomment" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${set.comment?'✎ Edit comment':'＋ Add comment'}</button></div>${set.comment?`<span class="fx-comment-preview">${esc(set.comment)}</span>`:''}
     </div>`).join('')}
     <p class="fx-complete-notice">Completion is independent of the numbers. Blank actual values stay unrecorded.</p>
     <div class="fx-rowgap"><button class="button-secondary" data-action="fxaddset" data-id="${esc(x.id)}">＋ Add ${cardio?'interval':'planned set'}</button></div></section>`}
+  // V7.5: reordering uses the existing exercise and set arrays. Stored records,
+  // results, comments, and rest preferences move together with their IDs.
+  function fxReorder(kind,exerciseId,sourceId,targetId,placeAfter=false){
+    const w=editingWorkout();if(!w||!['exercise','set'].includes(kind)||sourceId===targetId)return false;
+    const items=kind==='exercise'?w.exercises:w.exercises.find(ex=>ex.id===exerciseId)?.sets;
+    if(!items)return false;
+    const from=items.findIndex(item=>item.id===sourceId),to=items.findIndex(item=>item.id===targetId);
+    if(from<0||to<0)return false;
+    const original=items.slice();
+    const [moving]=items.splice(from,1);
+    const targetNow=items.findIndex(item=>item.id===targetId);
+    items.splice(targetNow+(placeAfter?1:0),0,moving);
+    if(items.every((x,i)=>x===original[i]))return false;
+    if(!saveFitness()){items.splice(0,items.length,...original);return false}
+    render();
+    const selector=kind==='exercise'?`[data-fx-drag="exercise"][data-ex="${CSS.escape(sourceId)}"]`:`[data-fx-drag="set"][data-set="${CSS.escape(sourceId)}"]`;
+    const handle=document.querySelector(selector);
+    if(handle){handle.focus({preventScroll:true});const rect=handle.getBoundingClientRect();if(rect.top<70||rect.bottom>innerHeight-65)handle.scrollIntoView({block:'nearest'});}
+    return true;
+  }
+  let fxDrag=null,fxDragScrollId=null;
+  const fxSortSelector='[data-fx-sort-item]';
+  function fxDragClear(){
+    if(!fxDrag)return;
+    if(fxDragScrollId){clearInterval(fxDragScrollId);fxDragScrollId=null}
+    fxDrag.handle?.setAttribute('aria-grabbed','false');
+    fxDrag.ghost?.remove();
+    document.querySelectorAll('.fx-sort-source,.fx-sort-before,.fx-sort-after').forEach(el=>el.classList.remove('fx-sort-source','fx-sort-before','fx-sort-after'));
+    fxDrag=null;
+  }
+  function fxDragCandidate(x,y){
+    if(!fxDrag)return null;
+    const found=document.elementFromPoint(x,y)?.closest(fxSortSelector);
+    if(!found||found.dataset.fxSortItem!==fxDrag.kind)return null;
+    if(fxDrag.kind==='set'&&found.dataset.fxParent!==fxDrag.exerciseId)return null;
+    return found;
+  }
+  function fxDropAfter(el,drag,y){
+    const r=el.getBoundingClientRect();
+    // Large cards (especially cardio sets on phones) may extend outside the
+    // screen. In that case, use the direction of travel rather than a hidden
+    // midpoint that would make 'drop before' impossible.
+    if(r.top<65||r.bottom>innerHeight-65){
+      const w=editingWorkout(),items=drag.kind==='exercise'?w?.exercises:w?.exercises.find(x=>x.id===drag.exerciseId)?.sets;
+      if(items){const source=items.findIndex(x=>x.id===drag.sourceId),target=items.findIndex(x=>x.id===el.dataset.fxId);if(source!==-1&&target!==-1)return source<target}
+    }
+    return y>r.top+r.height/2;
+  }
+  function fxDragMark(){
+    const d=fxDrag;if(!d?.active)return;
+    document.querySelectorAll('.fx-sort-before,.fx-sort-after').forEach(el=>el.classList.remove('fx-sort-before','fx-sort-after'));
+    const el=fxDragCandidate(d.x,d.y);
+    if(!el||el.dataset.fxId===d.sourceId){d.targetId=null;return}
+    d.targetId=el.dataset.fxId;d.after=fxDropAfter(el,d,d.y);
+    el.classList.add(d.after?'fx-sort-after':'fx-sort-before');
+  }
+  function fxDragAutoScroll(){
+    const d=fxDrag;if(!d?.active)return;
+    // Once the pointer has reached a valid destination, pause autoscroll so
+    // mobile users have time to lift their finger and drop precisely.
+    const hovered=fxDragCandidate(d.x,d.y);
+    if(hovered&&hovered.dataset.fxId!==d.sourceId)return;
+    const area=90,topLimit=80,bottomLimit=innerHeight-75;
+    let speed=0;
+    if(d.y<topLimit+area)speed=-Math.min(24,Math.max(0,(topLimit+area-d.y)/4));
+    else if(d.y>bottomLimit-area)speed=Math.min(24,Math.max(0,(d.y-(bottomLimit-area))/4));
+    if(speed){window.scrollBy(0,speed);fxDragMark()}
+  }
+  function fxPointerStart(e){
+    const handle=e.target.closest('button[data-fx-drag]');
+    if(!handle||view!=='fitness'||fxScreen!=='editor'||!consentOk)return;
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const kind=handle.dataset.fxDrag,exerciseId=handle.dataset.ex;
+    const sourceId=kind==='exercise'?exerciseId:handle.dataset.set;
+    const item=handle.closest(fxSortSelector);
+    if(!item||!editingWorkout())return;
+    e.preventDefault();
+    fxDragClear();
+    fxDrag={pointerId:e.pointerId,kind,exerciseId,sourceId,item,handle,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,active:false,targetId:null,after:false,ghost:null};
+    handle.setAttribute('aria-grabbed','true');
+    try{handle.setPointerCapture(e.pointerId)}catch(_){}
+  }
+  function fxPointerMove(e){
+    const d=fxDrag;if(!d||e.pointerId!==d.pointerId)return;
+    d.x=e.clientX;d.y=e.clientY;
+    if(!d.active&&Math.hypot(d.x-d.startX,d.y-d.startY)<7)return;
+    if(!d.active){
+      d.active=true;d.item.classList.add('fx-sort-source');
+      const ghost=document.createElement('div');ghost.className='fx-drag-ghost';
+      const label=d.kind==='exercise'?d.item.querySelector('h3')?.textContent:d.item.querySelector('.fx-set-titleline strong')?.textContent;
+      const icon=document.createElement('span');icon.textContent='⠿';ghost.append(icon,document.createTextNode(label||'Reorder'));document.body.append(ghost);d.ghost=ghost;
+      fxDragScrollId=setInterval(fxDragAutoScroll,36);
+    }
+    e.preventDefault();
+    d.ghost.style.left=Math.min(Math.max(6,d.x+15),Math.max(6,innerWidth-d.ghost.offsetWidth-6))+'px';
+    d.ghost.style.top=Math.min(Math.max(6,d.y+12),Math.max(6,innerHeight-d.ghost.offsetHeight-6))+'px';
+    fxDragMark();
+  }
+  function fxPointerEnd(e){
+    const d=fxDrag;if(!d||e.pointerId!==d.pointerId)return;
+    const candidate=d.active?fxDragCandidate(e.clientX,e.clientY):null;
+    const targetId=candidate&&candidate.dataset.fxId!==d.sourceId?candidate.dataset.fxId:d.targetId;
+    const after=candidate?fxDropAfter(candidate,d,e.clientY):d.after;
+    const {kind,exerciseId,sourceId}=d;fxDragClear();
+    if(d.active&&e.type!=='pointercancel'&&targetId&&fxReorder(kind,exerciseId,sourceId,targetId,after))showToast(kind==='exercise'?'Exercise order saved.':'Set order saved.');
+  }
+  function fxDragKeyboard(e){
+    const handle=e.target.closest?.('button[data-fx-drag]');
+    if(!handle||!['ArrowUp','ArrowDown'].includes(e.key)||view!=='fitness'||fxScreen!=='editor'||!consentOk)return;
+    e.preventDefault();const kind=handle.dataset.fxDrag,exerciseId=handle.dataset.ex,sourceId=kind==='exercise'?exerciseId:handle.dataset.set;
+    const w=editingWorkout(),items=kind==='exercise'?w?.exercises:w?.exercises.find(x=>x.id===exerciseId)?.sets;
+    if(!items)return;const i=items.findIndex(x=>x.id===sourceId),j=i+(e.key==='ArrowUp'?-1:1);
+    if(j<0||j>=items.length)return;
+    const targetId=items[j].id;
+    if(fxReorder(kind,exerciseId,sourceId,targetId,e.key==='ArrowDown'))showToast(kind==='exercise'?'Exercise order saved.':'Set order saved.');
+  }
+  document.addEventListener('pointerdown',fxPointerStart);
+  document.addEventListener('pointermove',fxPointerMove,{passive:false});
+  document.addEventListener('pointerup',fxPointerEnd);
+  document.addEventListener('pointercancel',fxPointerEnd);
+  document.addEventListener('keydown',fxDragKeyboard);
+
   function fxSetDescription(s,ex){
     if(isCardio(ex)){
       const shape=(min,dist)=>`${min===null?'—':cardioFmt(min)+' min'} · ${dist===null?'—':cardioFmt(dist)+' mi'}`;
@@ -1003,6 +1143,14 @@
     if(action==='fxdeletecustom'){const id=btn.dataset.id,x=fitness.customExercises.find(x=>x.id===id);if(!x||!confirm(`Delete ${x.name} from the library? Workouts already logged with it will keep their original entries.`))return;fitness.customExercises=fitness.customExercises.filter(a=>a.id!==id);saveFitness();render();showToast('Custom exercise deleted.');return}
     if(action==='fxpick'){fxScreen='library';fxSearch='';fxMuscle='All';render();return}
     if(action==='fxaddexercise'){fxAddExercise(btn.dataset.id);return}
+    if(action==='fxmove'){
+      const kind=btn.dataset.kind,exId=btn.dataset.ex,srcId=kind==='exercise'?exId:btn.dataset.set;
+      const w=editingWorkout(),items=kind==='exercise'?w?.exercises:w?.exercises.find(x=>x.id===exId)?.sets;
+      if(!items)return;const idx=items.findIndex(x=>x.id===srcId),dir=btn.dataset.dir==='up'?-1:1,to=idx+dir;
+      if(idx<0||to<0||to>=items.length)return;
+      if(fxReorder(kind,exId,srcId,items[to].id,dir===1))showToast(kind==='exercise'?'Exercise order saved.':'Set order saved.');
+      return;
+    }
     if(action==='fxaddset'){const ex=editingWorkout()?.exercises.find(x=>x.id===btn.dataset.id);if(!ex)return;if(ex.sets.length>=80){showToast('Maximum 80 sets per exercise.');return}ex.sets.push(fxNewSet());saveFitness();render();return}
     if(action==='fxremoveset'){const ex=editingWorkout()?.exercises.find(x=>x.id===btn.dataset.ex);if(!ex)return;const s=ex.sets.find(x=>x.id===btn.dataset.set);if(!s||!confirm(`Remove this set from ${ex.name}? This cannot be undone.`))return;if(fxRestTimer?.setId===s.id)fxStopRest();ex.sets=ex.sets.filter(x=>x.id!==s.id);saveFitness();render();return}
     if(action==='fxsetcomment'){fxSetCommentModal(btn.dataset.ex,btn.dataset.set);return}
@@ -1038,7 +1186,7 @@
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
-  function render(){document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
+  function render(){if(fxDrag)fxDragClear();document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
   function openModal(content){document.getElementById('modalDialog').innerHTML=content;document.getElementById('modalBackdrop').classList.add('show');document.body.style.overflow='hidden';setTimeout(()=>document.querySelector('#modalDialog input,#modalDialog select,#modalDialog button')?.focus(),20)}
   function closeModal(){barcodeRequestSeq++;stopScanner().catch(()=>{});document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null;activeProduct=null}
   function referenceModal(){
