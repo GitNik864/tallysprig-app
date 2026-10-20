@@ -1,28 +1,50 @@
-TALLYSPRIG V2.1 — INSTALLABLE WEB APP
+TALLYSPRIG V3 — BARCODE SCANNING & OPEN FOOD FACTS
 
-This package contains the same V2.1 app and adds installability, offline loading after first visit, and CSV log import for moving from a downloaded file to a hosted HTTPS site.
+WHAT'S NEW
+- Scan EAN/UPC grocery barcodes with a phone camera.
+- Scan a barcode from a saved image, or manually enter 8–14 numeric digits.
+- Look up packaged-food nutrition using the Open Food Facts v3 API.
+- Verify or edit values and serving amounts before logging.
+- Optional "Save in My Foods" for convenient future use.
+- A 30-day, 50-product local lookup cache for revisits. New products require internet.
+- Original V2.2 UI, favorites, custom foods, food editing, energy reference, confirmation prompts, and CSV import/export remain.
+- Your existing food log remains in the SAME browser's localStorage key (dayplate_v1). Do not clear browser site data.
 
-IMPORTANT: Opening index.html from the ZIP or Android Files app will not fix ERR_FILE_NOT_FOUND. You MUST upload the site files to a stable HTTPS web host first.
+PUBLISH AN UPDATE TO YOUR EXISTING GITHUB PAGES SITE
+1. FIRST, export your current food log as CSV (Foods → Export CSV) as a backup.
+2. Open your existing GitHub repository, tallysprig-app, and select Add file → Upload files.
+3. Upload the CONTENTS of this ZIP, not the ZIP itself. Keep index.html, sw.js, manifest.webmanifest and icons folder at the repository root.
+4. Confirm the replacement of index.html and sw.js and commit the changes.
+5. GitHub Pages deploys from main / (root). Wait for completion under Actions; then refresh your installed Tallysprig app while online.
+6. If the old interface persists, fully close and reopen it, or reload online. The service-worker cache version was incremented to V3.
+7. Check an existing food entry remains before testing scanning. You should NOT uninstall the PWA or clear site data to update it.
+8. Open Foods → Scan barcode. Test a known packaged barcode while connected to the internet, confirm its data, then log a serving.
 
-RECOMMENDED: GITHUB PAGES (personal project, not commercial SaaS)
-1. Sign in to github.com and create a PUBLIC repository, e.g., tallysprig-app.
-2. Add every webapp file to the repository root: index.html, manifest.webmanifest, sw.js, icons/icon-192.png, icons/icon-512.png, and .nojekyll. Do NOT upload any personal CSV food logs.
-3. Go to repository Settings > Pages > Deploy from a branch > main > /(root) > Save.
-4. Once published, open the HTTPS site in Chrome on Android. Choose browser menu > Install app or Add to home screen.
-5. Open it at least once online to cache resources; afterwards it should launch offline.
-6. Your entries are stored locally in that browser/app, NOT in the GitHub repository.
+TESTING & COMPATIBILITY
+- A live barcode scan requests camera permission. Most browsers require HTTPS (GitHub Pages supplies it).
+- Camera scanning/photo reading lazily loads Apache-2.0 licensed html5-qrcode v2.3.8 from jsDelivr on first use. If this cannot load, manually enter the barcode. Manual barcode lookup does not need the library.
+- Data retrieval requires an internet connection for uncached products, and Open Food Facts can return missing/out-of-date data or temporary API errors. A local product cache reduces repeat requests.
+- The original food journal and its offline shell still open without internet.
+- If scanning cannot start, check permission and use the manual fallback.
+- Product data is stored locally in the journal; it is not uploaded to GitHub.
 
-TO MOVE YOUR PREVIOUS FOOD LOG:
-1. Open the OLD V2.1 file from your Android Files app (rather than reopening a stale browser tab).
-2. In V2.1 go to Foods > Export CSV and save that file.
-3. On the NEW hosted Tallysprig site go to Foods > Import CSV.
-4. Choose the exported CSV. Review the confirmation: it REPLACES existing entries on the new site.
-5. Previous custom foods and favorites are NOT included in the old CSV and must be recreated.
+OPEN FOOD FACTS LICENSE AND ATTRIBUTION
+- Product facts are provided by Open Food Facts community contributors, https://world.openfoodfacts.org/ .
+- Database license: Open Database License 1.0 (ODbL), https://opendatacommons.org/licenses/odbl/1-0/ .
+- Individual database contents and any reuse, combination, or derivative databases are subject to applicable Open Food Facts terms and share-alike requirements; confirm compliance prior to public/commercial expansion.
+- We deliberately do not copy product photos in V3 because product images have their own CC BY-SA terms.
+- API documentation: https://openfoodfacts.github.io/openfoodfacts-server/api/ .
+- IMPORTANT PRODUCTION NOTE: Open Food Facts requests an identifying custom User-Agent. Browsers don't let JavaScript reliably override that header. The prototype performs direct browser-side GET requests; for sustained public deployment, coordinate a compliant browser-client solution with Open Food Facts or use a controlled serverless proxy that identifies Tallysprig properly and enforces rate limits.
+- API rate limits and data completeness are controlled by Open Food Facts, not Tallysprig. Do not bulk-fetch or scrape their API.
 
-LEGAL & PRIVACY:
-- The new PWA uses standard browser web APIs and does not bypass Android file permissions.
-- The site files contain no private food logs. DO NOT upload CSV files or private data.
-- Data is saved using your browser's localStorage, which may be cleared by browser/system settings.
-- A publicly reachable website is not a secret/private website even if the logs stay locally saved.
-- GitHub Pages is appropriate for a personal/noncommercial prototype, subject to current GitHub terms.
-- App brand name/trademark availability has not been formally cleared.
+BARCODE SCANNER DEPENDENCY
+- html5-qrcode v2.3.8 by mebjas and contributors, Apache License 2.0, https://github.com/mebjas/html5-qrcode .
+- It is fetched by the browser from https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js when scan camera/photo is requested.
+- No scanner library code has been copied or bundled with these project files.
+
+PRIVACY
+- No account, analytics, advertising, or proprietary server in Tallysprig.
+- Barcode/product lookup sends the queried barcode to Open Food Facts; the optional scanner library is loaded from jsDelivr on demand.
+- Food logs are kept in the browser's localStorage and can be deleted by clearing browser app/site data. Regular CSV exports are recommended until robust full backup/restore is available.
+
+The Tallysprig name and code are not represented as trademark-cleared; verify before formal public launch.

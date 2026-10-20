@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A simple, private food journal for meals and nutrients.">
-  <title>Tallysprig — Food journal</title>
+  <title>Tallysprig V3 — Food journal</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" type="image/png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,6 +167,29 @@
     @media(max-width:650px) { .app { display:block; padding-bottom:76px; } aside.sidebar { display:none; } main { padding:22px 17px 40px; } .main-top { margin-bottom:31px; } .date-switch { gap:4px; } .date-pill { font-size:11px; } .heading-row { gap:9px; } h1 { font-size:32px; letter-spacing:-1.6px; } .button-primary { padding:10px 11px; font-size:12px; flex-shrink:0; } .subheading { font-size:12px; } .stats-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin:24px 0 32px; } .stat { min-height:106px; padding:11px; border-radius:13px; } .stat.energy { grid-column:1/-1; min-height:133px; padding:17px; } .stat-label { font-size:10px; } .stat-number { font-size:24px; letter-spacing:-1.1px; } .stat.energy .stat-number { font-size:39px; } .stat .unit { display:block; margin:0; font-size:10px; } .stat.energy .unit { display:inline; } .meals-grid { grid-template-columns:1fr; gap:11px; } .meal-card { min-height:164px; padding:17px; } .library-grid { grid-template-columns:1fr; } .mobile-nav { display:flex; justify-content:space-around; position:fixed; bottom:0; left:0; right:0; padding:8px 0 max(8px,env(safe-area-inset-bottom)); background:#fff; border-top:1px solid #e3ede3; z-index:10; } .mobile-nav button { flex:1; border:0; background:transparent; color:#85978a; font-size:10px; font-weight:800; display:flex; flex-direction:column; align-items:center; gap:4px; } .mobile-nav button span { font-size:21px; } .mobile-nav button.active { color:#1e654c; } .library-toolbar { margin-top:24px; } .library-search { max-width:none; width:100%; } .history-visual { gap:7px; } }
     @media(max-width:650px) { .energy-reference { padding:13px 14px; gap:9px; margin-top:19px; margin-bottom:0; } .energy-ref-title { font-size:11px; } .energy-ref-desc { font-size:10px; } .energy-ref-actions { flex-direction:column; align-items:flex-end; gap:6px; } .energy-ref-value { font-size:15px; } .energy-ref-edit { padding:7px 11px; font-size:11px; } .dialog-actions button { flex:1; } }
     @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; } }
+
+    /* V3 barcode lookup: retain the original Tallysprig layout. */
+    .scan-trigger { white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+    .scan-trigger span { font-size:17px; line-height:1; }
+    .scan-sidebar { width:100%; margin-top:11px; text-align:center; }
+    .scan-status { margin-top:12px; padding:12px 13px; border-radius:11px; font-size:12px; line-height:1.55; background:#eef6ed; color:#365b49; }
+    .scan-status.error { background:#fff1e9; color:#9a4d38; }
+    .scan-camera-frame { border:1px solid #d4e4d6; background:#f7faf5; overflow:hidden; border-radius:14px; margin:15px 0; padding:9px; }
+    .scan-camera-frame[hidden] { display:none; }
+    #barcode-reader { width:100%; min-height:130px; overflow:hidden; }
+    #barcode-reader video { width:100%!important; border-radius:10px; }
+    .scan-alt-row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:10px; }
+    .scan-alt-row button { flex:1; }
+    .scan-footnote { margin-top:15px; font-size:11px; line-height:1.65; color:#82978a; }
+    .scan-footnote a,.off-credit a { color:#276951; text-decoration:underline; text-underline-offset:2px; }
+    .off-credit { font-size:11px; color:#809687; margin-top:16px; line-height:1.7; }
+    .scan-preview-title { font-size:17px; font-weight:850; line-height:1.35; }
+    .review-source { display:inline-block; background:#e9f6ec; color:#32654b; border-radius:30px; padding:5px 9px; font-size:10px; font-weight:800; margin-top:7px; }
+    .scan-checkbox { font-size:12px; color:#4b6455; display:flex; align-items:flex-start; gap:9px; line-height:1.5; padding:10px 0; }
+    .scan-checkbox input { width:18px; height:18px; flex-shrink:0; accent-color:#245b45; }
+    .barcode-field input { letter-spacing:1.5px; font-variant-numeric:tabular-nums; }
+    .scan-empty { padding:14px; color:#617d6d; background:#f4f8f1; border-radius:12px; font-size:12px; line-height:1.65; }
+    @media(max-width:650px) { .scan-trigger { width:100%; } .scan-alt-row { flex-direction:column; align-items:stretch; } .scan-alt-row button { width:100%; } }
   </style>
 </head>
 <body>
@@ -184,6 +207,7 @@
   <aside class="right-panel" aria-label="Quick food search">
     <div class="right-header"><div class="right-title">Quick add <span style="color:#b0c9b2">✳</span></div><button class="round-btn" data-action="custom" title="Create custom food" aria-label="Create custom food">＋</button></div>
     <div class="searchbox"><span>⌕</span><input id="quickSearch" type="search" placeholder="Search food..." aria-label="Search food"></div>
+    <button class="button-secondary scan-sidebar scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button>
     <div class="quiet-label" id="quickHeading">POPULAR FOODS</div>
     <div id="quickFoodList" class="food-list"></div>
     <div class="note-card"><strong>🌿 A more mindful food log</strong><p>Nutrition numbers are estimates, not rules. Pay attention to variety, hunger, energy, and how you feel, too.</p><button data-action="export">↗ Export your log</button></div>
@@ -199,6 +223,9 @@
 (()=>{
   'use strict';
   const KEY='dayplate_v1';
+  const OFF_CACHE_KEY='tallysprig_off_products_v3';
+  const OFF_API='https://world.openfoodfacts.org/api/v3/product/';
+  const SCANNER_LIB='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
   const DB=[
     ['oats','Rolled oats','½ cup dry (40 g)',150,5,27,3,'Grains','🥣'],
     ['milk','Milk, 2%','1 cup (240 mL)',122,8,12,5,'Dairy','🥛'],
@@ -248,6 +275,7 @@
   let store; try { store={...DEFAULT,...JSON.parse(localStorage.getItem(KEY)||'{}')}; if(!Array.isArray(store.entries)||!Array.isArray(store.customFoods)||!Array.isArray(store.favorites))throw Error('Invalid data'); }catch(e){store=structuredClone(DEFAULT)}
   if(!Number.isFinite(store.energyReference)||store.energyReference<=0||store.energyReference>20000)store.energyReference=null;
   let selectedDate=localISO(new Date()),view='today',category='All',libQuery='',quickQuery='',chosenFood=null,chosenMeal='Breakfast',editingEntryId=null,editingCustomId=null,pendingRemovalId=null,toastTimer;
+  let scanner=null,scannerStarting=false,scannerHandling=false,barcodeRequestSeq=0,activeProduct=null,scanLibraryPromise=null;
   function localISO(d){let y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
   function dateObj(s){return new Date(s+'T12:00:00')}
   function addDays(s,n){let d=dateObj(s);d.setDate(d.getDate()+n);return localISO(d)}
@@ -273,13 +301,13 @@
     return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+referenceHtml+statHtml+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
-  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p>`}
+  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
   function render(){document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
   function openModal(content){document.getElementById('modalDialog').innerHTML=content;document.getElementById('modalBackdrop').classList.add('show');document.body.style.overflow='hidden';setTimeout(()=>document.querySelector('#modalDialog input,#modalDialog select,#modalDialog button')?.focus(),20)}
-  function closeModal(){document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null}
+  function closeModal(){barcodeRequestSeq++;stopScanner().catch(()=>{});document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null;activeProduct=null}
   function referenceModal(){
     openModal(`<div class="modal-header"><h3 id="modalTitle">Daily energy reference</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><p class="helper" style="font-size:12px;margin:0 0 18px">Keep an optional reference number alongside your food log. It won’t restrict logging, show calories remaining, or change any meals. This setting appears on every date.</p><form id="referenceForm"><div class="field"><label for="referenceAmount">Daily reference (kcal)</label><input id="referenceAmount" type="number" inputmode="numeric" min="1" max="20000" step="1" placeholder="Enter an optional number" value="${store.energyReference??''}" required></div><div class="dialog-actions">${store.energyReference!==null?'<button type="button" class="button-secondary" data-action="clearreference">Clear</button>':''}<button type="button" class="button-secondary" data-action="close">Cancel</button><button type="submit" class="button-primary">Save reference</button></div></form>`);
   }
@@ -339,6 +367,216 @@
     store.customFoods=store.customFoods.filter(f=>f.id!==id);
     store.favorites=store.favorites.filter(x=>x!==id);
     save();render();showToast('Custom food deleted. Previous logs are preserved.')}
+  // V3 barcode feature. Product data is fetched only on explicit user action.
+  function validBarcode(code){return /^\d{8,14}$/.test(code)}
+  function scanNote(message,isError=false){const status=document.getElementById('scanStatus');if(status){status.textContent=message;status.className='scan-status'+(isError?' error':'')}}
+  function scanModal(){
+    chosenMeal=chosenMeal||'Breakfast';
+    openModal(`<div class="modal-header"><h3 id="modalTitle">Scan a food barcode</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div>
+    <p class="helper" style="margin:0 0 17px">Scan a package or type its barcode. Product lookup needs internet; your existing food journal works offline.</p>
+    <form id="barcodeForm"><div class="field barcode-field"><label for="barcodeInput">Barcode number</label><input id="barcodeInput" type="text" inputmode="numeric" pattern="[0-9]{8,14}" maxlength="14" placeholder="e.g. 3017620422003" autocomplete="off" required></div><button class="button-primary" type="submit" id="barcodeLookupButton" style="width:100%">Look up product →</button></form>
+    <div class="scan-alt-row"><button class="button-secondary" data-action="startcamera" id="cameraStart">▣ Use camera</button><button class="button-secondary" data-action="pickbarcodeimage">⌁ Scan a saved photo</button></div>
+    <div class="scan-camera-frame" id="cameraFrame" hidden><div id="barcode-reader"></div><button class="button-secondary" data-action="stopcamera" style="width:100%;margin-top:10px">Stop camera</button></div>
+    <input type="file" id="barcodeImageFile" accept="image/*" hidden>
+    <div id="scanStatus" class="scan-status" role="status" aria-live="polite">Tip: Hold the entire barcode inside the camera frame. You can always enter the number manually.</div>
+    <p class="scan-footnote">Camera access requires your permission and HTTPS. For product data, <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts</a> is contacted only when a barcode is submitted. Verify product labels, including allergen information.</p>`);
+  }
+  function loadScannerLib(){
+    if(window.Html5Qrcode)return Promise.resolve();
+    if(scanLibraryPromise)return scanLibraryPromise;
+    scanLibraryPromise=new Promise((resolve,reject)=>{
+      const s=document.createElement('script');s.src=SCANNER_LIB;s.async=true;s.crossOrigin='anonymous';
+      s.onload=()=>window.Html5Qrcode?resolve():reject(Error('Scanner library unavailable.'));
+      s.onerror=()=>reject(Error('Scanner library could not load. Check your internet connection.'));
+      document.head.appendChild(s);
+    }).catch(e=>{scanLibraryPromise=null;throw e});
+    return scanLibraryPromise;
+  }
+  async function stopScanner(){
+    const old=scanner;scanner=null;scannerStarting=false;
+    if(!old)return;
+    try{if(old.isScanning)await old.stop()}catch(_){ /* already stopped */ }
+    try{await old.clear()}catch(_){ /* view may already be closed */ }
+    const frame=document.getElementById('cameraFrame');if(frame)frame.hidden=true;
+  }
+  async function startScanner(){
+    if(scanner||scannerStarting)return;
+    if(!window.isSecureContext){scanNote('Camera scanning needs a secure HTTPS site. You can still type the barcode.',true);return}
+    if(!navigator.mediaDevices?.getUserMedia){scanNote('This browser does not expose a camera to websites. Enter the barcode manually.',true);return}
+    scannerStarting=true;scanNote('Loading camera scanner…');
+    const button=document.getElementById('cameraStart');if(button)button.disabled=true;
+    try{
+      await loadScannerLib();
+      // User could close the modal while the external library loaded.
+      if(!document.getElementById('cameraFrame'))return;
+      const formats=window.Html5QrcodeSupportedFormats;
+      const reader=new window.Html5Qrcode('barcode-reader',{
+        formatsToSupport:[formats.EAN_13,formats.EAN_8,formats.UPC_A,formats.UPC_E],
+        verbose:false
+      });
+      scanner=reader;
+      document.getElementById('cameraFrame').hidden=false;
+      await reader.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:150}},async code=>{
+        if(scannerHandling)return;
+        if(!validBarcode(String(code).trim()))return;
+        scannerHandling=true;
+        await stopScanner();
+        const input=document.getElementById('barcodeInput');if(input)input.value=String(code).trim();
+        await lookupBarcode(String(code).trim());
+        scannerHandling=false;
+      },()=>{});
+      // If the dialog was closed during the permission prompt, immediately release the camera.
+      if(scanner!==reader||!document.getElementById('cameraFrame')){
+        try{if(reader.isScanning)await reader.stop();await reader.clear()}catch(_){}
+        return;
+      }
+      scanNote('Point your camera at the lines of a food package barcode.');
+    }catch(e){await stopScanner();scanNote('Camera could not start. Allow camera permission or enter the code manually. '+(e?.message||''),true)}
+    finally{scannerStarting=false;const btn=document.getElementById('cameraStart');if(btn)btn.disabled=false}
+  }
+  async function scanImage(file){
+    if(!file)return;
+    if(file.size>12000000){scanNote('Image is too large (12 MB maximum).',true);return}
+    scanNote('Reading barcode image…');
+    try{
+      await loadScannerLib();
+      if(!document.getElementById('cameraFrame'))return;
+      await stopScanner();
+      const formats=window.Html5QrcodeSupportedFormats;
+      const reader=new window.Html5Qrcode('barcode-reader',{formatsToSupport:[formats.EAN_13,formats.EAN_8,formats.UPC_A,formats.UPC_E],verbose:false});
+      scanner=reader;
+      document.getElementById('cameraFrame').hidden=false;
+      const code=await reader.scanFile(file,true);
+      await stopScanner();
+      if(!document.getElementById('barcodeInput'))return;
+      if(!validBarcode(String(code).trim()))throw Error('Barcode must be 8–14 digits.');
+      const input=document.getElementById('barcodeInput');if(input)input.value=String(code).trim();
+      await lookupBarcode(String(code).trim());
+    }catch(e){await stopScanner();scanNote('Could not detect a food barcode in that photo. Try a clearer image or enter its number.',true)}
+  }
+  function readOffCache(code){
+    try{const data=JSON.parse(localStorage.getItem(OFF_CACHE_KEY)||'{}');const item=data[code];if(item&&item.date>Date.now()-30*86400000&&item.product)return item.product}catch(_){ /* optional cache */ }
+    return null;
+  }
+  function writeOffCache(code,product){
+    try{
+      const data=JSON.parse(localStorage.getItem(OFF_CACHE_KEY)||'{}');
+      data[code]={date:Date.now(),product};
+      const recent=Object.entries(data).sort((a,b)=>b[1].date-a[1].date).slice(0,50);
+      localStorage.setItem(OFF_CACHE_KEY,JSON.stringify(Object.fromEntries(recent)));
+    }catch(_){ /* caching is optional, never block logging */ }
+  }
+  function numOrNull(val){if(val===null||val===undefined||val==='')return null;const n=Number(val);return Number.isFinite(n)&&n>=0?n:null}
+  function energyAt(n,suffix){
+    const kcal=numOrNull(n['energy-kcal_'+suffix]);if(kcal!==null)return kcal;
+    const kj=numOrNull(n['energy-kj_'+suffix]);if(kj!==null)return kj/4.184;
+    return null;
+  }
+  function normalizeOffProduct(code,product){
+    const n=product.nutriments||{};
+    const name=String(product.product_name_en||product.product_name||product.generic_name||'Unnamed packaged food').trim().slice(0,100);
+    const brands=String(product.brands||'').trim().slice(0,90);
+    const rawServing=String(product.serving_size||'').trim().slice(0,100);
+    let quantity=numOrNull(product.serving_quantity);
+    // OFF serving_quantity represents grams/milliliters; do not infer from "1 bar".
+    if(quantity===null&&rawServing){const match=rawServing.match(/(\d+(?:[.,]\d+)?)\s*(g|ml)\b/i);if(match)quantity=Number(match[1].replace(',','.'))}
+    if(quantity!==null&&(quantity<=0||quantity>2000))quantity=null;
+    const servingVals={cal:energyAt(n,'serving'),p:numOrNull(n.proteins_serving),c:numOrNull(n.carbohydrates_serving),f:numOrNull(n.fat_serving)};
+    const hundred={cal:energyAt(n,'100g'),p:numOrNull(n.proteins_100g),c:numOrNull(n.carbohydrates_100g),f:numOrNull(n.fat_100g)};
+    const hasServing=!!rawServing&&Object.values(servingVals).some(v=>v!==null);
+    const canCalculateServing=!!rawServing&&quantity!==null;
+    const useServing=hasServing||canCalculateServing;
+    const values={};
+    for(const key of ['cal','p','c','f']){
+      values[key]=useServing
+        ?(servingVals[key]!==null?servingVals[key]:(canCalculateServing&&hundred[key]!==null?hundred[key]*quantity/100:null))
+        :hundred[key];
+    }
+    // Never label 100g values as a different serving size when conversion isn't possible.
+    const serving=useServing?rawServing:'100 g / 100 mL (check package)';
+    const lacking=['cal','p','c','f'].filter(k=>values[k]===null);
+    return {code,name,brands,serving,cal:values.cal,p:values.p,c:values.c,f:values.f,missing:lacking,estimated:!rawServing};
+  }
+  async function lookupBarcode(barcode){
+    const code=String(barcode||'').replace(/\s+/g,'');
+    if(!validBarcode(code)){scanNote('Enter a numeric barcode between 8 and 14 digits.',true);return}
+    const seq=++barcodeRequestSeq;
+    const lookupButton=document.getElementById('barcodeLookupButton');if(lookupButton)lookupButton.disabled=true;
+    scanNote('Looking up '+code+' in Open Food Facts…');
+    try{
+      let product=readOffCache(code);
+      if(!product){
+        const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),13000);
+        let response;
+        try{
+          const fields='code,product_name,product_name_en,generic_name,brands,serving_size,serving_quantity,nutriments';
+          response=await fetch(OFF_API+encodeURIComponent(code)+'?fields='+encodeURIComponent(fields)+'&lc=en',{
+            method:'GET',mode:'cors',signal:controller.signal,credentials:'omit',headers:{'Accept':'application/json'}
+          });
+        }finally{clearTimeout(timer)}
+        if(response.status===404)throw Error('No product found for this barcode. Try creating a custom food.');
+        if(response.status===429)throw Error('Open Food Facts is limiting requests. Try again later.');
+        if(!response.ok)throw Error('Food database unavailable (HTTP '+response.status+'). Try again later.');
+        const data=await response.json();
+        if(!data.product||typeof data.product!=='object'||!Object.keys(data.product).length)throw Error('No product found for this barcode. Try creating a custom food.');
+        product=data.product;
+        writeOffCache(code,product);
+      }
+      if(seq!==barcodeRequestSeq)return;
+      await stopScanner();
+      showProductReview(normalizeOffProduct(code,product));
+    }catch(e){if(seq!==barcodeRequestSeq)return;
+      const msg=e?.name==='AbortError'?'Product lookup timed out. Try again.':(!navigator.onLine?'You are offline. Connect to the internet to look up a new barcode.':(e?.message||'Lookup failed.'));
+      scanNote(msg,true);
+    }finally{const btn=document.getElementById('barcodeLookupButton');if(btn)btn.disabled=false}
+  }
+  function showProductReview(product){
+    activeProduct=product;
+    const val=k=>product[k]===null||product[k]===undefined?'':Number(product[k].toFixed(2));
+    const missing=product.missing.length>0;
+    openModal(`<div class="modal-header"><h3 id="modalTitle">Review this product</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div>
+      <div class="modal-food"><span class="food-icon">🛒</span><div><div class="scan-preview-title">${esc(product.name)}</div><div class="helper">${esc(product.brands||'Packaged food')} · Barcode ${esc(product.code)}</div><span class="review-source">Open Food Facts</span></div></div>
+      <div class="scan-empty" style="margin-bottom:17px">${missing?'Some nutrition values are missing. Use the package label to fill in every field before logging.':'Check these values against the package label before logging.'} ${product.estimated?'Serving defaults to 100 g or 100 mL because no clear serving size was found.':''}</div>
+      <form id="productReviewForm"><div class="field"><label for="reviewName">Product name</label><input id="reviewName" maxlength="90" required value="${esc(product.name)}"></div>
+      <div class="field"><label for="reviewServing">Serving size (check product label)</label><input id="reviewServing" maxlength="80" required value="${esc(product.serving)}"></div>
+      <div class="field-row"><div class="field"><label for="reviewCal">Calories (kcal)</label><input id="reviewCal" type="number" inputmode="decimal" min="0" max="20000" step="any" required value="${val('cal')}"></div>
+      <div class="field"><label for="reviewP">Protein (g)</label><input id="reviewP" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('p')}"></div>
+      <div class="field"><label for="reviewC">Carbs (g)</label><input id="reviewC" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('c')}"></div>
+      <div class="field"><label for="reviewF">Fat (g)</label><input id="reviewF" type="number" inputmode="decimal" min="0" max="2000" step="any" required value="${val('f')}"></div></div>
+      <div class="field"><label for="reviewQuantity">How many servings?</label><input id="reviewQuantity" type="number" inputmode="decimal" min="0.1" max="100" step="any" required value="1"></div>
+      <div class="field"><label for="reviewMeal">Meal</label><select id="reviewMeal">${MEALS.map(m=>`<option ${m.id===chosenMeal?'selected':''}>${m.id}</option>`).join('')}</select></div>
+      <label class="scan-checkbox"><input type="checkbox" id="reviewRemember" checked> Save this reviewed product in My Foods for future use</label>
+      <p class="helper">For ${esc(prettyDate(selectedDate))}. Existing logged meals will not be altered. Scanned details are community-maintained and might be inaccurate.</p>
+      <div class="dialog-actions"><button type="button" class="button-secondary" data-action="scan">← Back to scan</button><button type="submit" class="button-primary">Add food →</button></div></form>
+      <p class="off-credit">Data: <a href="https://world.openfoodfacts.org/" rel="noopener noreferrer" target="_blank">Open Food Facts</a> (ODbL). Check packaging for allergens.</p>`);
+  }
+  function logReviewedProduct(){
+    if(!activeProduct)return;
+    const name=document.getElementById('reviewName')?.value.trim(),serving=document.getElementById('reviewServing')?.value.trim();
+    const quantity=Number(document.getElementById('reviewQuantity')?.value);
+    const meal=document.getElementById('reviewMeal')?.value;
+    const keys=['Cal','P','C','F'];
+    const values=keys.map(k=>{const raw=document.getElementById('review'+k)?.value.trim();return raw===''?NaN:Number(raw)});
+    if(!name||!serving||name.length>90||serving.length>80||!Number.isFinite(quantity)||quantity<.1||quantity>100||!MEALS.some(m=>m.id===meal)||values.some((n,i)=>!Number.isFinite(n)||n<0||n>(i===0?20000:2000))){showToast('Check all product and serving fields.');return}
+    const [cal,p,c,f]=values;
+    const remember=document.getElementById('reviewRemember')?.checked;
+    const barcode=activeProduct.code;
+    let foodId='';
+    if(remember){
+      let food=store.customFoods.find(f=>f.barcode===barcode&&f.source==='Open Food Facts');
+      if(food){Object.assign(food,{name,serving,cal,p,c,f})}
+      else{
+        food={id:'off-'+barcode,name,serving,cal,p,c,f,category:'Other',emoji:'🛒',custom:true,barcode,source:'Open Food Facts'};
+        store.customFoods.unshift(food);
+      }
+      foodId=food.id;
+    }
+    store.entries.push({id:'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),foodId,
+      name,serving,emoji:'🛒',qty:quantity,meal,date:selectedDate,
+      basis:{cal,p,c,f},cal:dec(cal*quantity),p:dec(p*quantity),c:dec(c*quantity),f:dec(f*quantity)});
+    save();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
+  }
+
   function csvQuote(t){return '"'+String(t??'').replaceAll('"','""')+'"'}
   function exportCSV(){const cols=['Date','Meal','Food','Serving','Quantity','Calories (kcal)','Protein (g)','Carbs (g)','Fat (g)'];const rows=store.entries.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>[e.date,e.meal,e.name,e.serving,e.qty,e.cal,e.p,e.c,e.f]);const csv='\ufeff'+[cols,...rows].map(r=>r.map(csvQuote).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='tallysprig-food-log.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('Food log exported as CSV.')}
 
@@ -401,6 +639,10 @@
     if(action==='prevdate'||action==='nextdate'){selectedDate=addDays(selectedDate,action==='prevdate'?-1:1);render()}
     else if(action==='goday'){selectedDate=btn.dataset.date;view='today';render();window.scrollTo(0,0)}
     else if(action==='add'){chosenMeal=btn.dataset.meal||'Breakfast';view='foods';category='All';libQuery='';render();showToast('Choose a food to add.');window.scrollTo(0,0)}
+    else if(action==='scan'){stopScanner().catch(()=>{});scanModal()}
+    else if(action==='startcamera'){startScanner()}
+    else if(action==='stopcamera'){stopScanner().catch(()=>{});scanNote('Camera stopped. Enter a barcode or scan a photo.')}
+    else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
     else if(action==='editreference'){referenceModal()}
@@ -422,7 +664,8 @@
   document.addEventListener('click',onClick);
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
   document.addEventListener('input',e=>{if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
-  document.addEventListener('submit',e=>{if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}});
+  document.addEventListener('submit',e=>{if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
+  document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
   render();
