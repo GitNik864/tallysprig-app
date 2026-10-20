@@ -1,29 +1,22 @@
-TALLYSPRIG V7.3 — WORKOUT LOGGER CONTROLS
-=========================================
-GitHub Pages replacement package, built on V7.2 + Health Mode 6.1.
+TALLYSPRIG V7.4 — CARDIO LOGGING UPDATE
 
-WHAT'S NEW
-- Discard an unfinished/draft workout directly from the Fitness overview or its editor; you no longer need to finish the session before deleting it. Confirmation is required.
-- Mark sets complete even if planned and actual reps/weight are blank. Missing numbers remain unrecorded; the app does not turn blank values into zeroes. A workout can be finished when at least one set is marked complete.
-- Add an editable comment to each set in a pop-up (up to 800 characters). Edit or clear it later. Comments appear in workout details and JSON backups.
-- Set an optional exercise-wide rest duration in seconds. Individual sets can inherit that default or override it; entering 0 explicitly indicates no rest. A per-set Start rest/Stop rest countdown is available. The timer does not send push notifications and is not guaranteed to continue through closing the app; saved rest preferences do persist.
-- Removing an individual set now requests confirmation.
-- Copying workouts preserves planned rest settings but clears actual performance, completion, and set comments.
-- Workout histories, existing V7.2 data, and earlier workout backup formats remain compatible.
-- Fixed a backup restore issue with REPLACE mode discovered during testing.
+This is a complete GitHub Pages release based on V7.3 + Health Mode 6.1.
 
-RETAINED
-All features from V7.2 + Health Mode 6.1, including food journal, barcode scanning, macro chart, health mode, theme, exercise library, workout history, offline PWA shell, and full JSON backups.
+New:
+- Cardio category in Fitness > Exercises; eleven built-in activities including running, walking, cycling, swimming and rowing.
+- Cardio sessions have planned and actual time (minutes) and distance (miles) instead of strength weight/reps.
+- Cardio activities support intervals, completion checkboxes, rest timers, comments, history and copy-to-another-day.
+- Custom exercises can be categorized as Cardio.
+- Backups and restore include cardio values. Old fitness records continue to work.
+- Privacy Policy is updated to v1.4, which requires a fresh acknowledgement.
+- No calorie-burn estimates or distance requirements are imposed.
 
 DEPLOY TO GITHUB PAGES
-1. In your existing app, use Settings > Download full backup and store the JSON file privately.
-2. Download and extract the ZIP; upload its CONTENTS (not the ZIP or an enclosing folder) to the ROOT of your existing tallysprig-app GitHub repository, overwriting matching paths.
-3. Commit the changes, e.g. "Update Tallysprig to V7.3".
-4. Allow GitHub Pages to deploy. Reopen your installed app while online to fetch the new shell. Do not uninstall it or clear site data.
-5. The Privacy Policy has been updated from v1.2 to v1.3 to mention set comments and rest preferences. Users will be asked to re-acknowledge it. Medical Disclaimer remains v1.3.
-6. Test: start and discard an unfinished workout; complete a set with blanks; add/edit a set comment; set rest defaults and overrides; copy a workout; reopen the app and verify autosaved notes/rest; export/restore full backup.
+1. Download a full JSON backup in your current Tallysprig app.
+2. Extract this ZIP. Upload these website files into the ROOT of your existing GitHub Pages repository (NOT the ZIP itself).
+3. Replace files of the same name, keeping icons/ directory structure and both HTML policy files.
+4. Commit, e.g., "Update Tallysprig to V7.4".
+5. After deployment, reopen the website while online. Do not clear app storage or uninstall the PWA.
+6. Acknowledge the updated Privacy Policy, then test a cardio interval and re-open History.
 
-NOTES
-- All workout records and preferences remain browser-local unless you choose to export them.
-- Individual rest timers work while this app page is open. They are optional and not training advice.
-- The Privacy Policy remains a prototype draft; it still needs a verified operator and privacy contact and suitable review before public launch.
+Privacy: The workout diary and cardio entries stay on your device unless you export/share them. A full JSON backup can contain personal information; do not upload it publicly.

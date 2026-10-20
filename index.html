@@ -414,7 +414,7 @@
     <div class="consent-logo"><span aria-hidden="true">✳</span><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
     <h1 class="consent-title" id="consentTitle">Before you begin</h1>
     <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
-    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.3).</span></label></div>
+    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.4).</span></label></div>
     <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.3).</span></label></div>
     <button id="agreeContinue" class="button-primary" type="button" disabled>Agree &amp; Continue →</button>
     <div id="consentError" class="consent-error" role="alert" aria-live="polite"></div>
@@ -478,7 +478,7 @@
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.3', MEDICAL_VERSION='1.3';
+  const PRIVACY_VERSION='1.4', MEDICAL_VERSION='1.3';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -713,19 +713,22 @@
   // All external loads are stored in kilograms; the selected unit is presentation only.
   const KG_PER_LB=0.45359237;
   const EQUIPMENT=['Barbell','Dumbbell','Machine','Cable','Bodyweight','Other'];
-  const MUSCLES=['Chest','Back','Legs','Shoulders','Arms','Core','Full body'];
+  const MUSCLES=['Chest','Back','Legs','Shoulders','Arms','Core','Full body','Cardio'];
   const EXERCISES=[
     ['Bench Press','Barbell','Chest'],['Incline Bench Press','Barbell','Chest'],['Dumbbell Bench Press','Dumbbell','Chest'],['Incline Dumbbell Press','Dumbbell','Chest'],['Chest Press','Machine','Chest'],['Chest Fly','Machine','Chest'],['Cable Fly','Cable','Chest'],['Push-Up','Bodyweight','Chest'],['Dip','Bodyweight','Chest'],
     ['Lat Pulldown','Cable','Back'],['Pull-Up','Bodyweight','Back'],['Chin-Up','Bodyweight','Back'],['Seated Cable Row','Cable','Back'],['Chest Supported Row','Machine','Back'],['Bent-Over Row','Barbell','Back'],['One-Arm Row','Dumbbell','Back'],['Straight-Arm Pulldown','Cable','Back'],['Back Extension','Bodyweight','Back'],
     ['Squat','Barbell','Legs'],['Leg Press','Machine','Legs'],['Leg Extension','Machine','Legs'],['Seated Leg Curl','Machine','Legs'],['Lying Leg Curl','Machine','Legs'],['Romanian Deadlift','Barbell','Legs'],['Dumbbell Lunge','Dumbbell','Legs'],['Calf Raise','Machine','Legs'],['Hip Thrust','Barbell','Legs'],['Step-Up','Dumbbell','Legs'],['Hack Squat','Machine','Legs'],
     ['Overhead Press','Barbell','Shoulders'],['Seated Dumbbell Press','Dumbbell','Shoulders'],['Machine Shoulder Press','Machine','Shoulders'],['Lateral Raise','Dumbbell','Shoulders'],['Cable Lateral Raise','Cable','Shoulders'],['Reverse Pec Deck','Machine','Shoulders'],['Face Pull','Cable','Shoulders'],
     ['Dumbbell Curl','Dumbbell','Arms'],['Hammer Curl','Dumbbell','Arms'],['Preacher Curl','Machine','Arms'],['Cable Curl','Cable','Arms'],['Triceps Pushdown','Cable','Arms'],['Overhead Triceps Extension','Cable','Arms'],['Skull Crusher','Barbell','Arms'],['Close-Grip Bench Press','Barbell','Arms'],
-    ['Plank','Bodyweight','Core'],['Crunch','Bodyweight','Core'],['Cable Crunch','Cable','Core'],['Hanging Knee Raise','Bodyweight','Core'],['Russian Twist','Bodyweight','Core'],['Deadlift','Barbell','Full body'],['Farmer Carry','Dumbbell','Full body']
+    ['Plank','Bodyweight','Core'],['Crunch','Bodyweight','Core'],['Cable Crunch','Cable','Core'],['Hanging Knee Raise','Bodyweight','Core'],['Russian Twist','Bodyweight','Core'],['Deadlift','Barbell','Full body'],['Farmer Carry','Dumbbell','Full body'],
+    ['Outdoor Running','Other','Cardio'],['Treadmill Running','Machine','Cardio'],['Walking','Other','Cardio'],['Treadmill Walking','Machine','Cardio'],['Cycling','Other','Cardio'],['Stationary Cycling','Machine','Cardio'],['Rowing','Machine','Cardio'],['Elliptical','Machine','Cardio'],['Swimming','Other','Cardio'],['Hiking','Other','Cardio'],['Stair Climber','Machine','Cardio']
   ].map(([name,equipment,muscle],i)=>({id:'built'+(i+1),name,equipment,muscle}));
   function emptyFitness(){return {unit:'lb',sessions:[],customExercises:[]}}
   function idFitness(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
   function validFitnessNumber(v,max,nullable=false){return (nullable&&v===null)||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function validRestSeconds(v){return v===null||(Number.isInteger(v)&&v>=0&&v<=3600)}
+  function validCardio(v,max){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
+  function isCardio(ex){return ex.trackingType==='cardio'||(!ex.trackingType&&(getFitnessExercise(ex.exerciseId)?.muscle==='Cardio'))}
   function verifyFitness(f){
     if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises))throw Error('Backup has an invalid fitness section.');
     if(f.sessions.length>10000||f.customExercises.length>1000)throw Error('Backup has too many fitness records.');
@@ -740,6 +743,7 @@
       for(const ex of w.exercises){
         if(!ex||!validText(ex.id,90)||exerciseSeen.has(ex.id)||!validText(ex.name,100)||!EQUIPMENT.includes(ex.equipment)||!validText(ex.exerciseId,90)||!Array.isArray(ex.sets)||ex.sets.length>80)throw Error('Backup has invalid workout exercises.');
         if(Object.hasOwn(ex,'restSeconds')&&!validRestSeconds(ex.restSeconds))throw Error('Backup has invalid exercise rest time.');
+        if(Object.hasOwn(ex,'trackingType')&&!['cardio','strength'].includes(ex.trackingType))throw Error('Backup has invalid tracking type.');
         exerciseSeen.add(ex.id);const setSeen=new Set();
         for(const set of ex.sets){
           if(!set||!validText(set.id,90)||setSeen.has(set.id)||!['work','warmup'].includes(set.type)||typeof set.done!=='boolean')throw Error('Backup has invalid workout sets.');
@@ -748,6 +752,8 @@
           if(!(Object.hasOwn(set,'targetReps')||Object.hasOwn(set,'reps'))||!(Object.hasOwn(set,'targetWeightKg')||Object.hasOwn(set,'weightKg')))throw Error('Backup has incomplete workout sets.');
           if(Object.hasOwn(set,'comment')&&(typeof set.comment!=='string'||set.comment.length>800))throw Error('Backup has invalid set comments.');
           if(Object.hasOwn(set,'restSeconds')&&!validRestSeconds(set.restSeconds))throw Error('Backup has invalid set rest time.');
+          for(const k of ['targetMinutes','actualMinutes'])if(Object.hasOwn(set,k)&&!validCardio(set[k],10080))throw Error('Backup has invalid cardio duration.');
+          for(const k of ['targetMiles','actualMiles'])if(Object.hasOwn(set,k)&&!validCardio(set[k],10000))throw Error('Backup has invalid cardio distance.');
           setSeen.add(set.id);
         }
       }
@@ -759,8 +765,9 @@
     // V7 fields were originally entered as performed values. Keep those as BOTH the
     // remembered plan and the recorded result on completed sets; uncompleted rows keep only their plan.
     return {unit:value.unit,customExercises:value.customExercises,sessions:value.sessions.map(w=>({
-      ...w,exercises:w.exercises.map(ex=>({...ex,restSeconds:ex.restSeconds??null,sets:ex.sets.map(set=>({
+      ...w,exercises:w.exercises.map(ex=>({...ex,trackingType:ex.trackingType||((value.customExercises.find(x=>x.id===ex.exerciseId)||EXERCISES.find(x=>x.id===ex.exerciseId))?.muscle==='Cardio'?'cardio':'strength'),restSeconds:ex.restSeconds??null,sets:ex.sets.map(set=>({
         id:set.id,type:set.type,done:set.done,comment:set.comment??'',restSeconds:set.restSeconds??null,
+        targetMinutes:set.targetMinutes??null,actualMinutes:set.actualMinutes??null,targetMiles:set.targetMiles??null,actualMiles:set.actualMiles??null,
         targetWeightKg:Object.hasOwn(set,'targetWeightKg')?set.targetWeightKg:set.weightKg,
         targetReps:Object.hasOwn(set,'targetReps')?set.targetReps:set.reps,
         actualWeightKg:Object.hasOwn(set,'actualWeightKg')?set.actualWeightKg:(set.done?set.weightKg:null),
@@ -779,13 +786,13 @@
   function fxToKg(value){const v=Number(value);return fitness.unit==='lb'?Math.round(v*KG_PER_LB*10000)/10000:Math.round(v*10000)/10000}
   function activeWorkout(){return fitness.sessions.find(w=>w.status==='draft')}
   function fxNav(){return `<div class="fx-toolbar" role="navigation" aria-label="Fitness sections">${[['home','Overview'],['history','History'],['library','Exercises']].map(([k,v])=>`<button data-action="fxnav" data-screen="${k}" class="${fxScreen===k?'active':''}">${v}</button>`).join('')}</div>`}
-  function fxHeading(t,desc){return `<div class="main-top"><div class="eyebrow">✳ &nbsp; TALLYSPRIG FITNESS</div><span class="date-pill">STRENGTH JOURNAL</span></div><div class="heading-row"><div><h1>${t}</h1><p class="subheading">${desc}</p></div></div>`}
+  function fxHeading(t,desc){return `<div class="main-top"><div class="eyebrow">✳ &nbsp; TALLYSPRIG FITNESS</div><span class="date-pill">TRAINING JOURNAL</span></div><div class="heading-row"><div><h1>${t}</h1><p class="subheading">${desc}</p></div></div>`}
   function renderFitness(){
     let content='';if(fxScreen==='editor'&&editingWorkout())return fxHeading('Record your workout.','Your session autosaves as you log each set.')+renderFxEditor(editingWorkout());
     if(fxScreen==='history')content=renderFxHistory();
     else if(fxScreen==='library')content=renderFxLibrary();
     else content=renderFxHome();
-    return fxHeading('Your workouts.','A simple home for your strength-training journal.')+fxNav()+content;
+    return fxHeading('Your workouts.','Your strength and cardio training journal.')+fxNav()+content;
   }
   function renderFxHome(){
     const completed=fitness.sessions.filter(w=>w.status==='complete');const now=localISO(new Date()),seven=addDays(now,-6);
@@ -818,19 +825,35 @@
   function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="home">← Fitness home</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':'Editing completed session · autosaved'}</span></div>
     <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div><div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div></div>
     <div class="fx-field"><label for="fxWorkoutNotes">Session notes (optional)</label><textarea class="fx-note" id="fxWorkoutNotes" data-fx-field="notes" maxlength="1200" placeholder="How did the session feel?">${esc(w.notes)}</textarea></div>
-    <p class="fx-help">Plan your target weight and reps, then separately log what you actually performed. One row is one planned set. You can mark a set complete even if you leave weight and reps blank; missing values stay unrecorded. Add optional set notes and rest times as needed.</p></section>
+    <p class="fx-help">Strength sets use weight and reps. Cardio intervals use time (minutes) and distance (miles). Plan a target, then record actual results separately. All numbers are optional; blank values remain unrecorded. Add optional notes and rest times as needed.</p></section>
     ${w.exercises.map((x,ei)=>renderFxExerciseBlock(x,ei)).join('')}
     <div class="fx-rowgap"><button class="button-secondary" data-action="fxpick">＋ Add exercise</button>${w.status==='draft'?'<button class="button-primary" data-action="fxfinish">✓ Finish workout</button>':w.status==='planned'?'<button class="button-primary" data-action="fxstartplanned" data-id="'+esc(w.id)+'">Start this workout</button>':'<button class="button-primary" data-action="fxsavedone">✓ Done editing</button>'}<button class="button-secondary" data-action="fxcopy" data-id="${esc(w.id)}">Copy to another day</button><button class="button-secondary" data-action="fxnav" data-screen="home">Keep for later</button><button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(w.id)}">${w.status==='draft'?'Discard workout':'Delete workout'}</button></div><p class="fx-help" style="margin:13px 0">Your progress is autosaved. Copied sessions keep the plan but start with no actual results.</p>`}
   function fxTotals(x){
+    if(isCardio(x)){
+      const done=x.sets.filter(s=>s.done).length;
+      const actualTime=x.sets.filter(s=>s.done&&s.actualMinutes!==null);
+      const actualDistance=x.sets.filter(s=>s.done&&s.actualMiles!==null);
+      const plannedTime=x.sets.filter(s=>s.targetMinutes!==null);
+      const plannedDistance=x.sets.filter(s=>s.targetMiles!==null);
+      const targets=x.sets.filter(s=>s.targetMinutes!==null&&s.targetMiles!==null);
+      const onTarget=targets.filter(s=>s.done&&s.actualMinutes!==null&&s.actualMiles!==null&&s.actualMinutes>=s.targetMinutes&&s.actualMiles>=s.targetMiles).length;
+      return {cardio:true,done,actualTime:actualTime.reduce((a,s)=>a+s.actualMinutes,0),actualDistance:actualDistance.reduce((a,s)=>a+s.actualMiles,0),timeCount:actualTime.length,distanceCount:actualDistance.length,plannedTime:plannedTime.reduce((a,s)=>a+s.targetMinutes,0),plannedDistance:plannedDistance.reduce((a,s)=>a+s.targetMiles,0),plannedTimeCount:plannedTime.length,plannedDistanceCount:plannedDistance.length,onTarget,targetCount:targets.length};
+    }
     const planned=x.sets.reduce((n,s)=>n+(s.targetReps??0),0);
     const logged=x.sets.reduce((n,s)=>n+(s.done&&s.actualReps!==null?s.actualReps:0),0);
     const repsRecorded=x.sets.filter(s=>s.done&&s.actualReps!==null).length;
     const done=x.sets.filter(s=>s.done).length;
     const hasTargets=x.sets.filter(s=>s.targetReps!==null&&s.targetWeightKg!==null);
     const onTarget=hasTargets.filter(s=>s.done&&s.actualReps!==null&&s.actualWeightKg!==null&&s.actualReps>=s.targetReps&&s.actualWeightKg+0.00001>=s.targetWeightKg).length;
-    return {planned,logged,repsRecorded,done,onTarget,targetCount:hasTargets.length};
+    return {cardio:false,planned,logged,repsRecorded,done,onTarget,targetCount:hasTargets.length};
   }
+  function cardioFmt(n){return Number(n.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2})}
   function fxProgressHtml(t){
+    if(t.cardio){
+      const time=t.timeCount?`${cardioFmt(t.actualTime)} actual min${t.plannedTimeCount?' · '+cardioFmt(t.plannedTime)+' planned':''}`:'Time not recorded';
+      const miles=t.distanceCount?`${cardioFmt(t.actualDistance)} actual mi${t.plannedDistanceCount?' · '+cardioFmt(t.plannedDistance)+' planned':''}`:'Distance not recorded';
+      return `<span class="fx-pill">${t.done} interval${t.done===1?'':'s'} completed</span><span class="fx-pill">${time}</span><span class="fx-pill">${miles}</span>`;
+    }
     const reps=t.repsRecorded?`${t.logged} actual reps entered · ${t.planned} planned`:`No actual reps entered · ${t.planned} planned`;
     return `<span class="fx-pill">${t.done} set${t.done===1?'':'s'} completed</span><span class="fx-pill">${reps}</span>${t.targetCount?`<span class="fx-pill">${t.onTarget} / ${t.targetCount} met planned weight & reps (when recorded)</span>`:''}`;
   }
@@ -854,27 +877,42 @@
     fxStopRest();fxRestTimer={setId,ends:Date.now()+duration*1000};
     fxRestTicker=setInterval(fxUpdateRestTimer,400);render();fxUpdateRestTimer();
   }
-  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x);return `<section class="fx-exercise"><div class="fx-exercise-head"><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${totals.done} / ${x.sets.length} sets completed</p></div><div class="fx-actions"><button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
-    <div class="fx-rest-default"><label for="fxExRest${esc(x.id)}">Exercise default rest (seconds)</label><input id="fxExRest${esc(x.id)}" type="number" data-fx-field="exerciseRest" data-ex="${esc(x.id)}" value="${x.restSeconds??''}" min="0" max="3600" step="5" inputmode="numeric" placeholder="Optional"><span class="fx-meta">Leave blank for no default. Each set may override it.</span></div>
+  function fxCardioInputs(set,exId,i,plan){
+    const prefix=plan?'target':'actual',title=plan?'Planned target':'Actually achieved';
+    const mins=set[prefix+'Minutes']??'',miles=set[prefix+'Miles']??'';
+    return `<div class="fx-set-group"><h4>${title}</h4><div class="fx-set-pair"><div><label>Time (min)</label><input data-fx-field="${prefix}Minutes" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="0" max="10080" step="0.1" inputmode="decimal" value="${mins}" placeholder="—" aria-label="Interval ${i+1} ${plan?'planned':'actual'} time in minutes"></div><div><label>Distance (mi)</label><input data-fx-field="${prefix}Miles" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="0" max="10000" step="0.01" inputmode="decimal" value="${miles}" placeholder="—" aria-label="Interval ${i+1} ${plan?'planned':'actual'} distance in miles"></div></div></div>`;
+  }
+  function fxStrengthInputs(set,exId,i,plan){
+    const weight=plan?'targetWeight':'actualWeight',reps=plan?'targetReps':'actualReps';
+    const value=plan?set.targetWeightKg:set.actualWeightKg;
+    return `<div class="fx-set-group"><h4>${plan?'Planned target':'Actually achieved'}</h4><div class="fx-set-pair"><div><label>Weight (${fitness.unit})</label><input data-fx-field="${weight}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="0" max="${fitness.unit==='lb'?4400:2000}" step="any" inputmode="decimal" value="${fxUnits(value)}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} weight"></div><div><label>Reps</label><input data-fx-field="${reps}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="1" max="1000" inputmode="numeric" value="${set[reps]??''}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} reps"></div></div></div>`;
+  }
+  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x),cardio=isCardio(x),unitLabel=cardio?'interval':'set';return `<section class="fx-exercise"><div class="fx-exercise-head"><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${cardio?'Cardio · time & miles · ':''}${totals.done} / ${x.sets.length} ${unitLabel}s completed</p></div><div class="fx-actions"><button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
+    <div class="fx-rest-default"><label for="fxExRest${esc(x.id)}">Exercise default rest (seconds)</label><input id="fxExRest${esc(x.id)}" type="number" data-fx-field="exerciseRest" data-ex="${esc(x.id)}" value="${x.restSeconds??''}" min="0" max="3600" step="5" inputmode="numeric" placeholder="Optional"><span class="fx-meta">Leave blank for no default. Each ${unitLabel} may override it.</span></div>
     <div class="fx-set-progress">${fxProgressHtml(totals)}</div>
-    ${x.sets.map((set,i)=>`<div class="fx-set-card"><div class="fx-set-top"><strong>Set ${i+1}</strong><div class="fx-set-controls"><select data-fx-field="type" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Set ${i+1} type"><option value="work" ${set.type==='work'?'selected':''}>Work</option><option value="warmup" ${set.type==='warmup'?'selected':''}>Warm-up</option></select><label><input type="checkbox" data-fx-field="done" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Set ${i+1} completed" ${set.done?'checked':''}> Completed</label><button class="fx-tiny" data-action="fxremoveset" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Remove set ${i+1}" title="Remove set">×</button></div></div>
-    <div class="fx-set-body"><div class="fx-set-group"><h4>Planned target</h4><div class="fx-set-pair"><div><label>Weight (${fitness.unit})</label><input data-fx-field="targetWeight" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="0" max="${fitness.unit==='lb'?4400:2000}" step="any" inputmode="decimal" value="${fxUnits(set.targetWeightKg)}" placeholder="—" aria-label="Set ${i+1} planned weight"></div><div><label>Reps</label><input data-fx-field="targetReps" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="1" max="1000" inputmode="numeric" value="${set.targetReps??''}" placeholder="—" aria-label="Set ${i+1} planned reps"></div></div></div>
-    <div class="fx-set-group"><h4>Actually achieved</h4><div class="fx-set-pair"><div><label>Weight (${fitness.unit})</label><input data-fx-field="actualWeight" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="0" max="${fitness.unit==='lb'?4400:2000}" step="any" inputmode="decimal" value="${fxUnits(set.actualWeightKg)}" placeholder="—" aria-label="Set ${i+1} actual weight"></div><div><label>Reps</label><input data-fx-field="actualReps" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="1" max="1000" inputmode="numeric" value="${set.actualReps??''}" placeholder="—" aria-label="Set ${i+1} actual reps"></div></div></div></div>
-    <div class="fx-set-footer"><div class="fx-rest-inline"><label for="fxRest${esc(set.id)}">Rest after set (sec)</label><input id="fxRest${esc(set.id)}" data-fx-field="setRest" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="0" max="3600" step="5" inputmode="numeric" value="${set.restSeconds??''}" placeholder="${x.restSeconds??'Default'}" aria-label="Set ${i+1} rest seconds"><span class="fx-meta">${set.restSeconds===null?'Exercise default: ':'Set-specific: '}${esc(fxRestLabel(fxEffectiveRest(x,set)))}</span></div><button class="fx-mini-button" data-action="fxresttimer" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${fxRestTimer?.setId===set.id?'Stop rest':'Start rest'}</button><span class="fx-rest-clock" data-fx-rest-display="${esc(set.id)}">${fxRestTimer?.setId===set.id?fxFormatClock((fxRestTimer.ends-Date.now())/1000):''}</span></div>
-    <div class="fx-set-footer"><button class="fx-mini-button" data-action="fxsetcomment" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${set.comment?'✎ Edit set comment':'＋ Add set comment'}</button></div>${set.comment?`<span class="fx-comment-preview">${esc(set.comment)}</span>`:''}
+    ${x.sets.map((set,i)=>`<div class="fx-set-card"><div class="fx-set-top"><strong>${cardio?'Interval':'Set'} ${i+1}</strong><div class="fx-set-controls"><select data-fx-field="type" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} type"><option value="work" ${set.type==='work'?'selected':''}>Work</option><option value="warmup" ${set.type==='warmup'?'selected':''}>Warm-up</option></select><label><input type="checkbox" data-fx-field="done" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} completed" ${set.done?'checked':''}> Completed</label><button class="fx-tiny" data-action="fxremoveset" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Remove ${unitLabel} ${i+1}" title="Remove ${unitLabel}">×</button></div></div>
+    <div class="fx-set-body">${cardio?fxCardioInputs(set,x.id,i,true)+fxCardioInputs(set,x.id,i,false):fxStrengthInputs(set,x.id,i,true)+fxStrengthInputs(set,x.id,i,false)}</div>
+    <div class="fx-set-footer"><div class="fx-rest-inline"><label for="fxRest${esc(set.id)}">Rest after ${unitLabel} (sec)</label><input id="fxRest${esc(set.id)}" data-fx-field="setRest" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" type="number" min="0" max="3600" step="5" inputmode="numeric" value="${set.restSeconds??''}" placeholder="${x.restSeconds??'Default'}" aria-label="${unitLabel} ${i+1} rest seconds"><span class="fx-meta">${set.restSeconds===null?'Exercise default: ':'Set-specific: '}${esc(fxRestLabel(fxEffectiveRest(x,set)))}</span></div><button class="fx-mini-button" data-action="fxresttimer" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${fxRestTimer?.setId===set.id?'Stop rest':'Start rest'}</button><span class="fx-rest-clock" data-fx-rest-display="${esc(set.id)}">${fxRestTimer?.setId===set.id?fxFormatClock((fxRestTimer.ends-Date.now())/1000):''}</span></div>
+    <div class="fx-set-footer"><button class="fx-mini-button" data-action="fxsetcomment" data-ex="${esc(x.id)}" data-set="${esc(set.id)}">${set.comment?'✎ Edit comment':'＋ Add comment'}</button></div>${set.comment?`<span class="fx-comment-preview">${esc(set.comment)}</span>`:''}
     </div>`).join('')}
-    <p class="fx-complete-notice">Completion is independent of the numbers. Blank actual values stay unrecorded; they do not count as zero reps.</p>
-    <div class="fx-rowgap"><button class="button-secondary" data-action="fxaddset" data-id="${esc(x.id)}">＋ Add planned set</button></div></section>`}
-  function fxSetDescription(s,ex){const plan=(s.targetWeightKg===null?'bodyweight / unspecified weight':fxUnits(s.targetWeightKg)+' '+fitness.unit)+' × '+(s.targetReps??'—')+' reps';
+    <p class="fx-complete-notice">Completion is independent of the numbers. Blank actual values stay unrecorded.</p>
+    <div class="fx-rowgap"><button class="button-secondary" data-action="fxaddset" data-id="${esc(x.id)}">＋ Add ${cardio?'interval':'planned set'}</button></div></section>`}
+  function fxSetDescription(s,ex){
+    if(isCardio(ex)){
+      const shape=(min,dist)=>`${min===null?'—':cardioFmt(min)+' min'} · ${dist===null?'—':cardioFmt(dist)+' mi'}`;
+      return `<p class="fx-meta">${s.type==='warmup'?'Warm-up':'Work'} · ${s.done?'Completed':'Not completed'} · Planned: ${shape(s.targetMinutes,s.targetMiles)} · Actual: ${s.done?shape(s.actualMinutes,s.actualMiles):'Not logged'} · Rest after: ${esc(fxRestLabel(fxEffectiveRest(ex,s)))}</p>${s.comment?`<p class="fx-comment-preview">Note: ${esc(s.comment)}</p>`:''}`;
+    }
+    const plan=(s.targetWeightKg===null?'bodyweight / unspecified weight':fxUnits(s.targetWeightKg)+' '+fitness.unit)+' × '+(s.targetReps??'—')+' reps';
     const actual=s.done?((s.actualWeightKg===null?'bodyweight / unrecorded weight':fxUnits(s.actualWeightKg)+' '+fitness.unit)+' × '+(s.actualReps??'—')+' reps'):'Not logged';
-    return `<p class="fx-meta">${s.type==='warmup'?'Warm-up':'Work'} · ${s.done?'Completed':'Not completed'} · Planned: ${esc(plan)} · Actual: ${esc(actual)} · Rest after: ${esc(fxRestLabel(fxEffectiveRest(ex,s)))}</p>${s.comment?`<p class="fx-comment-preview">Note: ${esc(s.comment)}</p>`:''}`;}
+    return `<p class="fx-meta">${s.type==='warmup'?'Warm-up':'Work'} · ${s.done?'Completed':'Not completed'} · Planned: ${esc(plan)} · Actual: ${esc(actual)} · Rest after: ${esc(fxRestLabel(fxEffectiveRest(ex,s)))}</p>${s.comment?`<p class="fx-comment-preview">Note: ${esc(s.comment)}</p>`:''}`;
+  }
   function renderFxDetails(w){return `<section class="fx-panel"><h2>${esc(w.title)}</h2><p class="fx-meta">${esc(prettyDate(w.date))} · ${w.status==='planned'?'Planned':w.status==='complete'?'Completed':'Unfinished'} · ${w.exercises.length} exercises</p>${w.notes?`<p class="fx-help">${esc(w.notes)}</p>`:''}
     ${w.exercises.map(x=>`<div class="fx-item" style="display:block"><b>${esc(x.name)}</b><small>${esc(x.equipment)}</small>${x.sets.map(s=>fxSetDescription(s,x)).join('')||'<p class="fx-meta">No sets planned</p>'}</div>`).join('')}</section>`}
   function fxStart(){const draft=activeWorkout();if(draft){fxEditingId=draft.id;fxScreen='editor';render();return}
     const w={id:idFitness('w'),date:localISO(new Date()),title:'New workout',notes:'',status:'draft',exercises:[]};fitness.sessions.push(w);if(!saveFitness()){fitness.sessions.pop();return}fxEditingId=w.id;fxScreen='editor';render();}
-  function fxNewSet(){return {id:idFitness('s'),targetWeightKg:null,targetReps:null,actualWeightKg:null,actualReps:null,type:'work',done:false,comment:'',restSeconds:null}}
+  function fxNewSet(){return {id:idFitness('s'),targetWeightKg:null,targetReps:null,actualWeightKg:null,actualReps:null,targetMinutes:null,actualMinutes:null,targetMiles:null,actualMiles:null,type:'work',done:false,comment:'',restSeconds:null}}
   function fxAddExercise(id){const w=editingWorkout()||activeWorkout(),x=getFitnessExercise(id);if(!w||!x)return;if(w.exercises.length>=60){showToast('Maximum 60 exercises per workout.');return}
-    w.exercises.push({id:idFitness('x'),exerciseId:x.id,name:x.name,equipment:x.equipment,restSeconds:null,sets:[fxNewSet()]});saveFitness();fxEditingId=w.id;fxScreen='editor';render();}
+    w.exercises.push({id:idFitness('x'),exerciseId:x.id,name:x.name,equipment:x.equipment,trackingType:x.muscle==='Cardio'?'cardio':'strength',restSeconds:null,sets:[fxNewSet()]});saveFitness();fxEditingId=w.id;fxScreen='editor';render();}
   function fxFindSet(target){const w=editingWorkout();const ex=w?.exercises.find(x=>x.id===target.dataset.ex);return ex?.sets.find(s=>s.id===target.dataset.set)}
   function onFitnessInput(el){const w=editingWorkout();if(!w)return;const field=el.dataset.fxField;
     if(['title','date','notes'].includes(field)){
@@ -895,6 +933,10 @@
         else if(Number.isInteger(Number(el.value))&&Number(el.value)>=1&&Number(el.value)<=1000)s[field]=Number(el.value);
         else return;
       }
+      if(['targetMinutes','actualMinutes','targetMiles','actualMiles'].includes(field)){
+        const value=el.value.trim(),max=field.endsWith('Minutes')?10080:10000;
+        if(value!==''){const n=Number(value);if(!validCardio(n,max))return;s[field]=n;}else s[field]=null;
+      }
       if(field==='setRest'){const v=el.value.trim();if(v!==''&&!validRestSeconds(Number(v)))return;s.restSeconds=v===''?null:Number(v);}
       if(field==='type')s.type=el.value==='warmup'?'warmup':'work';
       if(field==='done'){
@@ -903,9 +945,9 @@
     }
     saveFitness();
     // Refresh the summaries after changes without stealing focus from an input.
-    if(field==='done'||field==='actualReps'||field==='targetReps'||field==='targetWeight'||field==='actualWeight'||field==='exerciseRest'||field==='setRest'){
+    if(field==='done'||field==='actualReps'||field==='targetReps'||field==='targetWeight'||field==='actualWeight'||['targetMinutes','actualMinutes','targetMiles','actualMiles','exerciseRest','setRest'].includes(field)){
       const ex=w.exercises.find(x=>x.id===el.dataset.ex);const card=el.closest('.fx-exercise');if(ex&&card){
-        const total=fxTotals(ex);const head=card.querySelector('.fx-exercise-head p');if(head)head.textContent=ex.equipment+' · '+total.done+' / '+ex.sets.length+' sets completed';
+        const total=fxTotals(ex);const head=card.querySelector('.fx-exercise-head p');if(head)head.textContent=ex.equipment+' · '+(isCardio(ex)?'Cardio · time & miles · ':'')+total.done+' / '+ex.sets.length+(isCardio(ex)?' intervals completed':' sets completed');
         const summary=card.querySelector('.fx-set-progress');if(summary)summary.innerHTML=fxProgressHtml(total);
         if(field==='exerciseRest'||field==='setRest'){
           for(const cardSet of card.querySelectorAll('.fx-set-card')){
@@ -930,14 +972,14 @@
   }
   function fxCopyModal(id){const w=fitness.sessions.find(w=>w.id===id);if(!w)return;
     const defaultDate=addDays(w.date,7);
-    openModal(`<div class="modal-header"><h3 id="modalTitle">Copy workout to a day</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><p class="fx-help">Copy the exercises, planned sets, target weights, and reps from <strong>${esc(w.title)}</strong>. Actual results and set comments will start blank; rest-time preferences will be copied. The original workout will not be changed.</p><div class="field"><label for="fxCopyDate">New workout date</label><input id="fxCopyDate" class="fx-entry-field" type="date" value="${esc(validDate(defaultDate)?defaultDate:localISO(new Date()))}" required></div><p class="fx-copy-message">The copy will be saved as a <strong>planned</strong> workout, not a completed one. You can open and start it on that day.</p><div class="dialog-actions"><button class="button-secondary" data-action="close">Cancel</button><button class="button-primary" data-action="fxconfirmcopy" data-id="${esc(w.id)}">Copy workout</button></div>`);
+    openModal(`<div class="modal-header"><h3 id="modalTitle">Copy workout to a day</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><p class="fx-help">Copy the exercises, planned sets, target weight/reps or time/miles from <strong>${esc(w.title)}</strong>. Actual results and set comments will start blank; rest-time preferences will be copied. The original workout will not be changed.</p><div class="field"><label for="fxCopyDate">New workout date</label><input id="fxCopyDate" class="fx-entry-field" type="date" value="${esc(validDate(defaultDate)?defaultDate:localISO(new Date()))}" required></div><p class="fx-copy-message">The copy will be saved as a <strong>planned</strong> workout, not a completed one. You can open and start it on that day.</p><div class="dialog-actions"><button class="button-secondary" data-action="close">Cancel</button><button class="button-primary" data-action="fxconfirmcopy" data-id="${esc(w.id)}">Copy workout</button></div>`);
   }
   function fxCopyToDate(id){const source=fitness.sessions.find(w=>w.id===id);const date=document.getElementById('fxCopyDate')?.value;
     if(!source||!validDate(date)){showToast('Choose a valid date.');return}
     if(fitness.sessions.length>=10000){showToast('Workout storage is full.');return}
     const copy={id:idFitness('w'),date,title:source.title,notes:'',status:'planned',exercises:source.exercises.map(ex=>({
-      id:idFitness('x'),exerciseId:ex.exerciseId,name:ex.name,equipment:ex.equipment,restSeconds:ex.restSeconds,
-      sets:ex.sets.map(s=>({id:idFitness('s'),targetWeightKg:s.targetWeightKg,targetReps:s.targetReps,actualWeightKg:null,actualReps:null,type:s.type,done:false,comment:'',restSeconds:s.restSeconds}))
+      id:idFitness('x'),exerciseId:ex.exerciseId,name:ex.name,equipment:ex.equipment,trackingType:ex.trackingType||((fitnessCatalog().find(x=>x.id===ex.exerciseId)?.muscle==='Cardio')?'cardio':'strength'),restSeconds:ex.restSeconds,
+      sets:ex.sets.map(s=>({id:idFitness('s'),targetWeightKg:s.targetWeightKg,targetReps:s.targetReps,actualWeightKg:null,actualReps:null,targetMinutes:s.targetMinutes??null,actualMinutes:null,targetMiles:s.targetMiles??null,actualMiles:null,type:s.type,done:false,comment:'',restSeconds:s.restSeconds}))
     }))};
     fitness.sessions.push(copy);if(!saveFitness()){fitness.sessions.pop();return}
     closeModal();fxHistoryDate='';fxScreen='history';fxEditingId=null;render();showToast('Planned workout copied to '+prettyDate(date)+'.');
