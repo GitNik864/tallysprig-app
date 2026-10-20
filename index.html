@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A simple, private food journal for meals and nutrients.">
-  <title>Tallysprig V3.1 — Food journal</title>
+  <title>Tallysprig V4 — Food journal</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" type="image/png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -207,9 +207,45 @@
     .barcode-field input { letter-spacing:1.5px; font-variant-numeric:tabular-nums; }
     .scan-empty { padding:14px; color:#617d6d; background:#f4f8f1; border-radius:12px; font-size:12px; line-height:1.65; }
     @media(max-width:650px) { .scan-trigger { width:100%; } .scan-alt-row { flex-direction:column; align-items:stretch; } .scan-alt-row button { width:100%; } }
+
+    /* V4 agreement screen: the app is not available until both documents are acknowledged. */
+    body:not(.terms-accepted) .app,body:not(.terms-accepted) .mobile-nav,body:not(.terms-accepted) .modal-backdrop,body:not(.terms-accepted) .toast { display:none!important; }
+    .consent-screen { min-height:100vh; background:radial-gradient(circle at 0 0,#e3f2df 0,transparent 42%),var(--bg); display:flex; justify-content:center; align-items:center; padding:25px 17px; }
+    body.terms-accepted .consent-screen { display:none; }
+    .consent-card { width:min(100%,540px); padding:30px; background:#fff; border:1px solid #e0eadf; border-radius:24px; box-shadow:0 24px 75px #24553b1d; }
+    .consent-logo {display:flex;gap:13px;align-items:center;margin-bottom:25px;font-size:23px;font-weight:850;letter-spacing:-1.3px}
+    .consent-logo > span:first-child {background:#19443c;color:#c5edb8;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:27px}
+    .consent-title { font-size:30px;letter-spacing:-1.3px;line-height:1.15;margin:0 0 12px; }
+    .consent-desc {color:#667e70;font-size:13px;line-height:1.65;margin:0 0 22px}
+    .agreement-box {border:1px solid #dfeadf;border-radius:15px;padding:16px;margin-bottom:13px}
+    .agreement-box h2 {font-size:15px;letter-spacing:-.2px;margin:0 0 6px}
+    .agreement-box p {font-size:12px;color:#738d7c;line-height:1.6;margin:0 0 12px}
+    .agreement-box a,.legal-links a {color:#27614d;text-decoration:underline;text-underline-offset:3px;font-size:12px;font-weight:750}
+    .agreement-box label {display:flex;align-items:flex-start;gap:11px;font-size:13px;line-height:1.5;color:#2c5140;margin-top:15px;cursor:pointer}
+    .agreement-box input {accent-color:#245e44;width:18px;height:18px;flex-shrink:0;margin-top:2px}
+    .consent-card .button-primary {width:100%;margin-top:10px;min-height:46px}
+    .consent-error {color:#9b4b43;min-height:18px;font-size:12px;margin-top:12px}
+    .legal-links {display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:12px}
+    .data-panel {background:white;border:1px solid var(--line);border-radius:17px;padding:22px;margin-top:20px;box-shadow:var(--shadow)}
+    .data-panel h2 {font-size:19px;margin-bottom:10px}
+    .data-panel p {color:#687f70;font-size:13px;line-height:1.7}
+    .data-detail {font-size:12px;color:#789386;line-height:1.7}
+    @media(max-width:650px){.consent-card{padding:22px}.consent-title{font-size:26px}.agreement-box{padding:14px}.mobile-nav button{min-width:0}}
   </style>
 </head>
 <body>
+<section id="consentScreen" class="consent-screen" aria-labelledby="consentTitle">
+  <div class="consent-card">
+    <div class="consent-logo"><span aria-hidden="true">✳</span><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
+    <h1 class="consent-title" id="consentTitle">Before you begin</h1>
+    <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
+    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.0).</span></label></div>
+    <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.0).</span></label></div>
+    <button id="agreeContinue" class="button-primary" type="button" disabled>Agree &amp; Continue →</button>
+    <div id="consentError" class="consent-error" role="alert" aria-live="polite"></div>
+    <p class="data-detail">If you do not agree, you can close this page. No existing food entries will be deleted.</p>
+  </div>
+</section>
 <div class="app">
   <aside class="sidebar">
     <div class="brand"><span class="brand-symbol" aria-hidden="true">✳</span> tallysprig<span style="color:#b8dfb8">.</span></div>
@@ -217,6 +253,7 @@
       <button class="side-link active" data-view="today"><span class="nav-icon">◫</span> Today</button>
       <button class="side-link" data-view="history"><span class="nav-icon">▥</span> History</button>
       <button class="side-link" data-view="foods"><span class="nav-icon">♧</span> Food library</button>
+      <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Privacy &amp; data</button>
     </nav></div>
     <div class="sidebar-bottom"><span class="side-tag">Private by design</span><div>Your food journal stays on this device. No account required.</div></div>
   </aside>
@@ -232,14 +269,38 @@
 </div>
 <nav class="mobile-nav" aria-label="Mobile navigation">
   <button class="active" data-view="today"><span>◫</span>Today</button><button data-view="history"><span>▥</span>History</button><button data-view="foods"><span>♧</span>Foods</button>
+  <button data-view="about"><span>⚙</span>Data</button>
 </nav>
 <div class="modal-backdrop" id="modalBackdrop" role="presentation"><div class="modal" id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importBackupFile" accept=".json,application/json" aria-label="Choose a Tallysprig JSON backup" style="display:none">
 <input type="file" id="importCsvFile" accept=".csv,text/csv,text/plain" aria-label="Choose a Tallysprig CSV export" style="display:none">
 <script>
 (()=>{
   'use strict';
   const KEY='dayplate_v1';
+  const CONSENT_KEY='tallysprig_document_acceptance_v4';
+  const LAST_BACKUP_KEY='tallysprig_last_full_backup_v4';
+  const PRIVACY_VERSION='1.0', MEDICAL_VERSION='1.0';
+  let consentOk=false;
+  function acceptedDocuments(){
+    try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
+    catch (_) {return false;}
+  }
+  function unlockIfAccepted(){consentOk=acceptedDocuments();document.body.classList.toggle('terms-accepted',consentOk);return consentOk;}
+  function setupConsent(){
+    unlockIfAccepted();
+    const a=document.getElementById('agreePrivacy'),b=document.getElementById('agreeMedical'),go=document.getElementById('agreeContinue');
+    const update=()=>{go.disabled=!(a.checked&&b.checked)};
+    a.addEventListener('change',update);b.addEventListener('change',update);
+    go.addEventListener('click',()=>{
+      if(!a.checked||!b.checked)return;
+      try{localStorage.setItem(CONSENT_KEY,JSON.stringify({privacyVersion:PRIVACY_VERSION,medicalVersion:MEDICAL_VERSION,acceptedAt:new Date().toISOString()}));}
+      catch(_){document.getElementById('consentError').textContent='Unable to save your acknowledgment. Please enable browser storage and try again.';return;}
+      if(unlockIfAccepted()){a.checked=false;b.checked=false;update();render();}
+    });
+  }
+
   const OFF_CACHE_KEY='tallysprig_off_products_v3';
   // The API permits 15 read-product requests per minute per public IP.
   // Keep 3 in reserve for concurrent/shared-IP usage. This limit is local to this browser.
@@ -327,8 +388,16 @@
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
+  function renderAbout(){
+    let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
+    const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
+    return heading('Privacy & your data.','Your food journal belongs to you. Back up and review how Tallysprig works.')+
+    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your complete food log, custom foods, favorites, and energy reference. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved.</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
+    `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food log and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
+  }
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
-  function render(){document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
+  function render(){document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
   function openModal(content){document.getElementById('modalDialog').innerHTML=content;document.getElementById('modalBackdrop').classList.add('show');document.body.style.overflow='hidden';setTimeout(()=>document.querySelector('#modalDialog input,#modalDialog select,#modalDialog button')?.focus(),20)}
   function closeModal(){barcodeRequestSeq++;stopScanner().catch(()=>{});document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null;activeProduct=null}
   function referenceModal(){
@@ -651,6 +720,75 @@
     save();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
   }
 
+  // V4 backup format deliberately excludes document acknowledgement, scanner cache, and rate counters.
+  // Agreement acceptance remains device-local; a different device must acknowledge for itself.
+  function exportFullBackup(){
+    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference}};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const link=URL.createObjectURL(blob),a=document.createElement('a');a.href=link;a.download='tallysprig-full-backup-'+localISO(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(link),5000);
+    try{localStorage.setItem(LAST_BACKUP_KEY,new Date().toISOString())}catch(_){}
+    render();showToast('Full JSON backup downloaded. Keep it private.');
+  }
+  function validText(s,max=255){return typeof s==='string'&&s.length>0&&s.length<=max}
+  function validDate(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const date=new Date(s+'T12:00:00Z');return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===s}
+  function validN(n,max){return typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=max}
+  function verifyBackup(raw){
+    if(!raw||raw.app!=='Tallysprig'||raw.format!=='tallysprig-backup'||raw.formatVersion!==1||!raw.data)throw Error('Not a supported Tallysprig full backup.');
+    const d=raw.data;
+    if(!Array.isArray(d.entries)||!Array.isArray(d.customFoods)||!Array.isArray(d.favorites))throw Error('Backup is missing journal sections.');
+    if(d.entries.length>20000||d.customFoods.length>5000||d.favorites.length>10000)throw Error('Backup contains too many records.');
+    if(d.energyReference!==null&&!(Number.isInteger(d.energyReference)&&d.energyReference>0&&d.energyReference<=20000))throw Error('Invalid daily energy reference.');
+    const entryIds=new Set(),foodIds=new Set();
+    for(const f of d.customFoods){
+      if(!f||!validText(f.id,90)||!validText(f.name,100)||!validText(f.serving,100)||!['Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'].includes(f.category)||!validText(f.emoji,16)||!['cal','p','c','f'].every(k=>validN(f[k],20000))||foodIds.has(f.id))throw Error('Backup contains an invalid or duplicate custom food.');
+      if(DB.some(b=>b.id===f.id))throw Error('Custom food ID overlaps with built-in foods.');
+      foodIds.add(f.id);
+    }
+    for(const e of d.entries){
+      if(!e||!validText(e.id,90)||entryIds.has(e.id)||!validText(e.name,255)||!validText(e.serving,255)||!validDate(e.date)||!MEALS.some(m=>m.id===e.meal)||!validN(e.qty,100)||e.qty===0||!['cal','p','c','f'].every(k=>validN(e[k],2000000))||!validText(e.emoji||'🍽️',16))throw Error('Backup contains an invalid or duplicate food log.');
+      if(e.basis!==undefined&&(!e.basis||!['cal','p','c','f'].every(k=>validN(e.basis[k],2000000))))throw Error('Backup contains invalid original nutrition values.');
+      if(e.foodId!==undefined&&typeof e.foodId!=='string')throw Error('Backup contains an invalid food ID.');
+      entryIds.add(e.id);
+    }
+    if(d.favorites.some(id=>!validText(id,90)))throw Error('Backup has an invalid favorite ID.');
+    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference};
+  }
+  async function importFullBackup(file){
+    try{
+      if(file.size>10000000)throw Error('Backup file is too large (10 MB maximum).');
+      const incoming=verifyBackup(JSON.parse(await file.text()));
+      const choice=prompt(`Valid Tallysprig backup found:\n${incoming.entries.length} meal entries, ${incoming.customFoods.length} custom foods, ${incoming.favorites.length} favorites.\n\nType MERGE to add missing records, or REPLACE to completely replace your current journal and settings.\n\nCancel leaves everything unchanged.`,'MERGE');
+      if(choice===null)return;
+      const mode=choice.trim().toUpperCase();
+      if(mode!=='MERGE'&&mode!=='REPLACE'){showToast('Enter MERGE or REPLACE. Nothing changed.');return}
+      const question=mode==='REPLACE'?`REPLACE all current Tallysprig entries, custom foods, favorites and energy reference with this backup?\n\nThis cannot be undone. Download a backup of your current data first.`:`MERGE this backup into your existing log? Matching entry IDs are skipped to avoid duplicates. Existing settings and foods win conflicts.`;
+      if(!confirm(question))return;
+      let next;
+      if(mode==='REPLACE')next=incoming;
+      else{
+        const entries=new Map(store.entries.map(e=>[e.id,e]));for(const e of incoming.entries){if(!entries.has(e.id))entries.set(e.id,e)}
+        const foods=new Map(store.customFoods.map(f=>[f.id,f]));for(const f of incoming.customFoods){if(!foods.has(f.id))foods.set(f.id,f)}
+        next={...store,entries:[...entries.values()],customFoods:[...foods.values()],favorites:[...new Set([...store.favorites,...incoming.favorites])],energyReference:store.energyReference??incoming.energyReference};
+      }
+      // Validate the combined result BEFORE replacing the active journal. An unsuccessful save restores the previous copy.
+      verifyBackup({app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,data:next});
+      const previous=store;
+      try{localStorage.setItem(KEY,JSON.stringify(next));store=next;}
+      catch(e){store=previous;throw Error('Could not save restored data. Storage might be full; nothing was changed.')}
+      selectedDate=localISO(new Date());view='today';closeModal();render();showToast(mode==='MERGE'?'Backup merged.':'Backup restored.');
+    }catch(err){showToast(err instanceof SyntaxError?'This JSON file could not be read.':err?.message||'Restore failed.');}
+  }
+  function deleteAllLocalData(){
+    if(!confirm('Delete all Tallysprig data on this device, including saved meals, custom foods, favorites, scanned product cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
+    const typed=prompt('Type DELETE to confirm permanent deletion of local Tallysprig data.','');
+    if(typed!=='DELETE'){showToast('Nothing deleted.');return}
+    try{
+      [KEY,OFF_CACHE_KEY,OFF_RATE_KEY,OFF_COOLDOWN_KEY,CONSENT_KEY,LAST_BACKUP_KEY].forEach(k=>localStorage.removeItem(k));
+      // Reload returns to agreement screen; no server account exists to delete.
+      location.reload();
+    }catch(e){showToast('Unable to clear local data in this browser.')}
+  }
+
   function csvQuote(t){return '"'+String(t??'').replaceAll('"','""')+'"'}
   function exportCSV(){const cols=['Date','Meal','Food','Serving','Quantity','Calories (kcal)','Protein (g)','Carbs (g)','Fat (g)'];const rows=store.entries.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>[e.date,e.meal,e.name,e.serving,e.qty,e.cal,e.p,e.c,e.f]);const csv='\ufeff'+[cols,...rows].map(r=>r.map(csvQuote).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='tallysprig-food-log.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showToast('Food log exported as CSV.')}
 
@@ -706,7 +844,7 @@
       save();view='today';render();showToast(`${restored.length} logged ${restored.length===1?'food':'foods'} imported.`);
     }catch(err){showToast(err?.message||'CSV could not be imported.');}
   }
-  function onClick(e){const btn=e.target.closest('button[data-action],button[data-view],button[data-category]');if(!btn)return;
+  function onClick(e){if(!consentOk)return;const btn=e.target.closest('button[data-action],button[data-view],button[data-category]');if(!btn)return;
     if(btn.dataset.view){view=btn.dataset.view;render();window.scrollTo({top:0,behavior:'smooth'});return}
     if(btn.dataset.category){category=btn.dataset.category;render();return}
     const action=btn.dataset.action;
@@ -732,17 +870,22 @@
     else if(action==='qtydown'||action==='qtyup'){const el=document.getElementById('quantity');const v=Number(el.value)||1;el.value=Math.max(.1,Math.round((v+(action==='qtyup'?.25:-.25))*100)/100);updatePreview()}
     else if(action==='confirmadd'){confirmAdd()}
     else if(action==='export'){exportCSV()}
+    else if(action==='backupfull'){exportFullBackup()}
+    else if(action==='restorefull'){document.getElementById('importBackupFile').click()}
+    else if(action==='deletealllocal'){deleteAllLocalData()}
     else if(action==='import'){document.getElementById('importCsvFile').click()}
     else if(action==='clear'){if(confirm('Clear all logged meals? Your custom foods and favorites will remain. This cannot be undone.')){store.entries=[];save();render();showToast('Food log cleared.')}}
   }
   document.addEventListener('click',onClick);
+  document.getElementById('importBackupFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f&&consentOk)importFullBackup(f)});
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
   document.addEventListener('input',e=>{if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
   document.addEventListener('submit',e=>{if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-  render();
+  setupConsent();
+  if(consentOk){render();}
 })();
 </script>
 <script>
