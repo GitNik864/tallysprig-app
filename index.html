@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and strength-training journal for meals, exercise sets, and workout history.">
-  <title>Tallysprig V7.2 — Food & Fitness Journal</title>
+  <title>Tallysprig V7.6 — Food & Fitness Journal</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -406,6 +406,18 @@
     .fx-complete-notice{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
     .fx-danger-button{color:#b54f4a!important}
     @media(max-width:480px){.fx-set-body{grid-template-columns:1fr}.fx-set-card{padding:10px}.fx-set-controls{gap:7px}}
+    /* V7.6: reusable Workout Bank and restrained personal-best feedback. */
+    .fx-bank-tag{font-size:10px;font-weight:800;letter-spacing:.3px;color:var(--muted);text-transform:uppercase}
+    .fx-bank-card{border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:15px;margin:10px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .fx-bank-card b{display:block;font-size:14px;margin:4px 0}.fx-bank-card small{font-size:11px;color:var(--muted)}
+    .fx-pr-switch{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .fx-pr-switch label{font-size:13px;font-weight:700}.fx-pr-switch input{width:20px;height:20px;accent-color:#377659}
+    .fx-pr-announcement{position:fixed;left:50%;top:18%;transform:translate(-50%,-18px) scale(.96);opacity:0;pointer-events:none;z-index:180;width:min(88vw,360px);background:#204b3c;color:#fff;border:1px solid #4f8b66;box-shadow:0 18px 48px #0d302744;border-radius:20px;padding:23px 26px;text-align:center;transition:opacity .18s ease,transform .18s ease}
+    .fx-pr-announcement.visible{opacity:1;transform:translate(-50%,0) scale(1)}
+    .fx-pr-announcement strong{font-size:20px;display:block;margin-bottom:5px}.fx-pr-announcement p{font-size:13px;margin:4px 0;line-height:1.6;color:#dcefe0}
+    .fx-pr-sparks{font-size:28px;letter-spacing:8px;animation:fxPRPop .85s ease-out 1}
+    @keyframes fxPRPop{0%{transform:translateY(10px) scale(.65);opacity:.25}50%{transform:translateY(-6px) scale(1.12);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+    @media(prefers-reduced-motion:reduce){.fx-pr-announcement,.fx-pr-sparks{animation:none!important;transition:none!important}}
     /* V7.5: accessible drag handles for exercise and set ordering. */
     .fx-exercise-titleline,.fx-set-titleline{display:flex;align-items:center;gap:9px;min-width:0}
     .fx-exercise-titleline>div{min-width:0}
@@ -432,7 +444,7 @@
     <div class="consent-logo"><span aria-hidden="true">✳</span><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
     <h1 class="consent-title" id="consentTitle">Before you begin</h1>
     <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
-    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.4).</span></label></div>
+    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.5).</span></label></div>
     <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.3).</span></label></div>
     <button id="agreeContinue" class="button-primary" type="button" disabled>Agree &amp; Continue →</button>
     <div id="consentError" class="consent-error" role="alert" aria-live="polite"></div>
@@ -496,7 +508,7 @@
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.4', MEDICAL_VERSION='1.3';
+  const PRIVACY_VERSION='1.5', MEDICAL_VERSION='1.3';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -741,22 +753,22 @@
     ['Plank','Bodyweight','Core'],['Crunch','Bodyweight','Core'],['Cable Crunch','Cable','Core'],['Hanging Knee Raise','Bodyweight','Core'],['Russian Twist','Bodyweight','Core'],['Deadlift','Barbell','Full body'],['Farmer Carry','Dumbbell','Full body'],
     ['Outdoor Running','Other','Cardio'],['Treadmill Running','Machine','Cardio'],['Walking','Other','Cardio'],['Treadmill Walking','Machine','Cardio'],['Cycling','Other','Cardio'],['Stationary Cycling','Machine','Cardio'],['Rowing','Machine','Cardio'],['Elliptical','Machine','Cardio'],['Swimming','Other','Cardio'],['Hiking','Other','Cardio'],['Stair Climber','Machine','Cardio']
   ].map(([name,equipment,muscle],i)=>({id:'built'+(i+1),name,equipment,muscle}));
-  function emptyFitness(){return {unit:'lb',sessions:[],customExercises:[]}}
+  function emptyFitness(){return {unit:'lb',sessions:[],bank:[],customExercises:[],prCelebrations:true}}
   function idFitness(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
   function validFitnessNumber(v,max,nullable=false){return (nullable&&v===null)||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function validRestSeconds(v){return v===null||(Number.isInteger(v)&&v>=0&&v<=3600)}
   function validCardio(v,max){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function isCardio(ex){return ex.trackingType==='cardio'||(!ex.trackingType&&(getFitnessExercise(ex.exerciseId)?.muscle==='Cardio'))}
   function verifyFitness(f){
-    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises))throw Error('Backup has an invalid fitness section.');
-    if(f.sessions.length>10000||f.customExercises.length>1000)throw Error('Backup has too many fitness records.');
+    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises)||(f.bank!==undefined&&!Array.isArray(f.bank))||(f.prCelebrations!==undefined&&typeof f.prCelebrations!=='boolean'))throw Error('Backup has an invalid fitness section.');
+    if(f.sessions.length>10000||(f.bank||[]).length>1000||f.customExercises.length>1000)throw Error('Backup has too many fitness records.');
     let seen=new Set();let exerciseIds=new Set(EXERCISES.map(x=>x.id));
     for(const x of f.customExercises){
       if(!x||!validText(x.id,90)||exerciseIds.has(x.id)||!validText(x.name,100)||!EQUIPMENT.includes(x.equipment)||!MUSCLES.includes(x.muscle))throw Error('Backup contains an invalid custom exercise.');
       exerciseIds.add(x.id);
     }
-    for(const w of f.sessions){
-      if(!w||!validText(w.id,90)||seen.has(w.id)||!validDate(w.date)||!validText(w.title,100)||!['draft','complete','planned'].includes(w.status)||!Array.isArray(w.exercises)||w.exercises.length>60||typeof w.notes!=='string'||w.notes.length>1200)throw Error('Backup has invalid workout details.');
+    for(const w of [...f.sessions,...(f.bank||[])]){
+      if(!w||!validText(w.id,90)||seen.has(w.id)||!validDate(w.date)||!validText(w.title,100)||!['draft','complete','planned','bank'].includes(w.status)||(w.status==='bank'&&!f.bank?.includes(w))||!Array.isArray(w.exercises)||w.exercises.length>60||typeof w.notes!=='string'||w.notes.length>1200)throw Error('Backup has invalid workout details.');
       seen.add(w.id);const exerciseSeen=new Set();
       for(const ex of w.exercises){
         if(!ex||!validText(ex.id,90)||exerciseSeen.has(ex.id)||!validText(ex.name,100)||!EQUIPMENT.includes(ex.equipment)||!validText(ex.exerciseId,90)||!Array.isArray(ex.sets)||ex.sets.length>80)throw Error('Backup has invalid workout exercises.');
@@ -772,6 +784,7 @@
           if(Object.hasOwn(set,'restSeconds')&&!validRestSeconds(set.restSeconds))throw Error('Backup has invalid set rest time.');
           for(const k of ['targetMinutes','actualMinutes'])if(Object.hasOwn(set,k)&&!validCardio(set[k],10080))throw Error('Backup has invalid cardio duration.');
           for(const k of ['targetMiles','actualMiles'])if(Object.hasOwn(set,k)&&!validCardio(set[k],10000))throw Error('Backup has invalid cardio distance.');
+          if(Object.hasOwn(set,'prNotified')&&(!Array.isArray(set.prNotified)||set.prNotified.some(m=>!['weight','reps','distance'].includes(m))))throw Error('Backup has invalid personal-best data.');
           setSeen.add(set.id);
         }
       }
@@ -780,34 +793,39 @@
   }
   function normalizeFitness(value){
     verifyFitness(value);
-    // V7 fields were originally entered as performed values. Keep those as BOTH the
-    // remembered plan and the recorded result on completed sets; uncompleted rows keep only their plan.
-    return {unit:value.unit,customExercises:value.customExercises,sessions:value.sessions.map(w=>({
-      ...w,exercises:w.exercises.map(ex=>({...ex,trackingType:ex.trackingType||((value.customExercises.find(x=>x.id===ex.exerciseId)||EXERCISES.find(x=>x.id===ex.exerciseId))?.muscle==='Cardio'?'cardio':'strength'),restSeconds:ex.restSeconds??null,sets:ex.sets.map(set=>({
+    // Legacy V7 entries used the same data fields for plan and result.
+    function normalizeWorkout(w){return {...w,exercises:w.exercises.map(ex=>({...ex,
+      trackingType:ex.trackingType||((value.customExercises.find(x=>x.id===ex.exerciseId)||EXERCISES.find(x=>x.id===ex.exerciseId))?.muscle==='Cardio'?'cardio':'strength'),
+      restSeconds:ex.restSeconds??null,sets:ex.sets.map(set=>({
         id:set.id,type:set.type,done:set.done,comment:set.comment??'',restSeconds:set.restSeconds??null,
+        prNotified:[...new Set(set.prNotified||[])],
         targetMinutes:set.targetMinutes??null,actualMinutes:set.actualMinutes??null,targetMiles:set.targetMiles??null,actualMiles:set.actualMiles??null,
         targetWeightKg:Object.hasOwn(set,'targetWeightKg')?set.targetWeightKg:set.weightKg,
         targetReps:Object.hasOwn(set,'targetReps')?set.targetReps:set.reps,
         actualWeightKg:Object.hasOwn(set,'actualWeightKg')?set.actualWeightKg:(set.done?set.weightKg:null),
         actualReps:Object.hasOwn(set,'actualReps')?set.actualReps:(set.done?set.reps:null)
-      }))}))
-    }))};
+      }))
+    }))};}
+    return {unit:value.unit,customExercises:value.customExercises,
+      prCelebrations:value.prCelebrations!==false,
+      sessions:value.sessions.map(normalizeWorkout),bank:(value.bank||[]).map(normalizeWorkout)};
   }
   let fitness=emptyFitness();try{const raw=localStorage.getItem(FITNESS_KEY);if(raw)fitness=normalizeFitness(JSON.parse(raw))}catch(_){fitness=emptyFitness()}
   let fxScreen='home',fxEditingId=null,fxSearch='',fxMuscle='All',fxCustomId=null,fxHistoryDate='';
-  let fxRestTimer=null,fxRestTicker=null;
+  let fxRestTimer=null,fxRestTicker=null,fxPRTimeout=null;
   function saveFitness(){try{localStorage.setItem(FITNESS_KEY,JSON.stringify(fitness));return true}catch(_){showToast('Workout could not be saved. Download a backup and check storage.');return false}}
   function fitnessCatalog(){return [...fitness.customExercises,...EXERCISES]}
   function getFitnessExercise(id){return fitnessCatalog().find(x=>x.id===id)}
-  function editingWorkout(){return fitness.sessions.find(w=>w.id===fxEditingId)||null}
+  function editingWorkout(){return fitness.sessions.find(w=>w.id===fxEditingId)||fitness.bank.find(w=>w.id===fxEditingId)||null}
   function fxUnits(v){return v===null?'':(fitness.unit==='lb'?Math.round(v/KG_PER_LB*10)/10:Math.round(v*10)/10)}
   function fxToKg(value){const v=Number(value);return fitness.unit==='lb'?Math.round(v*KG_PER_LB*10000)/10000:Math.round(v*10000)/10000}
   function activeWorkout(){return fitness.sessions.find(w=>w.status==='draft')}
-  function fxNav(){return `<div class="fx-toolbar" role="navigation" aria-label="Fitness sections">${[['home','Overview'],['history','History'],['library','Exercises']].map(([k,v])=>`<button data-action="fxnav" data-screen="${k}" class="${fxScreen===k?'active':''}">${v}</button>`).join('')}</div>`}
+  function fxNav(){return `<div class="fx-toolbar" role="navigation" aria-label="Fitness sections">${[['home','Overview'],['history','History'],['bank','Workout Bank'],['library','Exercises']].map(([k,v])=>`<button data-action="fxnav" data-screen="${k}" class="${fxScreen===k?'active':''}">${v}</button>`).join('')}</div>`}
   function fxHeading(t,desc){return `<div class="main-top"><div class="eyebrow">✳ &nbsp; TALLYSPRIG FITNESS</div><span class="date-pill">TRAINING JOURNAL</span></div><div class="heading-row"><div><h1>${t}</h1><p class="subheading">${desc}</p></div></div>`}
   function renderFitness(){
     let content='';if(fxScreen==='editor'&&editingWorkout())return fxHeading('Record your workout.','Your session autosaves as you log each set.')+renderFxEditor(editingWorkout());
     if(fxScreen==='history')content=renderFxHistory();
+    else if(fxScreen==='bank')content=renderFxBank();
     else if(fxScreen==='library')content=renderFxLibrary();
     else content=renderFxHome();
     return fxHeading('Your workouts.','Your strength and cardio training journal.')+fxNav()+content;
@@ -820,12 +838,70 @@
     const draft=activeWorkout();
     return `<div class="fx-grid"><div class="fx-stat"><small>Sessions · last 7 days</small><strong>${week}</strong></div><div class="fx-stat"><small>Exercises · last 7 days</small><strong>${exerciseCount}</strong></div></div>
       <section class="fx-panel"><h2>Training journal</h2><p class="fx-help">Log planned sets and your actual results separately. An unfinished workout stays on this device.</p>
-      <div class="fx-rowgap"><button class="button-primary" data-action="${draft?'fxresume':'fxstart'}">${draft?'↗ Resume unfinished workout':'＋ Start workout'}</button><button class="button-secondary" data-action="fxnav" data-screen="library">Browse exercises</button>${draft?`<button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(draft.id)}">Discard unfinished workout</button>`:''}</div>
+      <div class="fx-rowgap"><button class="button-primary" data-action="${draft?'fxresume':'fxstart'}">${draft?'↗ Resume unfinished workout':'＋ Start workout'}</button><button class="button-secondary" data-action="fxnav" data-screen="library">Browse exercises</button><button class="button-secondary" data-action="fxnav" data-screen="bank">Workout Bank (${fitness.bank.length})</button>${draft?`<button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(draft.id)}">Discard unfinished workout</button>`:''}</div>
       ${draft?`<p class="fx-meta" style="margin-top:12px">Unfinished: ${esc(draft.title)} · ${esc(prettyDate(draft.date))}</p>`:''}</section>
       ${planned.length?`<section class="fx-panel"><h2>Scheduled workouts</h2>${planned.slice(0,5).map(fxHistoryItem).join('')}</section>`:''}
       <section class="fx-panel"><div class="section-row"><h2>Recent workouts</h2><button class="button-secondary" data-action="fxnav" data-screen="history">See all</button></div>
       ${completed.length?[...completed].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(w=>fxHistoryItem(w)).join(''):'<div class="empty-state">No completed workouts yet. Start a workout to create your first record.</div>'}</section>
+      <section class="fx-panel"><div class="fx-pr-switch"><div><h2>Personal-best celebrations</h2><p class="fx-help">A short, optional animation when a logged working set beats a previously recorded best in weight, reps, or cardio distance. No animation for blank results or first-ever records.</p></div><label><input type="checkbox" data-action="fxprtoggle" ${fitness.prCelebrations?'checked':''} aria-label="Enable personal-best celebrations"> Enabled</label></div></section>
       <section class="fx-panel"><h2>Weight unit</h2><div class="fx-rowgap"><button class="theme-option" data-action="fxunit" data-unit="lb" aria-pressed="${fitness.unit==='lb'}">Pounds (lb)</button><button class="theme-option" data-action="fxunit" data-unit="kg" aria-pressed="${fitness.unit==='kg'}">Kilograms (kg)</button></div><p class="fx-help">Weights are stored in kilograms internally. Switching units changes their display, not the stored weight.</p></section>`;
+  }
+  function renderFxBank(){return `<section class="fx-panel"><div class="section-row"><h2>Workout Bank</h2><span class="fx-pill">${fitness.bank.length} template${fitness.bank.length===1?'':'s'}</span></div>
+    <p class="fx-help">Store reusable workout plans here—even with no sets completed. Saving a new template clears logged actual results and comments, but keeps exercises, planned targets, order, and rest settings. Bank templates are not counted as completed sessions.</p>
+    ${fitness.bank.length?fitness.bank.map(w=>`<div class="fx-bank-card"><div><span class="fx-bank-tag">Saved plan</span><b>${esc(w.title)}</b><small>${w.exercises.length} exercise${w.exercises.length===1?'':'s'} · ${w.exercises.reduce((n,x)=>n+x.sets.length,0)} planned sets / intervals</small></div><div class="fx-actions"><button data-action="fxbankuse" data-id="${esc(w.id)}">Use today</button><button data-action="fxbankplan" data-id="${esc(w.id)}">Schedule</button><button data-action="fxbankedit" data-id="${esc(w.id)}">Edit</button><button class="fx-danger" data-action="fxbankdelete" data-id="${esc(w.id)}">Delete</button></div></div>`).join(''):'<div class="empty-state">No workouts in the bank yet. Open a workout and select “Save to Workout Bank.” You don’t need to complete a single set.</div>'}
+    <p class="fx-help">Bank workouts are stored on this device and included in full JSON backups.</p></section>`;}
+  // Workout Bank stores templates separately, never completed workouts or workout-history events.
+  function fxPlanCopy(source,status,date){return {id:idFitness('w'),date,title:source.title,notes:source.notes||'',status,exercises:source.exercises.map(ex=>({
+    id:idFitness('x'),exerciseId:ex.exerciseId,name:ex.name,equipment:ex.equipment,trackingType:ex.trackingType||'strength',restSeconds:ex.restSeconds??null,
+    sets:ex.sets.map(set=>({id:idFitness('s'),type:set.type,done:false,comment:'',restSeconds:set.restSeconds??null,prNotified:[],
+      targetWeightKg:set.targetWeightKg??set.actualWeightKg??null,targetReps:set.targetReps??set.actualReps??null,actualWeightKg:null,actualReps:null,
+      targetMinutes:set.targetMinutes??set.actualMinutes??null,targetMiles:set.targetMiles??set.actualMiles??null,actualMinutes:null,actualMiles:null}))}))};}
+  function fxSaveToBank(id){const source=editingWorkout();if(!source||source.id!==id)return;
+    if(fitness.bank.length>=1000){showToast('Workout Bank is full.');return}
+    if(source.status==='bank'){fxScreen='bank';fxEditingId=null;render();return}
+    const isDraft=source.status==='draft',hasResults=source.exercises.some(ex=>ex.sets.some(s=>s.done));
+    if(isDraft&&!hasResults&&!confirm('Save this unfinished workout as a reusable bank template? Planned values will be kept; actual entries and comments will not be copied. The unfinished draft will be removed.'))return;
+    const template=fxPlanCopy(source,'bank',source.date);
+    // For workouts with completed sets, preserve the original session instead of discarding any results.
+    fitness.bank.push(template);
+    if(isDraft&&!hasResults)fitness.sessions=fitness.sessions.filter(w=>w.id!==source.id);
+    if(!saveFitness()){
+      fitness.bank=fitness.bank.filter(w=>w.id!==template.id);
+      if(isDraft&&!hasResults)fitness.sessions.push(source);
+      return;
+    }
+    fxEditingId=null;fxScreen='bank';render();showToast('Workout added to the bank.');}
+  function fxBankUse(id,scheduled=false){const template=fitness.bank.find(w=>w.id===id);if(!template)return;
+    if(!scheduled&&activeWorkout()){showToast('Finish, bank, or discard your unfinished workout before starting another.');return}
+    if(scheduled){fxCopyModal(id);return}
+    if(fitness.sessions.length>=10000){showToast('Workout storage is full.');return}
+    const newWorkout=fxPlanCopy(template,'draft',localISO(new Date()));fitness.sessions.push(newWorkout);
+    if(!saveFitness()){fitness.sessions.pop();return}
+    fxEditingId=newWorkout.id;fxScreen='editor';render();showToast('Workout started from your bank.');}
+  function fxDeleteBank(id){const template=fitness.bank.find(x=>x.id===id);if(!template||!confirm(`Delete “${template.title}” from Workout Bank? Existing and completed workouts will stay untouched.`))return;
+    fitness.bank=fitness.bank.filter(x=>x.id!==id);if(fxEditingId===id){fxEditingId=null;fxScreen='bank'}saveFitness();render();showToast('Bank template deleted.');}
+  function fxPriorBest(w,ex,set,metric){let max=null;
+    for(const session of fitness.sessions){for(const movement of session.exercises){
+      if(movement.exerciseId!==ex.exerciseId||isCardio(movement)!==isCardio(ex))continue;
+      for(const row of movement.sets){if(row.id===set.id||!row.done||row.type!=='work')continue;
+        const n=row[metric];if(typeof n==='number'&&Number.isFinite(n)&&n>0)max=max===null?n:Math.max(max,n);
+      }
+    }}return max;
+  }
+  function fxCheckPersonalBests(w,ex,set){if(set.type!=='work')return [];
+    const choices=isCardio(ex)?[['distance','actualMiles','distance']]:[['weight','actualWeightKg','weight'],['reps','actualReps','repetitions']];
+    const notified=set.prNotified||[];let hits=[];
+    for(const [flag,metric,label] of choices){const n=set[metric],best=fxPriorBest(w,ex,set,metric);
+      if(!notified.includes(flag)&&typeof n==='number'&&n>0&&best!==null&&n>best+0.00001){hits.push(label);notified.push(flag)}
+    }
+    set.prNotified=notified;return hits;
+  }
+  function fxCelebrate(exName,hits){if(!hits.length||!fitness.prCelebrations)return;
+    document.getElementById('fxPRAnnouncement')?.remove();if(fxPRTimeout)clearTimeout(fxPRTimeout);
+    const div=document.createElement('div');div.className='fx-pr-announcement';div.id='fxPRAnnouncement';div.setAttribute('role','status');div.setAttribute('aria-live','polite');
+    div.innerHTML=`<div class="fx-pr-sparks" aria-hidden="true">✳ ✦ ✳</div><strong>Personal best recorded!</strong><p>${esc(exName)} · New ${esc(hits.join(' & '))} best</p><p>Progress at your own pace.</p>`;
+    document.body.appendChild(div);requestAnimationFrame(()=>div.classList.add('visible'));
+    fxPRTimeout=setTimeout(()=>{div.classList.remove('visible');setTimeout(()=>div.remove(),250)},2300);
   }
   function fxHistoryItem(w){const done=w.exercises.reduce((a,x)=>a+x.sets.filter(s=>s.done).length,0);
     const status=w.status==='planned'?'<span class="fx-history-status">Planned</span> ':'';
@@ -840,12 +916,12 @@
   }
   function fxLibraryResults(list){const draft=editingWorkout()||activeWorkout();return list.length?list.map(x=>`<div class="fx-item"><div><b>${esc(x.name)}</b><small>${esc(x.equipment)} · ${esc(x.muscle)}${x.custom?' · Your exercise':''}</small></div><div class="fx-actions">${draft?`<button data-action="fxaddexercise" data-id="${esc(x.id)}">Add +</button>`:''}${x.custom?`<button data-action="fxcustom" data-id="${esc(x.id)}">Edit</button><button class="fx-danger" data-action="fxdeletecustom" data-id="${esc(x.id)}">Delete</button>`:''}</div></div>`).join(''):'<div class="empty-state">No matching exercises. You can create one.</div>'}
   function refreshExerciseResults(){const r=document.getElementById('fxExerciseResults');if(r)r.innerHTML=fxLibraryResults(fitnessCatalog().filter(x=>x.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||fxMuscle===x.muscle)).slice(0,120))}
-  function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="home">← Fitness home</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':'Editing completed session · autosaved'}</span></div>
-    <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div><div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div></div>
+  function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="${w.status==='bank'?'bank':'home'}">← ${w.status==='bank'?'Workout Bank':'Fitness home'}</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':w.status==='bank'?'Workout Bank template · autosaved':'Editing completed session · autosaved'}</span></div>
+    <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div>${w.status==='bank'?'':`<div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div>`}</div>
     <div class="fx-field"><label for="fxWorkoutNotes">Session notes (optional)</label><textarea class="fx-note" id="fxWorkoutNotes" data-fx-field="notes" maxlength="1200" placeholder="How did the session feel?">${esc(w.notes)}</textarea></div>
     <p class="fx-help">Strength sets use weight and reps. Cardio intervals use time (minutes) and distance (miles). Plan a target, then record actual results separately. All numbers are optional; blank values remain unrecorded. Add optional notes and rest times as needed.</p><p class="fx-reorder-tip">⠿ Drag an exercise or set by its grip, or tap ↑ ↓ for one-position moves. Keyboard: focus a grip and press ↑ or ↓. Your order saves automatically.</p></section>
     ${w.exercises.map((x,ei)=>renderFxExerciseBlock(x,ei)).join('')}
-    <div class="fx-rowgap"><button class="button-secondary" data-action="fxpick">＋ Add exercise</button>${w.status==='draft'?'<button class="button-primary" data-action="fxfinish">✓ Finish workout</button>':w.status==='planned'?'<button class="button-primary" data-action="fxstartplanned" data-id="'+esc(w.id)+'">Start this workout</button>':'<button class="button-primary" data-action="fxsavedone">✓ Done editing</button>'}<button class="button-secondary" data-action="fxcopy" data-id="${esc(w.id)}">Copy to another day</button><button class="button-secondary" data-action="fxnav" data-screen="home">Keep for later</button><button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(w.id)}">${w.status==='draft'?'Discard workout':'Delete workout'}</button></div><p class="fx-help" style="margin:13px 0">Your progress is autosaved. Copied sessions keep the plan but start with no actual results.</p>`}
+    <div class="fx-rowgap"><button class="button-secondary" data-action="fxpick">＋ Add exercise</button>${w.status==='bank'?`<button class="button-primary" data-action="fxnav" data-screen="bank">✓ Done editing bank plan</button><button class="button-secondary fx-danger-button" data-action="fxbankdelete" data-id="${esc(w.id)}">Delete from bank</button>`:`${w.status==='draft'?'<button class="button-primary" data-action="fxfinish">✓ Finish workout</button>':w.status==='planned'?'<button class="button-primary" data-action="fxstartplanned" data-id="'+esc(w.id)+'">Start this workout</button>':'<button class="button-primary" data-action="fxsavedone">✓ Done editing</button>'}<button class="button-secondary" data-action="fxsavebank" data-id="${esc(w.id)}">☆ Save to Workout Bank</button><button class="button-secondary" data-action="fxcopy" data-id="${esc(w.id)}">Copy to another day</button><button class="button-secondary" data-action="fxnav" data-screen="home">Keep for later</button><button class="button-secondary fx-danger-button" data-action="fxdelete" data-id="${esc(w.id)}">${w.status==='draft'?'Discard workout':'Delete workout'}</button>`}</div><p class="fx-help" style="margin:13px 0">Your progress is autosaved. Copied sessions keep the plan but start with no actual results.</p>`}
   function fxTotals(x){
     if(isCardio(x)){
       const done=x.sets.filter(s=>s.done).length;
@@ -1080,10 +1156,19 @@
       if(field==='setRest'){const v=el.value.trim();if(v!==''&&!validRestSeconds(Number(v)))return;s.restSeconds=v===''?null:Number(v);}
       if(field==='type')s.type=el.value==='warmup'?'warmup':'work';
       if(field==='done'){
+        if(w.status==='bank'){el.checked=false;showToast('Bank templates are plans. Use the workout before completing sets.');return}
+        const newlyCompleted=!s.done&&el.checked;
+        const ex=w.exercises.find(x=>x.id===el.dataset.ex);
+        const newBests=newlyCompleted&&ex?fxCheckPersonalBests(w,ex,s):[];
         s.done=el.checked;
+        if(newBests.length)el.dataset.fxNewBest=JSON.stringify({name:ex.name,hits:newBests});
       }
     }
-    saveFitness();
+    const persisted=saveFitness();
+    if(persisted&&el.dataset.fxNewBest){
+      try{const pr=JSON.parse(el.dataset.fxNewBest);fxCelebrate(pr.name,pr.hits);}catch(_){}
+      delete el.dataset.fxNewBest;
+    }
     // Refresh the summaries after changes without stealing focus from an input.
     if(field==='done'||field==='actualReps'||field==='targetReps'||field==='targetWeight'||field==='actualWeight'||['targetMinutes','actualMinutes','targetMiles','actualMiles','exerciseRest','setRest'].includes(field)){
       const ex=w.exercises.find(x=>x.id===el.dataset.ex);const card=el.closest('.fx-exercise');if(ex&&card){
@@ -1110,17 +1195,14 @@
     const comment=document.getElementById('fxCommentText')?.value??'';if(comment.length>800){showToast('Comment is too long.');return}
     set.comment=comment;if(!saveFitness())return;closeModal();render();showToast('Set comment saved.');
   }
-  function fxCopyModal(id){const w=fitness.sessions.find(w=>w.id===id);if(!w)return;
+  function fxCopyModal(id){const w=fitness.sessions.find(w=>w.id===id)||fitness.bank.find(w=>w.id===id);if(!w)return;
     const defaultDate=addDays(w.date,7);
     openModal(`<div class="modal-header"><h3 id="modalTitle">Copy workout to a day</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><p class="fx-help">Copy the exercises, planned sets, target weight/reps or time/miles from <strong>${esc(w.title)}</strong>. Actual results and set comments will start blank; rest-time preferences will be copied. The original workout will not be changed.</p><div class="field"><label for="fxCopyDate">New workout date</label><input id="fxCopyDate" class="fx-entry-field" type="date" value="${esc(validDate(defaultDate)?defaultDate:localISO(new Date()))}" required></div><p class="fx-copy-message">The copy will be saved as a <strong>planned</strong> workout, not a completed one. You can open and start it on that day.</p><div class="dialog-actions"><button class="button-secondary" data-action="close">Cancel</button><button class="button-primary" data-action="fxconfirmcopy" data-id="${esc(w.id)}">Copy workout</button></div>`);
   }
-  function fxCopyToDate(id){const source=fitness.sessions.find(w=>w.id===id);const date=document.getElementById('fxCopyDate')?.value;
+  function fxCopyToDate(id){const source=fitness.sessions.find(w=>w.id===id)||fitness.bank.find(w=>w.id===id);const date=document.getElementById('fxCopyDate')?.value;
     if(!source||!validDate(date)){showToast('Choose a valid date.');return}
     if(fitness.sessions.length>=10000){showToast('Workout storage is full.');return}
-    const copy={id:idFitness('w'),date,title:source.title,notes:'',status:'planned',exercises:source.exercises.map(ex=>({
-      id:idFitness('x'),exerciseId:ex.exerciseId,name:ex.name,equipment:ex.equipment,trackingType:ex.trackingType||((fitnessCatalog().find(x=>x.id===ex.exerciseId)?.muscle==='Cardio')?'cardio':'strength'),restSeconds:ex.restSeconds,
-      sets:ex.sets.map(s=>({id:idFitness('s'),targetWeightKg:s.targetWeightKg,targetReps:s.targetReps,actualWeightKg:null,actualReps:null,targetMinutes:s.targetMinutes??null,actualMinutes:null,targetMiles:s.targetMiles??null,actualMiles:null,type:s.type,done:false,comment:'',restSeconds:s.restSeconds}))
-    }))};
+    const copy=fxPlanCopy(source,'planned',date);
     fitness.sessions.push(copy);if(!saveFitness()){fitness.sessions.pop();return}
     closeModal();fxHistoryDate='';fxScreen='history';fxEditingId=null;render();showToast('Planned workout copied to '+prettyDate(date)+'.');
   }
@@ -1134,8 +1216,13 @@
     saveFitness();closeModal();fxScreen='library';render();showToast('Exercise saved. Previous workouts keep their original names.');
   }
   function onFitnessAction(action,btn){
-    if(action==='fxnav'){fxScreen=btn.dataset.screen||'home';render();return}
+    if(action==='fxnav'){fxScreen=btn.dataset.screen||'home';if(fxScreen!=='editor')fxEditingId=null;render();return}
     if(action==='fxstart'||action==='fxresume'){fxStart();return}
+    if(action==='fxsavebank'){fxSaveToBank(btn.dataset.id);return}
+    if(action==='fxbankuse'){fxBankUse(btn.dataset.id);return}
+    if(action==='fxbankplan'){fxBankUse(btn.dataset.id,true);return}
+    if(action==='fxbankedit'){const bank=fitness.bank.find(w=>w.id===btn.dataset.id);if(!bank)return;fxEditingId=bank.id;fxScreen='editor';render();return}
+    if(action==='fxbankdelete'){fxDeleteBank(btn.dataset.id);return}
     if(action==='fxunit'){const unit=btn.dataset.unit;if(!['lb','kg'].includes(unit))return;fitness.unit=unit;saveFitness();render();return}
     if(action==='fxmuscle'){fxMuscle=btn.dataset.muscle;render();return}
     if(action==='fxclearfilter'){fxHistoryDate='';render();return}
@@ -1181,7 +1268,7 @@
     <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
     </section>`+
     healthSettingsHtml()+
-    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your meals, custom foods, favorites, fitness sessions, custom exercises, unit preference, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your meals, custom foods, favorites, fitness sessions, Workout Bank templates, custom exercises, unit preference, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
     `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
@@ -1704,7 +1791,7 @@
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
   document.addEventListener('input',e=>{if(e.target.matches('[data-fx-field]')){onFitnessInput(e.target)}else if(e.target.id==='fxExerciseSearch'){fxSearch=e.target.value;refreshExerciseResults()}else if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
   document.addEventListener('submit',e=>{if(e.target.id==='fxExerciseForm'){e.preventDefault();saveFitnessExerciseForm()}else if(e.target.id==='healthProfileForm'){e.preventDefault();saveHealthForm()}else if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
-  document.addEventListener('change',e=>{if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
+  document.addEventListener('change',e=>{if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
