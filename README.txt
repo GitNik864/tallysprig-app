@@ -1,22 +1,29 @@
-TALLYSPRIG V7.2 — FITNESS PLANNING + RESULTS (WITH HEALTH MODE 6.1)
-===================================================================
-Complete GitHub Pages update package based on the latest V7 + Health Mode 6.1 files.
+TALLYSPRIG V7.3 — WORKOUT LOGGER CONTROLS
+=========================================
+GitHub Pages replacement package, built on V7.2 + Health Mode 6.1.
 
-NEW IN V7.2
-1. Fitness navigation icon is a monochrome outlined dumbbell, matching the other tab icons.
-2. Copy any workout to a different date (from Fitness History, Recent or workout editor). The copied session is PLANNED, not completed; the exercise list and planned sets/weights/reps are copied, but actual logged results and completion flags are reset. Your original record is never changed.
-3. Planned vs. actual per set: enter a target weight and reps, then enter the actual weight and reps performed. Mark a set complete once actual reps are entered. View sets completed / sets planned, recorded reps / planned reps, and sets reaching both planned load and reps.
-4. Planned workouts can be started later from Fitness Overview or History. Unfinished sessions still autosave. Full JSON backup/restore includes planned workouts and per-set target/actual data.
-5. Existing V7 workout sets are migrated locally: original weight/reps become targets, and completed rows also keep their previous actual data. Previously saved workouts and V7 JSON backups remain compatible.
+WHAT'S NEW
+- Discard an unfinished/draft workout directly from the Fitness overview or its editor; you no longer need to finish the session before deleting it. Confirmation is required.
+- Mark sets complete even if planned and actual reps/weight are blank. Missing numbers remain unrecorded; the app does not turn blank values into zeroes. A workout can be finished when at least one set is marked complete.
+- Add an editable comment to each set in a pop-up (up to 800 characters). Edit or clear it later. Comments appear in workout details and JSON backups.
+- Set an optional exercise-wide rest duration in seconds. Individual sets can inherit that default or override it; entering 0 explicitly indicates no rest. A per-set Start rest/Stop rest countdown is available. The timer does not send push notifications and is not guaranteed to continue through closing the app; saved rest preferences do persist.
+- Removing an individual set now requests confirmation.
+- Copying workouts preserves planned rest settings but clears actual performance, completion, and set comments.
+- Workout histories, existing V7.2 data, and earlier workout backup formats remain compatible.
+- Fixed a backup restore issue with REPLACE mode discovered during testing.
 
 RETAINED
-All nutrition logging, barcode scanner, cached products, rate controls, macro charts, Health Mode 6.1 suggestions, privacy agreement, custom exercises, light/dark themes, and complete backup functions.
+All features from V7.2 + Health Mode 6.1, including food journal, barcode scanning, macro chart, health mode, theme, exercise library, workout history, offline PWA shell, and full JSON backups.
 
-DEPLOY
-1. In your current Tallysprig app, download a FULL JSON backup and store it privately.
-2. Extract this ZIP, upload its contents to your existing GitHub repository root (overwrite matching files), then commit.
-3. Wait for GitHub Pages deployment. Open installed app while online to refresh the offline cache. Do not uninstall or clear site data.
-4. Test copying a session, editing planned and actual reps, opening it after a restart, and exporting/restoring a backup.
+DEPLOY TO GITHUB PAGES
+1. In your existing app, use Settings > Download full backup and store the JSON file privately.
+2. Download and extract the ZIP; upload its CONTENTS (not the ZIP or an enclosing folder) to the ROOT of your existing tallysprig-app GitHub repository, overwriting matching paths.
+3. Commit the changes, e.g. "Update Tallysprig to V7.3".
+4. Allow GitHub Pages to deploy. Reopen your installed app while online to fetch the new shell. Do not uninstall it or clear site data.
+5. The Privacy Policy has been updated from v1.2 to v1.3 to mention set comments and rest preferences. Users will be asked to re-acknowledge it. Medical Disclaimer remains v1.3.
+6. Test: start and discard an unfinished workout; complete a set with blanks; add/edit a set comment; set rest defaults and overrides; copy a workout; reopen the app and verify autosaved notes/rest; export/restore full backup.
 
-NOTE
-Privacy Policy v1.2 and Medical Disclaimer v1.3 are unchanged because workout logs were already covered. No new remote service is involved; records stay on-device unless exported.
+NOTES
+- All workout records and preferences remain browser-local unless you choose to export them.
+- Individual rest timers work while this app page is open. They are optional and not training advice.
+- The Privacy Policy remains a prototype draft; it still needs a verified operator and privacy contact and suitable review before public launch.
