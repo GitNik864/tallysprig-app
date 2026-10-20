@@ -267,6 +267,29 @@
     @media(max-width:650px) { .macro-panel {grid-template-columns:1fr;gap:7px;padding:19px 17px;margin:24px 0 32px} .macro-graphic {width:min(100%,236px)} .macro-center .macro-calories {font-size:37px} .macro-panel .macro-headline {font-size:16px} .macro-legend {gap:7px} .preference-row {align-items:flex-start} }
 
     /* V5 dark mode: keep the same layout and color language; only switch its surfaces and contrast. */
+    /* V6 optional Health Mode — same design language as the existing tracker. */
+    .mode-pill {display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:830;color:var(--green);letter-spacing:.35px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--paper);margin:0 0 14px}
+    .health-intro {background:var(--paper);border:1px solid var(--line);padding:20px 22px;border-radius:18px;margin:0 0 22px}
+    .health-intro h2,.health-progress h2 {font-size:17px;letter-spacing:-.4px;margin:0 0 7px}
+    .health-intro p,.health-progress p {font-size:12px;line-height:1.7;color:var(--muted);margin:0}
+    .health-progress {border:1px solid var(--line);background:var(--paper);border-radius:18px;padding:21px 23px;margin:0 0 27px}
+    .goal-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+    .goal-tile {background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:14px 13px;min-width:0}
+    .goal-name {font-size:12px;color:var(--muted);font-weight:760;margin-bottom:7px}
+    .goal-value {font-size:17px;font-weight:840;color:var(--ink);line-height:1.3}
+    .goal-value small {font-size:11px;color:var(--muted);font-weight:650}
+    .goal-bar {height:7px;background:var(--line);border-radius:10px;margin:11px 0 7px;overflow:hidden}
+    .goal-fill {height:100%;background:var(--green);border-radius:10px}
+    .goal-note {font-size:11px;color:var(--muted)}
+    .health-profile-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:15px 0 17px}
+    .health-profile-grid .field {margin:0;min-width:0}
+    .health-profile-grid input,.health-profile-grid select {width:100%;box-sizing:border-box}
+    .health-callout {border:1px solid var(--line);background:var(--bg);padding:14px 16px;border-radius:12px;margin:15px 0;font-size:12px;color:var(--muted);line-height:1.7}
+    .health-estimate {font-weight:860;font-size:21px;color:var(--ink);margin:7px 0}
+    .health-mode-buttons {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .profile-summary {font-size:12px;line-height:1.75;color:var(--muted)}
+    @media(max-width:650px) { .goal-grid {grid-template-columns:1fr;gap:9px} .goal-tile {padding:11px 12px} .health-intro,.health-progress {padding:17px} .health-profile-grid {grid-template-columns:1fr} }
+
     html[data-theme="dark"] {color-scheme:dark;--ink:#e4f2ea;--ink2:#c1d2c8;--muted:#a4b7ab;--bg:#111d19;--paper:#1d2c25;--line:#33483b;--green:#72cda0;--peach:#f1bd86;--lav:#baaae8;--blue:#7bb3d6;--shadow:0 13px 38px rgba(0,0,0,.13)}
     html[data-theme="dark"] body {background:var(--bg);color:var(--ink)}
     html[data-theme="dark"] .sidebar {background:#102922}
@@ -360,9 +383,12 @@
   const CONSENT_KEY='tallysprig_document_acceptance_v4';
   const LAST_BACKUP_KEY='tallysprig_last_full_backup_v4';
   const PREF_KEY='tallysprig_preferences_v5';
-  const DEFAULT_PREFS={macroChart:false,theme:'light'};
+  const HEALTH_KEY='tallysprig_health_v6';
+  const DEFAULT_PREFS={macroChart:false,healthMacroChart:true,healthMode:false,theme:'light'};
   function normalizePrefs(obj){return {
     macroChart: typeof obj?.macroChart==='boolean'?obj.macroChart:false,
+    healthMacroChart:typeof obj?.healthMacroChart==='boolean'?obj.healthMacroChart:true,
+    healthMode:typeof obj?.healthMode==='boolean'?obj.healthMode:false,
     theme:obj?.theme==='dark'?'dark':'light'
   }}
   function loadPrefs(){try {return normalizePrefs(JSON.parse(localStorage.getItem(PREF_KEY)||'{}'));} catch(_){return {...DEFAULT_PREFS}}}
@@ -376,7 +402,7 @@
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.0', MEDICAL_VERSION='1.0';
+  const PRIVACY_VERSION='1.1', MEDICAL_VERSION='1.1';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -395,6 +421,27 @@
       if(unlockIfAccepted()){a.checked=false;b.checked=false;update();render();}
     });
   }
+
+  const EMPTY_HEALTH={age:null,heightCm:null,weightKg:null,physiology:'unspecified',activity:'moderate',goals:{p:null,c:null,f:null}};
+  function healthNumber(v,min,max){if(v===''||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max?n:null}
+  function normalizeHealth(obj){const h=obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{};const g=h.goals||{};
+    return {age:healthNumber(h.age,1,120),heightCm:healthNumber(h.heightCm,60,260),weightKg:healthNumber(h.weightKg,10,500),
+      physiology:['male','female','unspecified'].includes(h.physiology)?h.physiology:'unspecified',
+      activity:['sedentary','light','moderate','active','very-active'].includes(h.activity)?h.activity:'moderate',
+      goals:{p:healthNumber(g.p,1,500),c:healthNumber(g.c,1,800),f:healthNumber(g.f,1,300)}};
+  }
+  function loadHealth(){try{return normalizeHealth(JSON.parse(localStorage.getItem(HEALTH_KEY)||'{}'))}catch(_){return normalizeHealth({})}}
+  let health=loadHealth();
+  function saveHealth(next,message){try{const normalized=normalizeHealth(next);localStorage.setItem(HEALTH_KEY,JSON.stringify(normalized));health=normalized;render();showToast(message||'Health preferences saved.')}catch(_){showToast('Could not save health settings.')}}
+  function adultEstimate(){
+    if(health.age===null||health.age<18||!health.heightCm||!health.weightKg||health.physiology==='unspecified')return null;
+    const basal=10*health.weightKg+6.25*health.heightCm-5*health.age+(health.physiology==='male'?5:-161);
+    const factors={sedentary:1.2,light:1.375,moderate:1.55,active:1.725,'very-active':1.9};
+    const midpoint=basal*factors[health.activity];
+    if(!Number.isFinite(midpoint)||midpoint<=0)return null;
+    return {low:Math.round(midpoint*.9/50)*50,high:Math.round(midpoint*1.1/50)*50};
+  }
+  function isHealthChart(){return prefs.healthMode?prefs.healthMacroChart:prefs.macroChart}
 
   const OFF_CACHE_KEY='tallysprig_off_products_v3';
   // The API permits 15 read-product requests per minute per public IP.
@@ -500,28 +547,73 @@
       </div>
     </section>`;
   }
+  function healthProgressHtml(v){
+    const goalRows=[['Protein','p','#62b58e'],['Carbs','c','#efa96f'],['Fat','f','#a99adf']];
+    const active=goalRows.some(([,k])=>health.goals[k]!==null);
+    const rows=goalRows.map(([name,key,color])=>{
+      const target=health.goals[key],logged=dec(v[key]);
+      return `<div class="goal-tile"><div class="goal-name">${name}</div><div class="goal-value">${logged} <small>g recorded${target===null?'':` · ${target} g reference`}</small></div>${target===null?'<div class="goal-note" style="margin-top:9px">No reference set</div>':`<div class="goal-bar" role="progressbar" aria-label="${name} recorded compared with reference" aria-valuenow="${Math.min(100,Math.round(logged/target*100))}" aria-valuemin="0" aria-valuemax="100"><div class="goal-fill" style="width:${Math.min(100,logged/target*100)}%;background:${color}"></div></div><div class="goal-note">${Math.round(logged/target*100)}% of your reference logged · not a limit</div>`}</div>`;
+    }).join('');
+    return `<section class="health-progress" aria-label="Macro tracking for ${esc(prettyDate(selectedDate))}"><div class="section-row" style="margin:0"><h2>Daily macro references</h2><button class="button-secondary" data-action="gotohealth">Edit goals</button></div><p>${esc(prettyDate(selectedDate))} only. Your references are optional comparison points, not eating rules.</p><div class="goal-grid">${rows}</div>${!active?'<p style="margin-top:12px">Set optional macro references in Settings → Health Mode.</p>':''}</section>`;
+  }
+
   function renderToday(){const entries=todayEntries(),v=sum(entries);
     const stats=[['Protein','p','var(--green)'],['Carbs','c','var(--peach)'],['Fat','f','var(--lav)']];
     let statHtml=`<div class="stats-grid"><div class="stat energy"><div class="stat-label"><span class="stat-dot"></span> Energy logged</div><div class="stat-number">${fmt(v.cal)}<span class="unit">kcal</span></div><span style="color:#c3ddcc;font-size:11px">${entries.length} food ${entries.length===1?'entry':'entries'}</span></div>`;
     statHtml+=stats.map(([label,key,color])=>`<div class="stat"><div class="stat-label">${label}</div><div class="stat-number">${fmt(v[key])}<span class="unit">g</span></div><div style="display:flex;align-items:center;gap:6px;color:#9ba99e;font-size:10px"><span style="height:7px;width:7px;background:${color};border-radius:50%"></span>Logged today</div></div>`).join('')+'</div>';
     let meals=MEALS.map(meal=>{const items=entries.filter(e=>e.meal===meal.id),mv=sum(items);return `<section class="meal-card"><div class="meal-header"><div class="meal-left"><div class="meal-emoji" style="background:${meal.color}">${meal.emoji}</div><div><div class="meal-name">${meal.id}</div><div class="meal-total">${fmt(mv.cal)} kcal</div></div></div><button class="plus" data-action="add" data-meal="${meal.id}" aria-label="Add food to ${meal.id}" title="Add food to ${meal.id}">+</button></div>${items.length?`<div class="meal-items">${items.map(e=>`<div class="logged-item"><span class="item-icon">${esc(e.emoji||'🍽️')}</span><div class="item-desc"><div class="item-title" title="${esc(e.name)}">${esc(e.name)}</div><div class="item-sub">${fmt(e.qty*100)/100} × ${esc(e.serving)}</div></div><div class="item-cal">${fmt(e.cal)}</div><button class="item-edit" data-action="editentry" data-id="${esc(e.id)}" aria-label="Edit ${esc(e.name)}" title="Edit entry">✎</button><button class="item-remove" data-action="remove" data-id="${esc(e.id)}" aria-label="Remove ${esc(e.name)}" title="Remove entry">×</button></div>`).join('')}</div>`:`<div class="empty-meal">Nothing logged yet.<br>Tap + to add a food.</div>`}</section>`}).join('');
-    const referenceHtml=`<section class="energy-reference" aria-label="Daily energy reference"><div><div class="energy-ref-title">✳ Daily energy reference</div><div class="energy-ref-desc">An optional personal reference, not a limit.</div></div><div class="energy-ref-actions"><div class="energy-ref-value">${store.energyReference===null?'Not set':`${fmt(store.energyReference)} <small>kcal/day</small>`}</div><button class="energy-ref-edit" data-action="editreference" aria-label="${store.energyReference===null?'Set':'Edit'} daily energy reference">${store.energyReference===null?'Set reference':'Edit ✎'}</button></div></section>`;
-    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+referenceHtml+(prefs.macroChart?macroChartHtml(v,entries.length):statHtml)+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
+    const referenceHtml=`<section class="energy-reference" aria-label="Daily energy reference"><div><div class="energy-ref-title">✳ Daily energy reference</div><div class="energy-ref-desc">An optional personal reference, not a limit or ceiling.</div></div><div class="energy-ref-actions"><div class="energy-ref-value">${store.energyReference===null?'Not set':`${fmt(store.energyReference)} <small>kcal/day</small>`}</div><button class="energy-ref-edit" data-action="editreference" aria-label="${store.energyReference===null?'Set':'Edit'} daily energy reference">${store.energyReference===null?'Set reference':'Edit ✎'}</button></div></section>`;
+    const healthLead=prefs.healthMode?`<div class="mode-pill">✳ HEALTH MODE · OPTIONAL INSIGHTS</div><section class="health-intro"><h2>Nutrition in context.</h2><p>Track patterns, not perfection. Goals are flexible references, not ceilings; Tallysprig never blocks a meal or calculates calories remaining. ${health.age!==null&&health.age<18?'For growing users, numeric calorie estimates are not provided.':''}</p></section>`:'';
+    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+healthLead+referenceHtml+(isHealthChart()?macroChartHtml(v,entries.length):statHtml)+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
+  function healthSettingsHtml(){
+    const estimate=adultEstimate();const age=health.age;
+    const estimateHtml=age!==null&&age<18?
+      `<div class="health-callout"><strong>For users under 18:</strong> Tallysprig does not generate numeric calorie targets. Nutrition needs vary as people grow. Macro values and the daily energy reference remain informational, never limits.</div>`:
+      estimate?`<div class="health-callout"><strong>Optional adult energy estimate</strong><div class="health-estimate">${fmt(estimate.low)}–${fmt(estimate.high)} kcal/day</div>An approximate maintenance-energy range derived from your inputs using an adult equation, not a calorie limit or personalized prescription. Actual needs vary. This estimate is not automatically copied into the daily reference.</div>`:
+      `<div class="health-callout">Adult estimates are optional. To display one, provide an age of at least 18, height, weight, activity level, and an equation input. No estimate is generated for users under 18.</div>`;
+    const goalFields=[['p','Protein',500],['c','Carbs',800],['f','Fat',300]].map(([key,name,max])=>`<div class="field"><label for="healthGoal${key}">${name} reference (g/day)</label><input id="healthGoal${key}" type="number" min="1" max="${max}" step="1" inputmode="numeric" value="${health.goals[key]??''}" placeholder="Optional"></div>`).join('');
+    return `<section class="data-panel" id="health-mode-panel" aria-label="Health Mode settings"><h2>Health Mode</h2><p>Keep Classic tracking or turn on optional daily nutrition insights. Your journal remains the same in either mode.</p>
+      <div class="preference-row"><div><div class="preference-name">Enable Health Mode</div><div class="preference-description">Show nutrition references for each selected day. No strict calorie limits or over-limit warnings.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMode}" aria-label="Enable Health Mode" data-action="togglehealth"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
+      <div class="preference-row"><div><div class="preference-name">Health Mode macro chart</div><div class="preference-description">Health Mode defaults to the chart. Turn this off to use the original calorie and macro cards instead.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMacroChart}" aria-label="Show macro chart in Health Mode" data-action="togglehealthmacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
+      <p class="data-detail">Your Health Mode display choice is independent of the Classic Mode chart setting.</p>
+      ${prefs.healthMode?`<form id="healthProfileForm"><h3 style="font-size:15px;margin:19px 0 0">Optional health profile</h3><p>Stored only in this browser. You can leave fields blank or delete the profile at any time. Profile details are not sent to Open Food Facts.</p>
+      <div class="health-profile-grid"><div class="field"><label for="healthAge">Age (years)</label><input id="healthAge" type="number" inputmode="numeric" min="1" max="120" step="1" value="${age??''}" placeholder="Optional"></div>
+      <div class="field"><label for="healthHeight">Height (cm)</label><input id="healthHeight" type="number" inputmode="decimal" min="60" max="260" step="0.1" value="${health.heightCm??''}" placeholder="Optional"></div>
+      <div class="field"><label for="healthWeight">Weight (kg)</label><input id="healthWeight" type="number" inputmode="decimal" min="10" max="500" step="0.1" value="${health.weightKg??''}" placeholder="Optional"></div>
+      <div class="field"><label for="healthPhysiology">Adult estimate equation</label><select id="healthPhysiology"><option value="unspecified" ${health.physiology==='unspecified'?'selected':''}>Don't calculate</option><option value="male" ${health.physiology==='male'?'selected':''}>Male equation</option><option value="female" ${health.physiology==='female'?'selected':''}>Female equation</option></select></div>
+      <div class="field"><label for="healthActivity">Activity level</label><select id="healthActivity">${[['sedentary','Mostly sitting'],['light','Light activity'],['moderate','Moderate activity'],['active','Active'],['very-active','Very active']].map(([k,label])=>`<option value="${k}" ${health.activity===k?'selected':''}>${label}</option>`).join('')}</select></div></div>
+      <h3 style="font-size:15px;margin:12px 0 0">Optional macro references</h3><p>Set your own informational references. No values are prefilled or automatically recommended.</p><div class="health-profile-grid">${goalFields}</div>
+      <div class="health-mode-buttons"><button type="submit" class="button-primary">Save profile &amp; references</button><button type="button" class="button-secondary" data-action="clearhealth">Delete health profile &amp; goals</button></div></form>${estimateHtml}`:
+      `<div class="health-callout">Enable Health Mode to edit your optional profile and macro references. When disabled, your saved profile remains on this device until you delete it.</div>`}
+    </section>`;
+  }
+  function readOptionalNumber(id,label,min,max){const raw=document.getElementById(id)?.value.trim()||'';if(raw==='')return null;const n=Number(raw);if(!Number.isFinite(n)||n<min||n>max)throw Error(`${label} must be between ${min} and ${max}, or left blank.`);return n}
+  function saveHealthForm(){
+    try{const a=readOptionalNumber('healthAge','Age',1,120);
+      if(a!==null&&!Number.isInteger(a))throw Error('Age must be a whole number.');
+      const next={age:a,heightCm:readOptionalNumber('healthHeight','Height',60,260),weightKg:readOptionalNumber('healthWeight','Weight',10,500),physiology:document.getElementById('healthPhysiology').value,activity:document.getElementById('healthActivity').value,
+      goals:{p:readOptionalNumber('healthGoalp','Protein reference',1,500),c:readOptionalNumber('healthGoalc','Carb reference',1,800),f:readOptionalNumber('healthGoalf','Fat reference',1,300)}};
+      saveHealth(next,'Health profile and references saved.');
+    }catch(err){showToast(err.message||'Please check the inputs.');}
+  }
+  function clearHealth(){if(!confirm('Delete your local health profile and macro references? Your food journal and display settings will remain.'))return;saveHealth(EMPTY_HEALTH,'Health profile deleted.');}
+
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
     return heading('Settings & your data.','Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
-    <div class="preference-row"><div><div class="preference-name">Daily macro doughnut chart</div><div class="preference-description">Replace the four calorie and macro cards on Today with a doughnut chart. Each date shows only its own entries.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show daily macro chart" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
+    <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
     <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
     <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
     </section>`+
-    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your complete food log, custom foods, favorites, energy reference, and appearance settings. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    healthSettingsHtml()+
+    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your complete food log, custom foods, favorites, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
     `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food log and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
@@ -852,7 +944,7 @@
   // V4 backup format deliberately excludes document acknowledgement, scanner cache, and rate counters.
   // Agreement acceptance remains device-local; a different device must acknowledge for itself.
   function exportFullBackup(){
-    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference,preferences:prefs}};
+    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference,preferences:prefs,health}};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     const link=URL.createObjectURL(blob),a=document.createElement('a');a.href=link;a.download='tallysprig-full-backup-'+localISO(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(link),5000);
     try{localStorage.setItem(LAST_BACKUP_KEY,new Date().toISOString())}catch(_){}
@@ -867,7 +959,12 @@
     if(!Array.isArray(d.entries)||!Array.isArray(d.customFoods)||!Array.isArray(d.favorites))throw Error('Backup is missing journal sections.');
     if(d.entries.length>20000||d.customFoods.length>5000||d.favorites.length>10000)throw Error('Backup contains too many records.');
     if(d.energyReference!==null&&!(Number.isInteger(d.energyReference)&&d.energyReference>0&&d.energyReference<=20000))throw Error('Invalid daily energy reference.');
-    if(d.preferences!==undefined&&(d.preferences===null||typeof d.preferences!=='object'||Array.isArray(d.preferences)||typeof d.preferences.macroChart!=='boolean'||!['light','dark'].includes(d.preferences.theme)))throw Error('Backup contains invalid appearance settings.');
+    if(d.preferences!==undefined&&(d.preferences===null||typeof d.preferences!=='object'||Array.isArray(d.preferences)||typeof d.preferences.macroChart!=='boolean'||!['light','dark'].includes(d.preferences.theme)||('healthMode' in d.preferences&&typeof d.preferences.healthMode!=='boolean')||('healthMacroChart' in d.preferences&&typeof d.preferences.healthMacroChart!=='boolean')))throw Error('Backup contains invalid appearance settings.');
+    if(d.health!==undefined){
+      const h=d.health,g=h?.goals;if(!h||typeof h!=='object'||Array.isArray(h)||!g||typeof g!=='object'||Array.isArray(g))throw Error('Backup has invalid health data.');
+      const numeric=(n,lo,hi)=>n===null||(typeof n==='number'&&Number.isFinite(n)&&n>=lo&&n<=hi);
+      if(!numeric(h.age,1,120)||h.age!==null&&!Number.isInteger(h.age)||!numeric(h.heightCm,60,260)||!numeric(h.weightKg,10,500)||!['male','female','unspecified'].includes(h.physiology)||!['sedentary','light','moderate','active','very-active'].includes(h.activity)||!numeric(g.p,1,500)||!numeric(g.c,1,800)||!numeric(g.f,1,300))throw Error('Backup has invalid health profile or macro references.');
+    }
     const entryIds=new Set(),foodIds=new Set();
     for(const f of d.customFoods){
       if(!f||!validText(f.id,90)||!validText(f.name,100)||!validText(f.serving,100)||!['Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'].includes(f.category)||!validText(f.emoji,16)||!['cal','p','c','f'].every(k=>validN(f[k],20000))||foodIds.has(f.id))throw Error('Backup contains an invalid or duplicate custom food.');
@@ -881,7 +978,7 @@
       entryIds.add(e.id);
     }
     if(d.favorites.some(id=>!validText(id,90)))throw Error('Backup has an invalid favorite ID.');
-    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference,preferences:d.preferences?normalizePrefs(d.preferences):null};
+    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference,preferences:d.preferences?normalizePrefs(d.preferences):null,health:d.health?normalizeHealth(d.health):null};
   }
   async function importFullBackup(file){
     try{
@@ -893,7 +990,7 @@
       if(mode!=='MERGE'&&mode!=='REPLACE'){showToast('Enter MERGE or REPLACE. Nothing changed.');return}
       const question=mode==='REPLACE'?`REPLACE all current Tallysprig entries, custom foods, favorites and energy reference with this backup?\n\nThis cannot be undone. Download a backup of your current data first.`:`MERGE this backup into your existing log? Matching entry IDs are skipped to avoid duplicates. Existing settings and foods win conflicts.`;
       if(!confirm(question))return;
-      const {preferences:incomingPrefs,...incomingJournal}=incoming;
+      const {preferences:incomingPrefs,health:incomingHealth,...incomingJournal}=incoming;
       let next;
       if(mode==='REPLACE')next=incomingJournal;
       else{
@@ -904,24 +1001,26 @@
       // Validate the combined result BEFORE replacing the active journal. An unsuccessful save restores the previous copy.
       verifyBackup({app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,data:next});
       const nextPrefs=mode==='REPLACE'&&incomingPrefs?incomingPrefs:prefs;
-      const priorJournal=localStorage.getItem(KEY),priorPrefs=localStorage.getItem(PREF_KEY);
+      const nextHealth=mode==='REPLACE'?(incomingHealth||normalizeHealth({})):health;
+      const priorJournal=localStorage.getItem(KEY),priorPrefs=localStorage.getItem(PREF_KEY),priorHealth=localStorage.getItem(HEALTH_KEY);
       try{
         localStorage.setItem(KEY,JSON.stringify(next));
         if(mode==='REPLACE'&&incomingPrefs)localStorage.setItem(PREF_KEY,JSON.stringify(nextPrefs));
-        store=next;prefs=nextPrefs;applyTheme();
+        if(mode==='REPLACE')localStorage.setItem(HEALTH_KEY,JSON.stringify(nextHealth));
+        store=next;prefs=nextPrefs;health=nextHealth;applyTheme();
       }catch(e){
-        try{priorJournal===null?localStorage.removeItem(KEY):localStorage.setItem(KEY,priorJournal);priorPrefs===null?localStorage.removeItem(PREF_KEY):localStorage.setItem(PREF_KEY,priorPrefs);}catch(_){}
+        try{priorJournal===null?localStorage.removeItem(KEY):localStorage.setItem(KEY,priorJournal);priorPrefs===null?localStorage.removeItem(PREF_KEY):localStorage.setItem(PREF_KEY,priorPrefs);priorHealth===null?localStorage.removeItem(HEALTH_KEY):localStorage.setItem(HEALTH_KEY,priorHealth);}catch(_){}
         throw Error('Could not save restored data. Storage might be full; previous data was retained where possible.');
       }
       selectedDate=localISO(new Date());view='today';closeModal();render();showToast(mode==='MERGE'?'Backup merged.':'Backup restored.');
     }catch(err){showToast(err instanceof SyntaxError?'This JSON file could not be read.':err?.message||'Restore failed.');}
   }
   function deleteAllLocalData(){
-    if(!confirm('Delete all Tallysprig data on this device, including saved meals, custom foods, favorites, appearance settings, scanned product cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
+    if(!confirm('Delete all Tallysprig data on this device, including saved meals, custom foods, favorites, health profile, macro references, appearance settings, scanned product cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
     const typed=prompt('Type DELETE to confirm permanent deletion of local Tallysprig data.','');
     if(typed!=='DELETE'){showToast('Nothing deleted.');return}
     try{
-      [KEY,PREF_KEY,OFF_CACHE_KEY,OFF_RATE_KEY,OFF_COOLDOWN_KEY,CONSENT_KEY,LAST_BACKUP_KEY].forEach(k=>localStorage.removeItem(k));
+      [KEY,PREF_KEY,HEALTH_KEY,OFF_CACHE_KEY,OFF_RATE_KEY,OFF_COOLDOWN_KEY,CONSENT_KEY,LAST_BACKUP_KEY].forEach(k=>localStorage.removeItem(k));
       // Reload returns to agreement screen; no server account exists to delete.
       location.reload();
     }catch(e){showToast('Unable to clear local data in this browser.')}
@@ -995,7 +1094,11 @@
     else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
-    else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Daily chart '+(prefs.macroChart?'disabled.':'enabled.'))}
+    else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Classic Mode chart '+(prefs.macroChart?'disabled.':'enabled.'))}
+    else if(action==='togglehealth'){savePrefs({...prefs,healthMode:!prefs.healthMode},'Health Mode '+(prefs.healthMode?'disabled.':'enabled.'))}
+    else if(action==='togglehealthmacro'){savePrefs({...prefs,healthMacroChart:!prefs.healthMacroChart},'Health Mode chart '+(prefs.healthMacroChart?'disabled.':'enabled.'))}
+    else if(action==='gotohealth'){view='about';render();document.getElementById('health-mode-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
+    else if(action==='clearhealth'){clearHealth();}
     else if(action==='themelight'||action==='themedark'){savePrefs({...prefs,theme:action==='themedark'?'dark':'light'},'Appearance updated.')}
     else if(action==='editreference'){referenceModal()}
     else if(action==='clearreference'){clearReference()}
@@ -1020,7 +1123,7 @@
   document.getElementById('importBackupFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f&&consentOk)importFullBackup(f)});
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
   document.addEventListener('input',e=>{if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
-  document.addEventListener('submit',e=>{if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
+  document.addEventListener('submit',e=>{if(e.target.id==='healthProfileForm'){e.preventDefault();saveHealthForm()}else if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});

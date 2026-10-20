@@ -1,21 +1,21 @@
-Tallysprig V5 — GitHub Pages deployment
+TALLYSPRIG V6 — GITHUB PAGES RELEASE
 
-WHAT IS NEW
-- Optional daily macro doughnut chart replaces the four Today dashboard cards. Its center shows recorded calories for the selected day.
-- Settings & data > Appearance: enable/disable chart and select Light/Dark theme.
-- Preferences persist locally and are included in new V5 JSON backups. Old V4 backups still work.
-- All V4 features, mandatory agreement, legal documents, barcode scanner and offline app shell remain.
+UPGRADE: Upload the CONTENTS of this ZIP to the existing GitHub Pages repository root. Replace matching files, including index.html, privacy.html, medical.html and sw.js. Do not upload the ZIP itself. Wait for Pages deployment and reopen the installed app while online.
 
-HOW TO UPDATE
-1. In your existing app, go to Settings/Data and download a FULL JSON backup first. Keep it private.
-2. Extract this ZIP.
-3. In your existing GitHub repo, upload/replace these files at the ROOT: index.html, sw.js, manifest.webmanifest, privacy.html, medical.html, README.txt and icons/.
-4. Commit to main and wait for GitHub Pages deployment.
-5. Open the hosted app while online, then reopen if an older offline shell is still displayed. Do not uninstall or clear site data.
-6. Go to Settings (bottom tab on mobile) to switch modes and enable the chart.
-7. Test selected-day totals and both themes on your phone.
+NEW IN V6
+- Classic Mode stays default with original four nutrition cards. Optional Classic chart works exactly as in V5.
+- Health Mode is optional and defaults to macro chart; its own setting switches back to original cards.
+- Health Mode accepts optional age/height/weight/physiology equation/activity and macro gram references. All stay locally stored.
+- Nutrition reference comparison reflects the currently selected date. No calorie ceilings, calories-remaining counter, or meal restrictions.
+- Approximate adult maintenance range is displayed only if age >= 18 and enough inputs are present. No automatic calorie estimate for anyone under 18.
+- Full JSON backup/replace can include V6 profile and settings; older V4/V5 backups remain importable. CSV exports do not include profile.
+- Privacy Policy and Medical Disclaimer updated to v1.1, requiring new acknowledgment from existing users.
 
-HOW THE DOUGHNUT WORKS
-The chart represents protein/carbohydrate/fat contributions using 4/4/9 kcal per gram. The number in the center is the day's recorded calories, which may differ slightly from the 4/4/9 sum because nutrition labels and rounding can differ. Empty dates show an empty ring. This is a visual summary, not a calorie restriction or intake target.
+STORAGE
+The same dayplate_v1 meals key and tallysprig_preferences_v5 settings key are retained. Keep the site origin the same, and do not uninstall or clear storage during upgrade. Back up your JSON file before uploading.
 
-Do not upload your personal food-log JSON/CSV backups to a public GitHub repository.
+SAFETY
+Nutrition information is approximate and is not medical advice. For users under 18, numerical energy estimates are not generated. A user-entered reference is not a strict limit. New privacy documentation remains a working draft pending developer contact and legal review.
+
+CHECK AFTER UPLOAD
+Agree to updated legal documents; set Health Mode; verify age 16 shows no estimate; age 25 with valid details shows labeled rough range; edit macro references; switch chart in each mode independently; reload; test older food logs and backup export/restore; confirm barcode scanner still works.
