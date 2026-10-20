@@ -1,21 +1,18 @@
-TALLYSPRIG V6 — GITHUB PAGES RELEASE
+TALLYSPRIG HEALTH MODE 6.1 — V7-COMPATIBLE UPDATE
+=================================================
+This is a complete GitHub Pages update based on Tallysprig V7, not a separate replacement for the Fitness tab.
 
-UPGRADE: Upload the CONTENTS of this ZIP to the existing GitHub Pages repository root. Replace matching files, including index.html, privacy.html, medical.html and sw.js. Do not upload the ZIP itself. Wait for Pages deployment and reopen the installed app while online.
+NEW: Settings -> Health Mode -> Save a complete ADULT profile (age 18+) to see illustrative 20%/50%/30% macro references, with a button to copy those values into your existing protein / carbohydrate / fat references. The app asks for confirmation before replacing them. You can freely edit the references later. This is an example distribution, not an individual nutrition prescription or calorie ceiling.
+For users under 18, Health Mode shows general educational macronutrient ranges rather than numeric recommendations.
 
-NEW IN V6
-- Classic Mode stays default with original four nutrition cards. Optional Classic chart works exactly as in V5.
-- Health Mode is optional and defaults to macro chart; its own setting switches back to original cards.
-- Health Mode accepts optional age/height/weight/physiology equation/activity and macro gram references. All stay locally stored.
-- Nutrition reference comparison reflects the currently selected date. No calorie ceilings, calories-remaining counter, or meal restrictions.
-- Approximate adult maintenance range is displayed only if age >= 18 and enough inputs are present. No automatic calorie estimate for anyone under 18.
-- Full JSON backup/replace can include V6 profile and settings; older V4/V5 backups remain importable. CSV exports do not include profile.
-- Privacy Policy and Medical Disclaimer updated to v1.1, requiring new acknowledgment from existing users.
+PRIVACY: No new external API, server, or field collection. Values are calculated locally from the existing optional profile. Medical Disclaimer updated to v1.3, requiring reacknowledgment; Privacy Policy v1.2 is unchanged. Food/workout records and V7 functionality remain in place.
 
-STORAGE
-The same dayplate_v1 meals key and tallysprig_preferences_v5 settings key are retained. Keep the site origin the same, and do not uninstall or clear storage during upgrade. Back up your JSON file before uploading.
+DEPLOY:
+1. From your current app, export a FULL JSON backup and keep it private.
+2. Unzip and upload the CONTENTS to your existing tallysprig-app GitHub repository root, replacing matching paths.
+3. Commit. Wait for GitHub Pages; open the app while online to let offline cache update. Do not clear storage or uninstall.
+4. Review and acknowledge the updated Medical Disclaimer.
+5. Settings -> Health Mode -> turn on -> save your profile -> review example macro values -> optionally press Use these as my macro references.
+6. Test a meal, workout, barcode scan, backup export and offline reopen on your phone.
 
-SAFETY
-Nutrition information is approximate and is not medical advice. For users under 18, numerical energy estimates are not generated. A user-entered reference is not a strict limit. New privacy documentation remains a working draft pending developer contact and legal review.
-
-CHECK AFTER UPLOAD
-Agree to updated legal documents; set Health Mode; verify age 16 shows no estimate; age 25 with valid details shows labeled rough range; edit macro references; switch chart in each mode independently; reload; test older food logs and backup export/restore; confirm barcode scanner still works.
+If you have not yet deployed V7, this update also contains its full Fitness tab and features.

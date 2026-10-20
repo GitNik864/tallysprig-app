@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Tallysprig — Food journal",
+  "name": "Tallysprig — Food & Fitness Journal",
   "short_name": "Tallysprig",
-  "description": "A private food journal with food logging and barcode lookup.",
+  "description": "A private food and workout journal with meal logging, barcode lookup, and strength-training history.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
