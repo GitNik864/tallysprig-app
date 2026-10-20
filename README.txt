@@ -1,30 +1,21 @@
-Tallysprig V4 — GitHub Pages release
-===================================
+Tallysprig V5 — GitHub Pages deployment
 
-V4 keeps V3.2 features and adds:
-- mandatory separate, unchecked Privacy Policy and Medical Disclaimer acknowledgements;
-- consent record with policy versions and acceptance time saved locally;
-- re-acknowledgment if a version changes, without erasing meals;
-- dedicated offline-readable privacy.html and medical.html;
-- Privacy & data view with complete JSON backup/restore (Merge or Replace), plus local deletion;
-- existing CSV import/export is unchanged;
-- versioned offline app-shell cache.
+WHAT IS NEW
+- Optional daily macro doughnut chart replaces the four Today dashboard cards. Its center shows recorded calories for the selected day.
+- Settings & data > Appearance: enable/disable chart and select Light/Dark theme.
+- Preferences persist locally and are included in new V5 JSON backups. Old V4 backups still work.
+- All V4 features, mandatory agreement, legal documents, barcode scanner and offline app shell remain.
 
-INSTALL: Extract this ZIP. Upload the FILES and the icons FOLDER directly into your existing
-GitHub Pages repository main/(root), replacing matching files. Do not upload the ZIP itself.
-Visit the website while online to install the new offline cache, then test on Android.
-DO NOT uninstall the existing app or clear site data. Export CSV before you update.
+HOW TO UPDATE
+1. In your existing app, go to Settings/Data and download a FULL JSON backup first. Keep it private.
+2. Extract this ZIP.
+3. In your existing GitHub repo, upload/replace these files at the ROOT: index.html, sw.js, manifest.webmanifest, privacy.html, medical.html, README.txt and icons/.
+4. Commit to main and wait for GitHub Pages deployment.
+5. Open the hosted app while online, then reopen if an older offline shell is still displayed. Do not uninstall or clear site data.
+6. Go to Settings (bottom tab on mobile) to switch modes and enable the chart.
+7. Test selected-day totals and both themes on your phone.
 
-CRITICAL: The privacy and medical documents are project drafts, not lawyer-reviewed policies.
-Fill in an identifiable operator and real privacy contact before a broader public release;
-verify actual third-party data practices; obtain legal review appropriate to user ages and launch regions.
-The front-end acknowledgement record is in browser localStorage, not a server-verified signature.
+HOW THE DOUGHNUT WORKS
+The chart represents protein/carbohydrate/fat contributions using 4/4/9 kcal per gram. The number in the center is the day's recorded calories, which may differ slightly from the 4/4/9 sum because nutrition labels and rounding can differ. Empty dates show an empty ring. This is a visual summary, not a calorie restriction or intake target.
 
-DATA: The original journal storage key (dayplate_v1) is unchanged. Backup JSON includes meal
-entries, custom foods, favorites, and energy reference, but not camera data, product cache, or
-agreement acknowledgements. A restored backup requires a new acknowledgment on another device.
-
-BACKUP SAFETY: Keep JSON files private (they contain food logs). Merge skips duplicate IDs;
-Replace overwrites saved log/library/favorites/reference after confirmation.
-
-For Open Food Facts rate limits/attribution, see on-screen scanner notice and links.
+Do not upload your personal food-log JSON/CSV backups to a public GitHub repository.

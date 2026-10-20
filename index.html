@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A simple, private food journal for meals and nutrients.">
-  <title>Tallysprig V4 — Food journal</title>
+  <title>Tallysprig V5 — Food journal</title>
+  <script>
+    try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
+  </script>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" type="image/png">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -231,6 +234,81 @@
     .data-panel p {color:#687f70;font-size:13px;line-height:1.7}
     .data-detail {font-size:12px;color:#789386;line-height:1.7}
     @media(max-width:650px){.consent-card{padding:22px}.consent-title{font-size:26px}.agreement-box{padding:14px}.mobile-nav button{min-width:0}}
+
+    /* V5: a daily donut view that replaces the four Today tiles, never the meal list. */
+    .macro-panel {display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.82fr);gap:20px;align-items:center;margin:30px 0 36px;padding:22px 25px;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+    .macro-graphic {position:relative;width:min(100%,264px);aspect-ratio:1;margin:auto;display:grid;place-items:center}
+    .macro-graphic svg {width:100%;height:auto;display:block;overflow:visible}
+    .macro-ring-bg {stroke:var(--line)}
+    .macro-ring-segment {fill:none;stroke-width:26;stroke-linecap:butt}
+    .macro-center {position:absolute;inset:24%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center}
+    .macro-calories {font-size:clamp(28px,3.1vw,41px);font-weight:850;letter-spacing:-1.5px;line-height:1.12;color:var(--ink)}
+    .macro-center-label {font-size:12px;font-weight:700;color:var(--muted);margin-top:4px}
+    .macro-headline {font-size:17px;font-weight:840;letter-spacing:-.5px;margin:0 0 4px}
+    .macro-subtitle {font-size:12px;line-height:1.6;color:var(--muted);margin:0 0 17px}
+    .macro-legend {display:grid;gap:10px}
+    .macro-legend-row {display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:10px;padding:10px 11px;background:var(--bg);border-radius:11px}
+    .macro-swatch {width:11px;height:11px;border-radius:50%}
+    .macro-legend-name {font-weight:780;font-size:12px}
+    .macro-legend-value {font-size:12px;font-weight:820;white-space:nowrap}
+    .macro-percent {color:var(--muted);font-size:11px;font-weight:700;margin-left:4px}
+    .macro-notes {margin:15px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+    .macro-empty {font-size:11px;color:var(--muted);margin-top:9px}
+    .preference-row {display:flex;justify-content:space-between;align-items:center;gap:18px;margin:16px 0}
+    .preference-name {font-size:13px;font-weight:850;margin-bottom:5px}
+    .preference-description {color:var(--muted);font-size:12px;line-height:1.6;max-width:500px}
+    .pref-switch {border:1px solid var(--line);border-radius:40px;background:#d8e3db;width:54px;height:31px;flex-shrink:0;padding:3px;text-align:left;transition:background .18s;display:flex;align-items:center}
+    .pref-switch[aria-checked="true"] {background:#337e61}
+    .pref-switch-knob {width:23px;height:23px;background:white;border-radius:50%;box-shadow:0 1px 4px #112a1c30;transition:transform .18s}
+    .pref-switch[aria-checked="true"] .pref-switch-knob {transform:translateX(23px)}
+    .theme-options {display:flex;gap:8px;flex-wrap:wrap}
+    .theme-option {padding:11px 15px;border-radius:11px;background:var(--paper);color:var(--ink);border:1px solid var(--line);font-size:12px;font-weight:780}
+    .theme-option[aria-pressed="true"] {background:#244e41;color:white;border-color:#244e41}
+    @media(max-width:650px) { .macro-panel {grid-template-columns:1fr;gap:7px;padding:19px 17px;margin:24px 0 32px} .macro-graphic {width:min(100%,236px)} .macro-center .macro-calories {font-size:37px} .macro-panel .macro-headline {font-size:16px} .macro-legend {gap:7px} .preference-row {align-items:flex-start} }
+
+    /* V5 dark mode: keep the same layout and color language; only switch its surfaces and contrast. */
+    html[data-theme="dark"] {color-scheme:dark;--ink:#e4f2ea;--ink2:#c1d2c8;--muted:#a4b7ab;--bg:#111d19;--paper:#1d2c25;--line:#33483b;--green:#72cda0;--peach:#f1bd86;--lav:#baaae8;--blue:#7bb3d6;--shadow:0 13px 38px rgba(0,0,0,.13)}
+    html[data-theme="dark"] body {background:var(--bg);color:var(--ink)}
+    html[data-theme="dark"] .sidebar {background:#102922}
+    html[data-theme="dark"] .sidebar-bottom {border-color:#33564a}
+    html[data-theme="dark"] .side-link.active {background:#aadbb5;color:#15392c}
+    html[data-theme="dark"] .right-panel {background:#16241e;border-color:var(--line)}
+    html[data-theme="dark"] .stat:not(.energy),html[data-theme="dark"] .meal-card,html[data-theme="dark"] .library-food,html[data-theme="dark"] .history-wrap,html[data-theme="dark"] .history-row,html[data-theme="dark"] .data-panel,html[data-theme="dark"] .modal,html[data-theme="dark"] .consent-card {background:var(--paper);border-color:var(--line);color:var(--ink)}
+    html[data-theme="dark"] .stat.energy {background:#245c4a;border-color:#245c4a}
+    html[data-theme="dark"] .stat.energy .unit {color:#c4e3d1}
+    html[data-theme="dark"] .stat-dot {background:#8ee0ad}
+    html[data-theme="dark"] .stat-number,html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] .item-cal,html[data-theme="dark"] .date-pill,html[data-theme="dark"] .macro-calories {color:var(--ink)}
+    html[data-theme="dark"] .stat.energy .stat-number {color:white}
+    html[data-theme="dark"] .stat-label,html[data-theme="dark"] .subheading,html[data-theme="dark"] .energy-ref-desc,html[data-theme="dark"] .section-meta,html[data-theme="dark"] .item-sub,html[data-theme="dark"] .meal-total,html[data-theme="dark"] .food-serving,html[data-theme="dark"] .helper,html[data-theme="dark"] .history-amount,html[data-theme="dark"] .history-day,html[data-theme="dark"] .consent-desc,html[data-theme="dark"] .data-detail,html[data-theme="dark"] .data-panel p {color:var(--muted)}
+    html[data-theme="dark"] .date-switch button,html[data-theme="dark"] .round-btn,html[data-theme="dark"] .button-secondary,html[data-theme="dark"] .energy-ref-edit,html[data-theme="dark"] .note-card button,html[data-theme="dark"] .modal-close,html[data-theme="dark"] .counter button {background:#273c30;color:#d7efdf;border-color:var(--line)}
+    html[data-theme="dark"] .button-secondary:hover,html[data-theme="dark"] .food-btn:hover,html[data-theme="dark"] .history-row:hover {background:#2c4a38}
+    html[data-theme="dark"] .energy-reference,html[data-theme="dark"] .note-card,html[data-theme="dark"] .modal-food,html[data-theme="dark"] .modal-info,html[data-theme="dark"] .nutrition-notice,html[data-theme="dark"] .scan-rate-note,html[data-theme="dark"] .scan-status,html[data-theme="dark"] .scan-empty {background:#23392e;border-color:var(--line);color:#d0ead9}
+    html[data-theme="dark"] .energy-ref-title,html[data-theme="dark"] .energy-ref-value,html[data-theme="dark"] .energy-ref-value small,html[data-theme="dark"] .note-card p,html[data-theme="dark"] .nutrition-notice-title,html[data-theme="dark"] .nutrition-notice-text,html[data-theme="dark"] .scan-rate-note strong,html[data-theme="dark"] .scan-rate-note a,html[data-theme="dark"] .scan-rate-note .scan-rate-icon {color:#cce7d3}
+    html[data-theme="dark"] .item-icon,html[data-theme="dark"] .food-icon,html[data-theme="dark"] .plus {background:#2d4336;color:#c4eed3}
+    html[data-theme="dark"] .item-edit {color:#98d3ae}
+    html[data-theme="dark"] .item-remove {color:#bbaea4}
+    html[data-theme="dark"] .library-food .food-kcal,html[data-theme="dark"] .custom-link,html[data-theme="dark"] .off-credit a,html[data-theme="dark"] .scan-footnote a,html[data-theme="dark"] .scanned-library-source {color:#95d7b2}
+    html[data-theme="dark"] .filter,html[data-theme="dark"] .fav,html[data-theme="dark"] .searchbox,html[data-theme="dark"] .library-search,html[data-theme="dark"] .field input,html[data-theme="dark"] .field select,html[data-theme="dark"] .searchbox input {background:#1a3025;color:#d9eadf;border-color:var(--line)}
+    html[data-theme="dark"] .filter.active {background:#4b9774;color:#091c13;border-color:#4b9774}
+    html[data-theme="dark"] .filter:not(.active):hover {background:#2c4a38}
+    html[data-theme="dark"] .fav.active {color:#e6bc6d}
+    html[data-theme="dark"] .modal-backdrop {background:#09130fba}
+    html[data-theme="dark"] .field label,html[data-theme="dark"] .agreement-box label,html[data-theme="dark"] .agreement-box h2,html[data-theme="dark"] .consent-logo {color:#d4e9dc}
+    html[data-theme="dark"] .field-missing input,html[data-theme="dark"] .incomplete-notice {background:#3f3626;border-color:#796741;color:#f7db9e}
+    html[data-theme="dark"] .agreement-box {border-color:var(--line)}
+    html[data-theme="dark"] .agreement-box p,html[data-theme="dark"] .scan-footnote,html[data-theme="dark"] .off-credit {color:#adc6b6}
+    html[data-theme="dark"] .agreement-box a,html[data-theme="dark"] .legal-links a {color:#a5e4bb}
+    html[data-theme="dark"] .consent-screen {background:radial-gradient(circle at 0 0,#1d3929 0,transparent 42%),var(--bg)}
+    html[data-theme="dark"] .mobile-nav {background:#15251d;border-color:var(--line)}
+    html[data-theme="dark"] .mobile-nav button {color:#a6b6a9}
+    html[data-theme="dark"] .mobile-nav button.active {color:#9be1b6}
+    html[data-theme="dark"] .scan-camera-frame {background:#203427;border-color:var(--line)}
+    html[data-theme="dark"] .review-source {background:#294f37;color:#c6e8ca}
+    html[data-theme="dark"] .empty-state {border-color:var(--line);color:var(--muted)}
+    html[data-theme="dark"] .macro-ring-bg {stroke:#35483c}
+    html[data-theme="dark"] .macro-legend-row {background:#263a2d}
+    html[data-theme="dark"] .theme-option[aria-pressed="true"] {background:#a9ddbd;border-color:#a9ddbd;color:#153426}
+    html[data-theme="dark"] .pref-switch:not([aria-checked="true"]) {background:#3d5144}
   </style>
 </head>
 <body>
@@ -253,7 +331,7 @@
       <button class="side-link active" data-view="today"><span class="nav-icon">◫</span> Today</button>
       <button class="side-link" data-view="history"><span class="nav-icon">▥</span> History</button>
       <button class="side-link" data-view="foods"><span class="nav-icon">♧</span> Food library</button>
-      <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Privacy &amp; data</button>
+      <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
     <div class="sidebar-bottom"><span class="side-tag">Private by design</span><div>Your food journal stays on this device. No account required.</div></div>
   </aside>
@@ -269,7 +347,7 @@
 </div>
 <nav class="mobile-nav" aria-label="Mobile navigation">
   <button class="active" data-view="today"><span>◫</span>Today</button><button data-view="history"><span>▥</span>History</button><button data-view="foods"><span>♧</span>Foods</button>
-  <button data-view="about"><span>⚙</span>Data</button>
+  <button data-view="about"><span>⚙</span>Settings</button>
 </nav>
 <div class="modal-backdrop" id="modalBackdrop" role="presentation"><div class="modal" id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -281,6 +359,23 @@
   const KEY='dayplate_v1';
   const CONSENT_KEY='tallysprig_document_acceptance_v4';
   const LAST_BACKUP_KEY='tallysprig_last_full_backup_v4';
+  const PREF_KEY='tallysprig_preferences_v5';
+  const DEFAULT_PREFS={macroChart:false,theme:'light'};
+  function normalizePrefs(obj){return {
+    macroChart: typeof obj?.macroChart==='boolean'?obj.macroChart:false,
+    theme:obj?.theme==='dark'?'dark':'light'
+  }}
+  function loadPrefs(){try {return normalizePrefs(JSON.parse(localStorage.getItem(PREF_KEY)||'{}'));} catch(_){return {...DEFAULT_PREFS}}}
+  let prefs=loadPrefs();
+  function applyTheme(){
+    document.documentElement.dataset.theme=prefs.theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content',prefs.theme==='dark'?'#102922':'#173e38');
+  }
+  function savePrefs(next,message){
+    try {localStorage.setItem(PREF_KEY,JSON.stringify(next));prefs=next;applyTheme();render();showToast(message)}
+    catch(_) {showToast('Could not save preferences. Check browser storage.')}
+  }
+  applyTheme();
   const PRIVACY_VERSION='1.0', MEDICAL_VERSION='1.0';
   let consentOk=false;
   function acceptedDocuments(){
@@ -376,13 +471,42 @@
   function showToast(s){let el=document.getElementById('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}
   const dateNav=()=>`<div class="date-switch"><button data-action="prevdate" title="Previous day" aria-label="Previous day">‹</button><span class="date-pill">${esc(shortDate(selectedDate))}</span><button data-action="nextdate" title="Next day" aria-label="Next day">›</button></div>`;
   function heading(title,subtitle,action=''){return `<div class="main-top"><div class="eyebrow">✳ &nbsp; TALLYSPRIG</div>${dateNav()}</div><div class="heading-row"><div><h1>${title}</h1><p class="subheading">${subtitle}</p></div>${action}</div>`}
+  function macroChartHtml(v,entryCount){
+    const macroRows=[
+      {key:'p',name:'Protein',color:'#62b58e',factor:4},
+      {key:'c',name:'Carbs',color:'#efa96f',factor:4},
+      {key:'f',name:'Fat',color:'#a99adf',factor:9}
+    ].map(m=>({...m,grams:Math.max(0,v[m.key]),energy:Math.max(0,v[m.key])*m.factor}));
+    const total=macroRows.reduce((n,m)=>n+m.energy,0);
+    const r=91,circ=2*Math.PI*r;
+    let cursor=0;
+    const segments=macroRows.map(m=>{
+      if(m.energy<=0||total<=0)return '';
+      const length=m.energy/total*circ;
+      const segment=`<circle class="macro-ring-segment" cx="120" cy="120" r="${r}" stroke="${m.color}" stroke-dasharray="${length.toFixed(4)} ${(circ-length).toFixed(4)}" stroke-dashoffset="${(-cursor).toFixed(4)}" transform="rotate(-90 120 120)"></circle>`;
+      cursor+=length;return segment;
+    }).join('');
+    const accessible=total>0?macroRows.map(m=>`${m.name}: ${dec(m.grams)} grams, ${Math.round(m.energy/total*100)} percent of estimated macro calories`).join('; '):'No macronutrients logged';
+    const legends=macroRows.map(m=>`<div class="macro-legend-row"><span class="macro-swatch" style="background:${m.color}"></span><span class="macro-legend-name">${m.name}</span><span class="macro-legend-value">${dec(m.grams)} g <span class="macro-percent">${total>0?Math.round(m.energy/total*100):0}%</span></span></div>`).join('');
+    return `<section class="macro-panel" aria-label="Macro breakdown for ${esc(prettyDate(selectedDate))}">
+      <div class="macro-graphic">
+        <svg role="img" aria-label="${esc(accessible)}" viewBox="0 0 240 240"><circle class="macro-ring-bg" cx="120" cy="120" r="${r}" fill="none" stroke-width="26"></circle>${segments}</svg>
+        <div class="macro-center"><span class="macro-calories">${fmt(v.cal)}</span><span class="macro-center-label">kcal logged</span></div>
+      </div>
+      <div><h2 class="macro-headline">Daily macro breakdown</h2><p class="macro-subtitle">${esc(prettyDate(selectedDate))} · ${entryCount} food ${entryCount===1?'entry':'entries'}</p>
+        <div class="macro-legend">${legends}</div>
+        ${total===0?'<p class="macro-empty">No macro values logged for this day yet.</p>':''}
+        <p class="macro-notes">Percentages show the estimated energy split from macros (4 kcal/g protein and carbs, 9 kcal/g fat). The total in the center is the calories recorded for this day; labels and rounding may differ.</p>
+      </div>
+    </section>`;
+  }
   function renderToday(){const entries=todayEntries(),v=sum(entries);
     const stats=[['Protein','p','var(--green)'],['Carbs','c','var(--peach)'],['Fat','f','var(--lav)']];
     let statHtml=`<div class="stats-grid"><div class="stat energy"><div class="stat-label"><span class="stat-dot"></span> Energy logged</div><div class="stat-number">${fmt(v.cal)}<span class="unit">kcal</span></div><span style="color:#c3ddcc;font-size:11px">${entries.length} food ${entries.length===1?'entry':'entries'}</span></div>`;
     statHtml+=stats.map(([label,key,color])=>`<div class="stat"><div class="stat-label">${label}</div><div class="stat-number">${fmt(v[key])}<span class="unit">g</span></div><div style="display:flex;align-items:center;gap:6px;color:#9ba99e;font-size:10px"><span style="height:7px;width:7px;background:${color};border-radius:50%"></span>Logged today</div></div>`).join('')+'</div>';
     let meals=MEALS.map(meal=>{const items=entries.filter(e=>e.meal===meal.id),mv=sum(items);return `<section class="meal-card"><div class="meal-header"><div class="meal-left"><div class="meal-emoji" style="background:${meal.color}">${meal.emoji}</div><div><div class="meal-name">${meal.id}</div><div class="meal-total">${fmt(mv.cal)} kcal</div></div></div><button class="plus" data-action="add" data-meal="${meal.id}" aria-label="Add food to ${meal.id}" title="Add food to ${meal.id}">+</button></div>${items.length?`<div class="meal-items">${items.map(e=>`<div class="logged-item"><span class="item-icon">${esc(e.emoji||'🍽️')}</span><div class="item-desc"><div class="item-title" title="${esc(e.name)}">${esc(e.name)}</div><div class="item-sub">${fmt(e.qty*100)/100} × ${esc(e.serving)}</div></div><div class="item-cal">${fmt(e.cal)}</div><button class="item-edit" data-action="editentry" data-id="${esc(e.id)}" aria-label="Edit ${esc(e.name)}" title="Edit entry">✎</button><button class="item-remove" data-action="remove" data-id="${esc(e.id)}" aria-label="Remove ${esc(e.name)}" title="Remove entry">×</button></div>`).join('')}</div>`:`<div class="empty-meal">Nothing logged yet.<br>Tap + to add a food.</div>`}</section>`}).join('');
     const referenceHtml=`<section class="energy-reference" aria-label="Daily energy reference"><div><div class="energy-ref-title">✳ Daily energy reference</div><div class="energy-ref-desc">An optional personal reference, not a limit.</div></div><div class="energy-ref-actions"><div class="energy-ref-value">${store.energyReference===null?'Not set':`${fmt(store.energyReference)} <small>kcal/day</small>`}</div><button class="energy-ref-edit" data-action="editreference" aria-label="${store.energyReference===null?'Set':'Edit'} daily energy reference">${store.energyReference===null?'Set reference':'Edit ✎'}</button></div></section>`;
-    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+referenceHtml+statHtml+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
+    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+referenceHtml+(prefs.macroChart?macroChartHtml(v,entries.length):statHtml)+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
@@ -391,8 +515,13 @@
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Privacy & your data.','Your food journal belongs to you. Back up and review how Tallysprig works.')+
-    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your complete food log, custom foods, favorites, and energy reference. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved.</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    return heading('Settings & your data.','Choose how your journal looks, manage backups, and review your documents.')+
+    `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
+    <div class="preference-row"><div><div class="preference-name">Daily macro doughnut chart</div><div class="preference-description">Replace the four calorie and macro cards on Today with a doughnut chart. Each date shows only its own entries.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show daily macro chart" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
+    <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
+    <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
+    </section>`+
+    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your complete food log, custom foods, favorites, energy reference, and appearance settings. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
     `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food log and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
@@ -723,7 +852,7 @@
   // V4 backup format deliberately excludes document acknowledgement, scanner cache, and rate counters.
   // Agreement acceptance remains device-local; a different device must acknowledge for itself.
   function exportFullBackup(){
-    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference}};
+    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference,preferences:prefs}};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     const link=URL.createObjectURL(blob),a=document.createElement('a');a.href=link;a.download='tallysprig-full-backup-'+localISO(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(link),5000);
     try{localStorage.setItem(LAST_BACKUP_KEY,new Date().toISOString())}catch(_){}
@@ -738,6 +867,7 @@
     if(!Array.isArray(d.entries)||!Array.isArray(d.customFoods)||!Array.isArray(d.favorites))throw Error('Backup is missing journal sections.');
     if(d.entries.length>20000||d.customFoods.length>5000||d.favorites.length>10000)throw Error('Backup contains too many records.');
     if(d.energyReference!==null&&!(Number.isInteger(d.energyReference)&&d.energyReference>0&&d.energyReference<=20000))throw Error('Invalid daily energy reference.');
+    if(d.preferences!==undefined&&(d.preferences===null||typeof d.preferences!=='object'||Array.isArray(d.preferences)||typeof d.preferences.macroChart!=='boolean'||!['light','dark'].includes(d.preferences.theme)))throw Error('Backup contains invalid appearance settings.');
     const entryIds=new Set(),foodIds=new Set();
     for(const f of d.customFoods){
       if(!f||!validText(f.id,90)||!validText(f.name,100)||!validText(f.serving,100)||!['Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'].includes(f.category)||!validText(f.emoji,16)||!['cal','p','c','f'].every(k=>validN(f[k],20000))||foodIds.has(f.id))throw Error('Backup contains an invalid or duplicate custom food.');
@@ -751,7 +881,7 @@
       entryIds.add(e.id);
     }
     if(d.favorites.some(id=>!validText(id,90)))throw Error('Backup has an invalid favorite ID.');
-    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference};
+    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference,preferences:d.preferences?normalizePrefs(d.preferences):null};
   }
   async function importFullBackup(file){
     try{
@@ -763,8 +893,9 @@
       if(mode!=='MERGE'&&mode!=='REPLACE'){showToast('Enter MERGE or REPLACE. Nothing changed.');return}
       const question=mode==='REPLACE'?`REPLACE all current Tallysprig entries, custom foods, favorites and energy reference with this backup?\n\nThis cannot be undone. Download a backup of your current data first.`:`MERGE this backup into your existing log? Matching entry IDs are skipped to avoid duplicates. Existing settings and foods win conflicts.`;
       if(!confirm(question))return;
+      const {preferences:incomingPrefs,...incomingJournal}=incoming;
       let next;
-      if(mode==='REPLACE')next=incoming;
+      if(mode==='REPLACE')next=incomingJournal;
       else{
         const entries=new Map(store.entries.map(e=>[e.id,e]));for(const e of incoming.entries){if(!entries.has(e.id))entries.set(e.id,e)}
         const foods=new Map(store.customFoods.map(f=>[f.id,f]));for(const f of incoming.customFoods){if(!foods.has(f.id))foods.set(f.id,f)}
@@ -772,18 +903,25 @@
       }
       // Validate the combined result BEFORE replacing the active journal. An unsuccessful save restores the previous copy.
       verifyBackup({app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,data:next});
-      const previous=store;
-      try{localStorage.setItem(KEY,JSON.stringify(next));store=next;}
-      catch(e){store=previous;throw Error('Could not save restored data. Storage might be full; nothing was changed.')}
+      const nextPrefs=mode==='REPLACE'&&incomingPrefs?incomingPrefs:prefs;
+      const priorJournal=localStorage.getItem(KEY),priorPrefs=localStorage.getItem(PREF_KEY);
+      try{
+        localStorage.setItem(KEY,JSON.stringify(next));
+        if(mode==='REPLACE'&&incomingPrefs)localStorage.setItem(PREF_KEY,JSON.stringify(nextPrefs));
+        store=next;prefs=nextPrefs;applyTheme();
+      }catch(e){
+        try{priorJournal===null?localStorage.removeItem(KEY):localStorage.setItem(KEY,priorJournal);priorPrefs===null?localStorage.removeItem(PREF_KEY):localStorage.setItem(PREF_KEY,priorPrefs);}catch(_){}
+        throw Error('Could not save restored data. Storage might be full; previous data was retained where possible.');
+      }
       selectedDate=localISO(new Date());view='today';closeModal();render();showToast(mode==='MERGE'?'Backup merged.':'Backup restored.');
     }catch(err){showToast(err instanceof SyntaxError?'This JSON file could not be read.':err?.message||'Restore failed.');}
   }
   function deleteAllLocalData(){
-    if(!confirm('Delete all Tallysprig data on this device, including saved meals, custom foods, favorites, scanned product cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
+    if(!confirm('Delete all Tallysprig data on this device, including saved meals, custom foods, favorites, appearance settings, scanned product cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
     const typed=prompt('Type DELETE to confirm permanent deletion of local Tallysprig data.','');
     if(typed!=='DELETE'){showToast('Nothing deleted.');return}
     try{
-      [KEY,OFF_CACHE_KEY,OFF_RATE_KEY,OFF_COOLDOWN_KEY,CONSENT_KEY,LAST_BACKUP_KEY].forEach(k=>localStorage.removeItem(k));
+      [KEY,PREF_KEY,OFF_CACHE_KEY,OFF_RATE_KEY,OFF_COOLDOWN_KEY,CONSENT_KEY,LAST_BACKUP_KEY].forEach(k=>localStorage.removeItem(k));
       // Reload returns to agreement screen; no server account exists to delete.
       location.reload();
     }catch(e){showToast('Unable to clear local data in this browser.')}
@@ -857,6 +995,8 @@
     else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
+    else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Daily chart '+(prefs.macroChart?'disabled.':'enabled.'))}
+    else if(action==='themelight'||action==='themedark'){savePrefs({...prefs,theme:action==='themedark'?'dark':'light'},'Appearance updated.')}
     else if(action==='editreference'){referenceModal()}
     else if(action==='clearreference'){clearReference()}
     else if(action==='confirmremove'){confirmRemoveEntry()}
