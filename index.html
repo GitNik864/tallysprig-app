@@ -418,6 +418,15 @@
     .fx-pr-sparks{font-size:28px;letter-spacing:8px;animation:fxPRPop .85s ease-out 1}
     @keyframes fxPRPop{0%{transform:translateY(10px) scale(.65);opacity:.25}50%{transform:translateY(-6px) scale(1.12);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
     @media(prefers-reduced-motion:reduce){.fx-pr-announcement,.fx-pr-sparks{animation:none!important;transition:none!important}}
+    /* V7.7: independent, optional fitness sound controls. */
+    .fx-sound-options{display:grid;gap:12px;margin-top:15px}
+    .fx-sound-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+    .fx-sound-row strong{font-size:13px;display:block;color:var(--ink)}
+    .fx-sound-row .fx-help{margin:4px 0 0;max-width:510px}
+    .fx-sound-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .fx-sound-actions label{display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700;font-size:12px}
+    .fx-sound-actions input{width:19px;height:19px;accent-color:#377659}
+    .fx-sound-actions button{white-space:nowrap}
     /* V7.5: accessible drag handles for exercise and set ordering. */
     .fx-exercise-titleline,.fx-set-titleline{display:flex;align-items:center;gap:9px;min-width:0}
     .fx-exercise-titleline>div{min-width:0}
@@ -753,14 +762,14 @@
     ['Plank','Bodyweight','Core'],['Crunch','Bodyweight','Core'],['Cable Crunch','Cable','Core'],['Hanging Knee Raise','Bodyweight','Core'],['Russian Twist','Bodyweight','Core'],['Deadlift','Barbell','Full body'],['Farmer Carry','Dumbbell','Full body'],
     ['Outdoor Running','Other','Cardio'],['Treadmill Running','Machine','Cardio'],['Walking','Other','Cardio'],['Treadmill Walking','Machine','Cardio'],['Cycling','Other','Cardio'],['Stationary Cycling','Machine','Cardio'],['Rowing','Machine','Cardio'],['Elliptical','Machine','Cardio'],['Swimming','Other','Cardio'],['Hiking','Other','Cardio'],['Stair Climber','Machine','Cardio']
   ].map(([name,equipment,muscle],i)=>({id:'built'+(i+1),name,equipment,muscle}));
-  function emptyFitness(){return {unit:'lb',sessions:[],bank:[],customExercises:[],prCelebrations:true}}
+  function emptyFitness(){return {unit:'lb',sessions:[],bank:[],customExercises:[],prCelebrations:true,prSound:false,restSound:false}}
   function idFitness(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
   function validFitnessNumber(v,max,nullable=false){return (nullable&&v===null)||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function validRestSeconds(v){return v===null||(Number.isInteger(v)&&v>=0&&v<=3600)}
   function validCardio(v,max){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function isCardio(ex){return ex.trackingType==='cardio'||(!ex.trackingType&&(getFitnessExercise(ex.exerciseId)?.muscle==='Cardio'))}
   function verifyFitness(f){
-    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises)||(f.bank!==undefined&&!Array.isArray(f.bank))||(f.prCelebrations!==undefined&&typeof f.prCelebrations!=='boolean'))throw Error('Backup has an invalid fitness section.');
+    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises)||(f.bank!==undefined&&!Array.isArray(f.bank))||(f.prCelebrations!==undefined&&typeof f.prCelebrations!=='boolean')||(f.prSound!==undefined&&typeof f.prSound!=='boolean')||(f.restSound!==undefined&&typeof f.restSound!=='boolean'))throw Error('Backup has an invalid fitness section.');
     if(f.sessions.length>10000||(f.bank||[]).length>1000||f.customExercises.length>1000)throw Error('Backup has too many fitness records.');
     let seen=new Set();let exerciseIds=new Set(EXERCISES.map(x=>x.id));
     for(const x of f.customExercises){
@@ -808,11 +817,42 @@
     }))};}
     return {unit:value.unit,customExercises:value.customExercises,
       prCelebrations:value.prCelebrations!==false,
+      prSound:value.prSound===true,restSound:value.restSound===true,
       sessions:value.sessions.map(normalizeWorkout),bank:(value.bank||[]).map(normalizeWorkout)};
   }
   let fitness=emptyFitness();try{const raw=localStorage.getItem(FITNESS_KEY);if(raw)fitness=normalizeFitness(JSON.parse(raw))}catch(_){fitness=emptyFitness()}
   let fxScreen='home',fxEditingId=null,fxSearch='',fxMuscle='All',fxCustomId=null,fxHistoryDate='';
-  let fxRestTimer=null,fxRestTicker=null,fxPRTimeout=null;
+  let fxRestTimer=null,fxRestTicker=null,fxPRTimeout=null,fxAudioContext=null;
+  // Web Audio uses short, synthesized chimes: no external media, licensing or requests.
+  // Audio playback in mobile browsers requires an earlier user interaction; starting
+  // a timer primes the context, but OS/browser sound restrictions still apply.
+  function fxPrepareAudio(){
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    try{
+      if(!fxAudioContext||fxAudioContext.state==='closed')fxAudioContext=new AC();
+      if(fxAudioContext.state==='suspended')fxAudioContext.resume().catch(()=>{});
+      return fxAudioContext;
+    }catch(_){return null}
+  }
+  function fxPlaySound(kind){
+    const ctx=fxPrepareAudio();if(!ctx||ctx.state==='closed')return false;
+    try{
+      const t=ctx.currentTime+.015;
+      const notes=kind==='record'?[[523.25,0,.13],[659.25,.15,.13],[783.99,.3,.26]]:[[660,0,.16],[880,.19,.24]];
+      notes.forEach(([frequency,delay,length])=>{
+        const osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.type=kind==='record'?'sine':'triangle';osc.frequency.value=frequency;
+        const start=t+delay;
+        gain.gain.setValueAtTime(.0001,start);
+        gain.gain.exponentialRampToValueAtTime(kind==='record'?.065:.048,start+.025);
+        gain.gain.exponentialRampToValueAtTime(.0001,start+length);
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.start(start);osc.stop(start+length+.02);
+        osc.onended=()=>{osc.disconnect();gain.disconnect()};
+      });return true;
+    }catch(_){return false}
+  }
   function saveFitness(){try{localStorage.setItem(FITNESS_KEY,JSON.stringify(fitness));return true}catch(_){showToast('Workout could not be saved. Download a backup and check storage.');return false}}
   function fitnessCatalog(){return [...fitness.customExercises,...EXERCISES]}
   function getFitnessExercise(id){return fitnessCatalog().find(x=>x.id===id)}
@@ -843,7 +883,11 @@
       ${planned.length?`<section class="fx-panel"><h2>Scheduled workouts</h2>${planned.slice(0,5).map(fxHistoryItem).join('')}</section>`:''}
       <section class="fx-panel"><div class="section-row"><h2>Recent workouts</h2><button class="button-secondary" data-action="fxnav" data-screen="history">See all</button></div>
       ${completed.length?[...completed].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(w=>fxHistoryItem(w)).join(''):'<div class="empty-state">No completed workouts yet. Start a workout to create your first record.</div>'}</section>
-      <section class="fx-panel"><div class="fx-pr-switch"><div><h2>Personal-best celebrations</h2><p class="fx-help">A short, optional animation when a logged working set beats a previously recorded best in weight, reps, or cardio distance. No animation for blank results or first-ever records.</p></div><label><input type="checkbox" data-action="fxprtoggle" ${fitness.prCelebrations?'checked':''} aria-label="Enable personal-best celebrations"> Enabled</label></div></section>
+      <section class="fx-panel"><div class="fx-pr-switch"><div><h2>Personal-best celebrations</h2><p class="fx-help">A short, optional animation when a logged working set beats a previously recorded best in weight, reps, or cardio distance. No animation for blank results or first-ever records.</p></div><label><input type="checkbox" data-action="fxprtoggle" ${fitness.prCelebrations?'checked':''} aria-label="Enable personal-best celebrations"> Enabled</label></div>
+      <div class="fx-sound-options">
+        <div class="fx-sound-row"><div><strong>Personal-best sound</strong><p class="fx-help">Play a short chime with your personal-best celebration. Requires celebrations to be enabled.</p></div><div class="fx-sound-actions"><label><input type="checkbox" data-action="fxprsoundtoggle" ${fitness.prSound?'checked':''} aria-label="Play sound for personal best celebrations"> Sound on</label><button class="fx-mini-button" type="button" data-action="fxpreviewpr">▶ Test sound</button></div></div>
+        <div class="fx-sound-row"><div><strong>Rest-timer completion sound</strong><p class="fx-help">Play a gentle two-note signal when an active set rest timer reaches zero.</p></div><div class="fx-sound-actions"><label><input type="checkbox" data-action="fxrestsoundtoggle" ${fitness.restSound?'checked':''} aria-label="Play sound at the end of rest timer"> Sound on</label><button class="fx-mini-button" type="button" data-action="fxpreviewrest">▶ Test sound</button></div></div>
+      </div><p class="fx-help" style="margin:13px 0 0">Sounds start off and are saved on this device. Your browser must allow audio; when Tallysprig is backgrounded or the phone is locked, the sound may be delayed or silent.</p></section>
       <section class="fx-panel"><h2>Weight unit</h2><div class="fx-rowgap"><button class="theme-option" data-action="fxunit" data-unit="lb" aria-pressed="${fitness.unit==='lb'}">Pounds (lb)</button><button class="theme-option" data-action="fxunit" data-unit="kg" aria-pressed="${fitness.unit==='kg'}">Kilograms (kg)</button></div><p class="fx-help">Weights are stored in kilograms internally. Switching units changes their display, not the stored weight.</p></section>`;
   }
   function renderFxBank(){return `<section class="fx-panel"><div class="section-row"><h2>Workout Bank</h2><span class="fx-pill">${fitness.bank.length} template${fitness.bank.length===1?'':'s'}</span></div>
@@ -897,6 +941,7 @@
     set.prNotified=notified;return hits;
   }
   function fxCelebrate(exName,hits){if(!hits.length||!fitness.prCelebrations)return;
+    if(fitness.prSound)fxPlaySound('record');
     document.getElementById('fxPRAnnouncement')?.remove();if(fxPRTimeout)clearTimeout(fxPRTimeout);
     const div=document.createElement('div');div.className='fx-pr-announcement';div.id='fxPRAnnouncement';div.setAttribute('role','status');div.setAttribute('aria-live','polite');
     div.innerHTML=`<div class="fx-pr-sparks" aria-hidden="true">✳ ✦ ✳</div><strong>Personal best recorded!</strong><p>${esc(exName)} · New ${esc(hits.join(' & '))} best</p><p>Progress at your own pace.</p>`;
@@ -959,7 +1004,14 @@
     const remaining=Math.max(0,Math.ceil((fxRestTimer.ends-Date.now())/1000));
     const display=document.querySelector(`[data-fx-rest-display="${fxRestTimer.setId}"]`);
     if(display)display.textContent=remaining?`Rest ${fxFormatClock(remaining)}`:'Rest finished';
-    if(remaining===0){clearInterval(fxRestTicker);fxRestTicker=null;fxRestTimer=null;}
+    if(remaining===0){
+      const finishedId=fxRestTimer.setId;
+      clearInterval(fxRestTicker);fxRestTicker=null;fxRestTimer=null;
+      const button=[...document.querySelectorAll('[data-action="fxresttimer"]')].find(b=>b.dataset.set===finishedId);
+      if(button)button.textContent='Start rest';
+      if(fitness.restSound)fxPlaySound('rest');
+      showToast('Rest finished. Ready when you are.');
+    }
   }
   function fxStopRest(){if(fxRestTicker)clearInterval(fxRestTicker);fxRestTicker=null;fxRestTimer=null}
   function fxStartRest(exId,setId){
@@ -968,7 +1020,7 @@
     if(fxRestTimer?.setId===setId){fxStopRest();render();return}
     const duration=fxEffectiveRest(ex,set);
     if(duration===null||duration<1){showToast('Set a rest duration for this set or exercise first.');return}
-    fxStopRest();fxRestTimer={setId,ends:Date.now()+duration*1000};
+    fxStopRest();if(fitness.restSound)fxPrepareAudio();fxRestTimer={setId,ends:Date.now()+duration*1000};
     fxRestTicker=setInterval(fxUpdateRestTimer,400);render();fxUpdateRestTimer();
   }
   function fxCardioInputs(set,exId,i,plan){
@@ -1223,6 +1275,8 @@
     if(action==='fxbankplan'){fxBankUse(btn.dataset.id,true);return}
     if(action==='fxbankedit'){const bank=fitness.bank.find(w=>w.id===btn.dataset.id);if(!bank)return;fxEditingId=bank.id;fxScreen='editor';render();return}
     if(action==='fxbankdelete'){fxDeleteBank(btn.dataset.id);return}
+    if(action==='fxpreviewpr'){fxPlaySound('record');return}
+    if(action==='fxpreviewrest'){fxPlaySound('rest');return}
     if(action==='fxunit'){const unit=btn.dataset.unit;if(!['lb','kg'].includes(unit))return;fitness.unit=unit;saveFitness();render();return}
     if(action==='fxmuscle'){fxMuscle=btn.dataset.muscle;render();return}
     if(action==='fxclearfilter'){fxHistoryDate='';render();return}
@@ -1791,10 +1845,13 @@
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
   document.addEventListener('input',e=>{if(e.target.matches('[data-fx-field]')){onFitnessInput(e.target)}else if(e.target.id==='fxExerciseSearch'){fxSearch=e.target.value;refreshExerciseResults()}else if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
   document.addEventListener('submit',e=>{if(e.target.id==='fxExerciseForm'){e.preventDefault();saveFitnessExerciseForm()}else if(e.target.id==='healthProfileForm'){e.preventDefault();saveHealthForm()}else if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
-  document.addEventListener('change',e=>{if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
+  document.addEventListener('change',e=>{if(e.target.matches('[data-action="fxprsoundtoggle"]')){fitness.prSound=e.target.checked;saveFitness();if(fitness.prSound)fxPrepareAudio();showToast('Personal-best sound '+(fitness.prSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxrestsoundtoggle"]')){fitness.restSound=e.target.checked;saveFitness();if(fitness.restSound)fxPrepareAudio();showToast('Rest-timer sound '+(fitness.restSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  // Catch expiration after a throttled background interval once the app is visible again.
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)fxUpdateRestTimer()});
+  window.addEventListener('focus',fxUpdateRestTimer);
   setupConsent();
   if(consentOk){render();}
 })();
