@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
-  <meta name="description" content="A private food and strength-training journal for meals, exercise sets, and workout history.">
-  <title>Tallysprig I2.1 (V7.7) — Food & Fitness Journal</title>
+  <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
+  <title>Tallysprig V8.0 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -516,6 +516,38 @@
       .simple-mode .fx-item .fx-actions button{font-size:14px}
     }
     @media(prefers-reduced-motion:reduce){.simple-summary:after{transition:none}}
+
+    /* V8.0: offline, rule-based training and nutrition insights */
+    .insights-hero{background:linear-gradient(120deg,#214e43 0%,#376655 100%);color:#fff;border-radius:19px;padding:21px 23px;margin:23px 0 17px}
+    .insights-hero .insights-overline{color:#d0edd7;font-size:10px;font-weight:850;letter-spacing:2px;text-transform:uppercase}
+    .insights-hero h2{color:#fff;font-size:24px;margin:9px 0 7px;letter-spacing:-.8px}
+    .insights-hero p{margin:0;color:#e0efe4;font-size:13px;line-height:1.75;max-width:700px}
+    .insights-note{margin:13px 0 0;font-size:12px;line-height:1.65;color:var(--ink2)}
+    .insights-filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:19px 0}
+    .insights-filters .insights-label{font-size:11px;font-weight:850;color:var(--muted);margin-right:4px}
+    .insights-filters button{min-height:41px;padding:9px 15px;background:var(--paper);color:var(--ink2);border:1px solid var(--line);border-radius:11px;font-size:12px;font-weight:800}
+    .insights-filters button[aria-pressed="true"]{background:#204b3e;color:#fff;border-color:#204b3e}
+    .insights-section{margin:20px 0 31px}
+    .insights-section-head{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+    .insights-section-head h2{font-size:22px}
+    .insights-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:0 0 13px}
+    .insights-count{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}
+    .insights-count strong{display:block;font-size:26px;line-height:1.2;letter-spacing:-1px;color:var(--ink)}
+    .insights-count small{display:block;font-size:11px;color:var(--muted);line-height:1.45;margin-top:5px}
+    .insights-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .insights-card{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:18px 17px;box-shadow:var(--shadow);min-width:0}
+    .insights-card .insights-card-type{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:#56846a;font-weight:850}
+    .insights-card h3{font-size:16px;line-height:1.35;margin:8px 0 9px;letter-spacing:-.3px;color:var(--ink)}
+    .insights-card p{font-size:13px;line-height:1.7;color:var(--ink2);margin:0 0 10px}
+    .insights-card .insights-basis{font-size:11px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line);padding-top:10px}
+    .insights-card .insights-advice{background:var(--bg);padding:11px 12px;border-radius:10px;font-size:12px;line-height:1.65;color:var(--ink2);margin:9px 0}
+    .insights-empty{background:var(--paper);border:1px dashed var(--line);padding:20px;border-radius:13px;color:var(--ink2);font-size:13px;line-height:1.7}
+    .insights-footer{padding:17px;border:1px solid var(--line);background:var(--paper);border-radius:13px;color:var(--ink2);font-size:12px;line-height:1.8}
+    html[data-theme="dark"] .insights-hero{background:linear-gradient(125deg,#244838,#345441)}
+    html[data-theme="dark"] .insights-filters button[aria-pressed="true"]{background:#a5dab7;color:#173d37}
+    html[data-theme="dark"] .insights-card .insights-card-type{color:#a8d9ba}
+    @media(max-width:650px){.mobile-nav{padding-left:2px;padding-right:2px}.mobile-nav button{font-size:9px;gap:3px;padding:0 1px}.mobile-nav button span{font-size:18px}.insights-hero{padding:18px}.insights-hero h2{font-size:21px}.insights-cards{grid-template-columns:1fr}.insights-count{padding:12px 8px}.insights-count strong{font-size:22px}.insights-count small{font-size:10px}.insights-filters{gap:6px}.insights-filters button{padding:9px 11px}}
+    @media(max-width:350px){.mobile-nav button{font-size:8px}.insights-counts{gap:5px}}
   </style>
 </head>
 <body>
@@ -524,8 +556,8 @@
     <div class="consent-logo"><span aria-hidden="true">✳</span><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
     <h1 class="consent-title" id="consentTitle">Before you begin</h1>
     <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
-    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.5).</span></label></div>
-    <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.3).</span></label></div>
+    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.7).</span></label></div>
+    <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.4).</span></label></div>
     <button id="agreeContinue" class="button-primary" type="button" disabled>Agree &amp; Continue →</button>
     <div id="consentError" class="consent-error" role="alert" aria-live="polite"></div>
     <p class="data-detail">If you do not agree, you can close this page. No existing food entries will be deleted.</p>
@@ -539,9 +571,10 @@
       <button class="side-link" data-view="history"><span class="nav-icon">▥</span> History</button>
       <button class="side-link" data-view="foods"><span class="nav-icon">♧</span> Food library</button>
       <button class="side-link" data-view="fitness"><span class="nav-icon"><svg class="fitness-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m4.5 4.5 3 3"/><path d="m16.5 16.5 3 3"/><path d="M3 7 7 3"/><path d="m17 21 4-4"/><path d="m2 10 8-8"/><path d="m14 22 8-8"/></svg></span> Fitness</button>
+      <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Private by design</span><div>Your food and workout records stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.0 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -555,7 +588,8 @@
 </div>
 <nav class="mobile-nav" aria-label="Mobile navigation">
   <button class="active" data-view="today"><span>◫</span>Today</button><button data-view="history"><span>▥</span>History</button><button data-view="foods"><span>♧</span>Foods</button>
-  <button data-view="fitness"><span class="fitness-nav-mobile"><svg class="fitness-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m4.5 4.5 3 3"/><path d="m16.5 16.5 3 3"/><path d="M3 7 7 3"/><path d="m17 21 4-4"/><path d="m2 10 8-8"/><path d="m14 22 8-8"/></svg></span>Fitness</button><button data-view="about"><span>⚙</span>Settings</button>
+  <button data-view="fitness"><span class="fitness-nav-mobile"><svg class="fitness-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6.5 6.5 11 11"/><path d="m4.5 4.5 3 3"/><path d="m16.5 16.5 3 3"/><path d="M3 7 7 3"/><path d="m17 21 4-4"/><path d="m2 10 8-8"/><path d="m14 22 8-8"/></svg></span>Fitness</button>  <button data-view="insights"><span>✦</span>Insights</button>
+<button data-view="about"><span>⚙</span>Settings</button>
 </nav>
 <div class="modal-backdrop" id="modalBackdrop" role="presentation"><div class="modal" id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -590,7 +624,7 @@
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.6', MEDICAL_VERSION='1.3';
+  const PRIVACY_VERSION='1.7', MEDICAL_VERSION='1.4';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -1481,10 +1515,154 @@
     if(action==='fxdetails'){const w=fitness.sessions.find(x=>x.id===btn.dataset.id);if(!w)return;openModal(`<div class="modal-header"><h3 id="modalTitle">Workout details</h3><button class="modal-close" data-action="close">×</button></div>${renderFxDetails(w)}<div class="dialog-actions"><button class="button-primary" data-action="close">Close</button></div>`);return}
   }
 
+
+  // V8.0 Tallysprig Insights — deterministic rules, not a generative model.
+  // Reads the existing local journal in memory; no new storage or network calls.
+  let insightsWindow=28,insightsFocus='both';
+  function insightCutoff(){return addDays(localISO(new Date()),1-insightsWindow)}
+  function inInsightWindow(date){return typeof date==='string'&&date>=insightCutoff()&&date<=localISO(new Date())}
+  function insightCard(kind,title,observation,advice,basis){
+    return `<article class="insights-card"><div class="insights-card-type">${esc(kind)}</div><h3>${esc(title)}</h3><p>${esc(observation)}</p>${advice?`<div class="insights-advice"><strong>Consider:</strong> ${esc(advice)}</div>`:''}<div class="insights-basis">Based on: ${esc(basis)}</div></article>`;
+  }
+  function insightCount(value,label){return `<div class="insights-count"><strong>${esc(value)}</strong><small>${esc(label)}</small></div>`}
+  function insightGroup(ex){return getFitnessExercise(ex.exerciseId)?.muscle||'Uncategorized'}
+  function insightsFitness(){
+    const sessions=fitness.sessions.filter(w=>w.status==='complete'&&inInsightWindow(w.date)).sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));
+    const completedSets=sessions.flatMap(w=>w.exercises.flatMap(x=>x.sets.filter(set=>set.done)));
+    const exerciseList=sessions.flatMap(w=>w.exercises.filter(ex=>ex.sets.some(set=>set.done)));
+    const days=new Set(sessions.map(w=>w.date));
+    const counts=`<div class="insights-counts">${insightCount(sessions.length,'completed sessions')}${insightCount(days.size,'days with logged sessions')}${insightCount(completedSets.length,'completed sets / intervals')}</div>`;
+    if(!sessions.length)return counts+`<div class="insights-empty"><strong>No completed sessions in this window.</strong> Finish a workout in Fitness to see training patterns here. Drafts, scheduled workouts and Workout Bank templates are not counted.</div>`;
+    const cards=[];
+    cards.push(insightCard('Training overview','Your recorded training',
+      `You completed ${sessions.length} ${sessions.length===1?'workout':'workouts'} on ${days.size} ${days.size===1?'day':'days'}, with ${completedSets.length} completed sets or cardio intervals.`,
+      'Use these records as a starting point, not a quota. How you feel, rest, and exercise technique matter more than any single statistic.',
+      `${insightsWindow}-day window · completed sessions only`));
+    const strengthById=new Map();
+    for(const w of sessions)for(const ex of w.exercises){
+      if(isCardio(ex))continue;
+      const sets=ex.sets.filter(set=>set.done&&set.type!=='warmup'&&Number.isFinite(set.actualWeightKg)&&set.actualWeightKg>=0&&Number.isInteger(set.actualReps)&&set.actualReps>0);
+      if(!sets.length)continue;
+      // Select the heaviest comparable logged working set; ties favor more reps.
+      const best=[...sets].sort((a,b)=>b.actualWeightKg-a.actualWeightKg||b.actualReps-a.actualReps)[0];
+      const key=ex.exerciseId||ex.name;
+      if(!strengthById.has(key))strengthById.set(key,[]);
+      strengthById.get(key).push({date:w.date,name:ex.name,weight:best.actualWeightKg,reps:best.actualReps});
+    }
+    let trendCount=0;
+    for(const rows of [...strengthById.values()].sort((a,b)=>b.length-a.length)){
+      if(trendCount>=2)break;
+      // Only compare different dates, avoiding an arbitrary same-session ordering.
+      const earliest=rows[0];const latest=[...rows].reverse().find(r=>r.date!==earliest.date);
+      if(!latest)continue;
+      const firstWeight=fitness.unit==='lb'?earliest.weight/KG_PER_LB:earliest.weight;
+      const lastWeight=fitness.unit==='lb'?latest.weight/KG_PER_LB:latest.weight;
+      const weightUnit=fitness.unit;
+      const approx=(n)=>Number(n.toFixed(1));
+      const same=Math.abs(latest.weight-earliest.weight)<.005;
+      const clearProgress=(same&&latest.reps>earliest.reps)||latest.weight>earliest.weight+.005&&latest.reps>=earliest.reps;
+      const title=clearProgress?`${latest.name}: recorded progress`:`${latest.name}: two-session comparison`;
+      const observation=`Your selected working sets were ${approx(firstWeight)} ${weightUnit} × ${earliest.reps} on ${prettyDate(earliest.date)} and ${approx(lastWeight)} ${weightUnit} × ${latest.reps} on ${prettyDate(latest.date)}.${clearProgress?' Both records support an improvement in load or repetitions.':' The sets differ; this alone does not establish a performance trend.'}`;
+      cards.push(insightCard('Strength comparison',title,observation,
+        'Compare technique, range of motion, effort and how recovered you felt before drawing conclusions. Gradual, comfortable progress is more useful than chasing a new number.',
+        'Earliest and latest recorded working sets on different days · planned values and warmups excluded'));
+      trendCount++;
+    }
+    if(!trendCount){
+      cards.push(insightCard('Strength tracking','More context improves comparisons',
+        'There are not yet two different days with actual weight and repetitions recorded for the same strength exercise in this window.',
+        'Record actual weight and reps when useful; completed sets can still be saved without numbers.',
+        'Logged actual working sets only'));
+    }
+    const cardio=[];for(const w of sessions)for(const ex of w.exercises){
+      if(!isCardio(ex))continue;
+      const intervals=ex.sets.filter(s=>s.done);
+      const time=intervals.filter(s=>Number.isFinite(s.actualMinutes)).reduce((n,s)=>n+s.actualMinutes,0);
+      const distance=intervals.filter(s=>Number.isFinite(s.actualMiles)).reduce((n,s)=>n+s.actualMiles,0);
+      if(intervals.some(s=>Number.isFinite(s.actualMinutes)||Number.isFinite(s.actualMiles)))cardio.push({name:ex.name,date:w.date,time,distance});
+    }
+    if(cardio.length){
+      const last=cardio[cardio.length-1];
+      const totalTime=cardio.reduce((n,x)=>n+x.time,0);const totalDistance=cardio.reduce((n,x)=>n+x.distance,0);
+      cards.push(insightCard('Cardio log','Cardio in your journal',
+        `${cardio.length} cardio ${cardio.length===1?'exercise entry includes':'exercise entries include'} recorded results: ${cardioFmt(totalTime)} total minutes and ${cardioFmt(totalDistance)} total miles. Most recent: ${last.name} on ${prettyDate(last.date)}.`,
+        'Different activities, distances and intensities are not directly comparable. Use your energy, comfort and recovery alongside logged results.',
+        'Completed cardio intervals with actual time or distance · missing values not assumed to be zero'));
+    }
+    const groupCounts=new Map();for(const ex of exerciseList){const group=insightGroup(ex);if(group!=='Uncategorized')groupCounts.set(group,(groupCounts.get(group)||0)+1)}
+    if(groupCounts.size){const names=[...groupCounts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5).map(([n,k])=>`${n} (${k})`).join(', ');
+      cards.push(insightCard('Exercise categories','What your workouts included',
+        `Recorded exercises span ${groupCounts.size} recognized ${groupCounts.size===1?'category':'categories'}. Most represented: ${names}.`,
+        'This only describes logged exercise categories—not a full picture of muscle balance. For exercise selection or technique, a qualified coach can help.',
+        'Categories attached to completed exercise entries; custom or missing classifications may be excluded'));}
+    cards.push(insightCard('Recovery reminder','Make space for recovery',
+      'Workout records show what was completed, but do not reveal sleep, soreness, injury, technique or recovery readiness.',
+      'Include rest and easier activity when needed. If exercise causes pain, stop and seek advice from a qualified professional.',
+      'General educational guidance · not an assessment of fatigue or injury'));
+    return counts+`<div class="insights-cards">${cards.join('')}</div>`;
+  }
+  function insightsNutrition(){
+    const entries=store.entries.filter(e=>inInsightWindow(e.date));
+    const days=new Set(entries.map(e=>e.date));
+    const foodKeys=new Set(entries.map(e=>(e.foodId||'')+'|'+e.name.toLocaleLowerCase()));
+    const counts=`<div class="insights-counts">${insightCount(entries.length,'recorded food entries')}${insightCount(foodKeys.size,'different logged foods')}${insightCount(days.size,'days with food entries')}</div>`;
+    if(!entries.length)return counts+`<div class="insights-empty"><strong>No food entries in this window.</strong> If you decide to log meals, insights can show the variety of foods you recorded. You can also use Tallysprig without logging every meal.</div>`;
+    const cats=new Map();let unclassified=0;
+    for(const e of entries){const food=getFood(e.foodId);if(food&&typeof food.category==='string')cats.set(food.category,(cats.get(food.category)||0)+1);else unclassified++}
+    const cards=[];
+    const known=entries.length-unclassified;
+    cards.push(insightCard('Food journal overview','Variety in your recorded foods',
+      `Your journal contains ${foodKeys.size} different food ${foodKeys.size===1?'name':'names'} across ${days.size} ${days.size===1?'day':'days'} of entries. These records are only the foods you chose to log.`,
+      'Enjoying familiar foods is fine. Across meals and snacks, variety can help provide different nutrients; eating well does not require perfect logging.',
+      `${insightsWindow}-day window · food names from saved entries · neither food quality nor total intake measured`));
+    if(known){
+      const categories=[...cats.entries()].sort((a,b)=>b[1]-a[1]).map(([n,k])=>`${n} (${k})`).join(', ');
+      cards.push(insightCard('Logged food categories','Food groups represented',
+        `Of ${entries.length} entries, ${known} could be matched to a food-library category. Recorded categories: ${categories}.${unclassified?` ${unclassified} entries could not be categorized.`:''}`,
+        'Consider different types of produce, grains, protein-containing foods and other foods you enjoy, while accommodating allergies, access and preferences. Categories are broad and not a measure of meal quality.',
+        'Library labels only · scanned, renamed or imported foods may have missing or imperfect category data'));
+      const produceCount=(cats.get('Fruit')||0)+(cats.get('Produce')||0);
+      if(produceCount){cards.push(insightCard('Food ideas','Plants in the mix',
+          `${produceCount} recorded ${produceCount===1?'entry is':'entries are'} categorized as fruit or produce.`,
+          'Different colors and kinds of fruit and vegetables can provide different nutrients. Fresh, frozen and canned versions can all fit.',
+          'Recorded fruit and produce category labels; this is not a daily serving count'));}
+      else cards.push(insightCard('Food ideas','Explore variety when it suits you',
+        'No recorded entries could be classified as fruit or produce in this window. That does not establish what you actually ate.',
+        'If you want ideas, add a fruit or vegetable you enjoy to a meal or snack. Frozen and canned options count too.',
+        'Category labels from optional food logs; incomplete records are common'));
+      if(cats.has('Grains')||cats.has('Protein')||cats.has('Dairy')){
+        cards.push(insightCard('Meals & activity','Fuel for active days',
+          'Some entries match grain, protein-food or dairy categories. Food labels alone cannot tell whether someone has enough energy or nutrients.',
+          'On active days, regular satisfying meals and snacks with a mix of carbohydrates, protein and fats can support activity and recovery. Eat according to your needs and hunger, rather than a number in the app.',
+          'General nutrition education · no individual nutrient, calorie or weight targets are calculated'));}
+    }else{
+      cards.push(insightCard('Category coverage','Food labels need context',
+        'The saved foods in this window cannot be linked to built-in or custom food categories, so group-level insights would be unreliable.',
+        'Review product labels for accuracy and choose foods that meet your own needs and preferences.',
+        'Names and nutrient values do not reliably identify a food group'));
+    }
+    cards.push(insightCard('Nutrition safety','Logging is not the whole picture',
+      'The journal does not capture hunger, medical needs, food allergies, access to food, or every meal unless you choose to record it.',
+      'Do not use these insights to skip meals, compensate for eating with exercise, or judge yourself. For individual health or allergy concerns, ask a qualified healthcare professional.',
+      'Educational guidance · Tallysprig does not diagnose deficiencies or estimate intake adequacy'));
+    return counts+`<div class="insights-cards">${cards.join('')}</div>`;
+  }
+  function renderInsights(){
+    const length=insightsWindow;
+    return heading('Insights for your journey.','Practical training and nutrition reflections, made from your own records.')+
+      `<section class="insights-hero"><div class="insights-overline">✦ Tallysprig Intelligence · V8.0</div><h2>A clearer view of your patterns.</h2><p>These insights are calculated <strong>on this device</strong> using transparent rules. No AI API, account, or internet is needed. This is not a trained or conversational AI model, and the suggestions are educational—not professional coaching or medical advice.</p></section>`+
+      `<div class="insights-filters" role="group" aria-label="Insights time window"><span class="insights-label">SHOW</span>${[7,28,90].map(n=>`<button type="button" data-action="insightswindow" data-days="${n}" aria-pressed="${insightsWindow===n}">${n} days</button>`).join('')}</div>`+
+      `<div class="insights-filters" role="group" aria-label="Insights category"><span class="insights-label">TOPIC</span>${[['both','All'],['training','Training'],['nutrition','Nutrition']].map(([k,label])=>`<button type="button" data-action="insightsfocus" data-focus="${k}" aria-pressed="${insightsFocus===k}">${label}</button>`).join('')}</div>`+
+      `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only recorded data is considered. Blank actual results, unfinished workouts, and unlogged meals are not treated as zero or as failures.</p>`+
+      `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>🏋 Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
+      `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>🌿 Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.0 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Nothing here is an instruction to eat less, increase exercise, or train through pain. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+  }
+
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.0 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="simple-main-toggle" aria-label="Simple Mode setting"><div class="preference-row"><div><div class="preference-name">Simple Mode</div><div class="preference-description">${prefs.simpleMode?'On — tap a section or set to expand its options.':'Off — all details and options are shown as usual.'} Bigger touch targets and compact menus, especially for Fitness. Your data stays the same.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.simpleMode}" aria-label="Enable Simple Mode" data-action="togglesimple"><span class="pref-switch-knob" aria-hidden="true"></span></button></div></section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
@@ -1552,6 +1730,12 @@
       const progress=root.querySelector('.health-progress');
       if(progress){progress.classList.add('simple-panel');makeSimpleFold(progress,'today-health','Daily macro references','Tap to view your nutrient comparisons');}
     }
+    if(view==='insights'){
+      root.querySelectorAll('.insights-card').forEach((card,i)=>{
+        const title=card.querySelector('h3')?.textContent||'Insight';
+        makeSimpleFold(card,'insight-'+insightsFocus+'-'+insightsWindow+'-'+i,title,'Tap to read observations and advice');
+      });
+    }
     if(view==='fitness'){
       if(fxScreen==='editor'&&editingWorkout()){
         const panel=root.querySelector('.fx-panel');
@@ -1587,7 +1771,7 @@
       }
     }
   }
-  function render(){if(fxDrag)fxDragClear();document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});enhanceSimpleUI();renderQuick()}
+  function render(){if(fxDrag)fxDragClear();document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():view==='insights'?renderInsights():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});enhanceSimpleUI();renderQuick()}
   function openModal(content){document.getElementById('modalDialog').innerHTML=content;document.getElementById('modalBackdrop').classList.add('show');document.body.style.overflow='hidden';setTimeout(()=>document.querySelector('#modalDialog input,#modalDialog select,#modalDialog button')?.focus(),20)}
   function closeModal(){barcodeRequestSeq++;stopScanner().catch(()=>{});document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null;activeProduct=null}
   function referenceModal(){
@@ -2064,6 +2248,8 @@
     if(btn.dataset.view){view=btn.dataset.view;if(view==='fitness')fxScreen='home';render();window.scrollTo({top:0,behavior:'smooth'});return}
     if(btn.dataset.category){category=btn.dataset.category;render();return}
     const action=btn.dataset.action;
+    if(action==='insightswindow'){const days=Number(btn.dataset.days);if([7,28,90].includes(days)){insightsWindow=days;render()}return}
+    if(action==='insightsfocus'){if(['both','training','nutrition'].includes(btn.dataset.focus)){insightsFocus=btn.dataset.focus;render()}return}
     if(action.startsWith('fx')){onFitnessAction(action,btn);return}
     if(action==='prevdate'||action==='nextdate'){selectedDate=addDays(selectedDate,action==='prevdate'?-1:1);render()}
     else if(action==='goday'){selectedDate=btn.dataset.date;view='today';render();window.scrollTo(0,0)}

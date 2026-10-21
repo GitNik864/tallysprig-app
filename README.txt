@@ -1,3 +1,33 @@
+TALLYSPRIG V8.0 — OFFLINE FITNESS & NUTRITION INSIGHTS
+
+CUMULATIVE RELEASE: Includes I2.1 exercise favorites, I2 Simple Mode, I1 height/weight unit improvements, and all V7.7 fitness features.
+
+WHAT'S NEW
+- A separate Insights tab on desktop and mobile.
+- Training insights: completed workouts and sets, careful actual strength-set comparisons, cardio records, exercise category patterns and recovery considerations.
+- Nutrition insights: variety of food names, food library categories, ideas for balanced, satisfying meals and snacks. Missing foods and unlogged meals are NOT treated as under-eating or deficiencies.
+- Time filter: 7 / 28 / 90 days; topic filter: both / training / nutrition.
+- Simple Mode supports expandable insight cards, and the tab respects light and dark modes.
+- Rules-only analysis works offline: no AI API, model download, API key, backend, or per-use fee. This is NOT a trained language model. The feature never uploads meal or workout information.
+- Privacy Policy v1.7 and Medical Disclaimer v1.4 document the new functionality and require new acknowledgement.
+- App version is visible in Settings.
+
+SAFETY AND DATA INTEGRITY
+- Analysis is educational, based on self-reported incomplete records, not individualized medical or coaching advice.
+- Does not recommend eating less, calorie deficits, weight changes, exercise compensation or excessive training; under-18 users receive no new numerical calorie/macro targets.
+- Historical local storage keys and JSON backup structure are unchanged. Existing meals, workouts, favorites, and preferences are not modified by visiting Insights.
+- Existing third-party barcode lookup behavior remains unchanged; Insight calculations make no web requests.
+
+DEPLOYMENT
+1. On your current app, download a full JSON backup. Keep it private.
+2. Extract the ZIP and upload all files AND icons directory to the ROOT of your existing GitHub Pages repository, replacing same-named files. Do not upload the ZIP itself.
+3. Commit, let Pages deploy, visit the HTTPS site while online, and reopen/refresh the PWA if the prior cached build appears.
+4. Read and accept the updated Privacy Policy v1.7 and Medical Disclaimer v1.4.
+5. Never uninstall the PWA or clear site storage as a way to force updates.
+
+IMPORTANT: Privacy and medical documents are prototype drafts, not legal review. Actual device acceptance testing remains necessary.
+
+--- PREVIOUS RELEASE NOTES ---
 TALLYSPRIG I2.1 — FAVORITE EXERCISES UPDATE
 
 Built directly on the complete Tallysprig I2 package (V7.7 + Health 6.1).
