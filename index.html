@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and strength-training journal for meals, exercise sets, and workout history.">
-  <title>Tallysprig V7.6 — Food & Fitness Journal</title>
+  <title>Tallysprig I2 (V7.7) — Food & Fitness Journal</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -283,6 +283,11 @@
     .goal-note {font-size:11px;color:var(--muted)}
     .health-profile-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:15px 0 17px}
     .health-profile-grid .field {margin:0;min-width:0}
+    .health-profile-grid [hidden] { display:none !important; }
+    .health-unit-select {grid-column:1/-1;}
+    .height-imperial {grid-column:1/-1; display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+    .health-unit-note {grid-column:1/-1;color:var(--muted);font-size:11px;line-height:1.6;margin-top:-4px;}
+    @media(max-width:390px) { .height-imperial {gap:8px;} }
     .health-profile-grid input,.health-profile-grid select {width:100%;box-sizing:border-box}
     .health-callout {border:1px solid var(--line);background:var(--bg);padding:14px 16px;border-radius:12px;margin:15px 0;font-size:12px;color:var(--muted);line-height:1.7}
     .health-estimate {font-weight:860;font-size:21px;color:var(--ink);margin:7px 0}
@@ -445,6 +450,69 @@
     .fx-drag-ghost span{color:#4c9873;font-size:22px}
     .fx-reorder-tip{margin:12px 0 5px;font-size:11px;color:var(--muted);line-height:1.5}
     @media(prefers-reduced-motion:reduce){.fx-drag-ghost{transition:none}}
+
+    /* I2: Optional compact, accessible accordion mode; no new data is collected. */
+    .simple-mode .simple-main-toggle{border:1px solid #a8cdbc;background:var(--paper);box-shadow:var(--shadow)}
+    .simple-main-toggle{border:1px solid var(--line);border-radius:17px;padding:16px 19px;background:var(--paper);margin:0 0 17px}
+    .simple-main-toggle .preference-row{margin:0}
+    .simple-main-toggle .preference-name{font-size:16px}
+    .simple-mode .simple-main-toggle .preference-description{font-size:13px}
+    .simple-mode #main-content .simple-panel,
+    .simple-mode #main-content .simple-exercise,
+    .simple-mode #main-content .simple-meal{padding:13px 15px;min-height:0;margin-bottom:12px}
+    .simple-fold{width:100%;min-width:0}
+    .simple-summary{list-style:none;display:flex;gap:12px;justify-content:space-between;align-items:center;min-height:50px;padding:7px 2px;font-weight:850;font-size:16px;line-height:1.35;color:var(--ink);cursor:pointer;touch-action:manipulation}
+    .simple-summary::-webkit-details-marker{display:none}
+    .simple-summary:after{content:'+';font-size:25px;font-weight:600;line-height:1;flex:none;color:var(--muted)}
+    .simple-fold[open]>.simple-summary:after{content:'−'}
+    .simple-summary:focus-visible{outline:3px solid #6dae89;outline-offset:3px;border-radius:9px}
+    .simple-caption{display:block;font-size:12px;color:var(--muted);font-weight:650;margin-top:4px}
+    .simple-summary-title{min-width:0}
+    .simple-fold-body{border-top:1px solid var(--line);padding-top:13px;margin-top:5px;min-width:0}
+    .simple-fold-body>h2:first-child{display:none}
+    .simple-mode .simple-panel .simple-fold-body>.section-row:first-child>h2{display:none}
+    .simple-mode .fx-set-card>.fx-set-top{margin-bottom:0}
+    .simple-mode .fx-exercise>.fx-exercise-head{margin-bottom:0}
+    .simple-mode .fx-set-card .simple-summary{font-size:14px;min-height:42px;padding:7px 0}
+    .simple-mode .fx-set-card{margin:10px 0;padding:12px 13px}
+    .simple-mode .fx-set-card .simple-fold-body{padding-top:10px}
+    .simple-mode .fx-exercise .simple-summary{font-size:15px}
+    .simple-mode .fx-exercise .fx-exercise-head{gap:8px}
+    .simple-mode .fx-panel h2{font-size:17px}
+    .simple-mode .fx-panel .simple-fold-body .fx-help{font-size:13px}
+    .simple-mode .fx-item{flex-direction:column;align-items:stretch;gap:5px;padding:11px 0}
+    .simple-mode .fx-item>.simple-fold,.simple-mode .fx-bank-card>.simple-fold{width:100%}
+    .simple-mode .fx-item .simple-summary,.simple-mode .fx-bank-card .simple-summary{font-size:13px;min-height:37px}
+    .simple-mode .fx-item .fx-actions{justify-content:flex-start}
+    .simple-mode .fx-toolbar{gap:5px}
+    .simple-mode .fx-toolbar button{font-size:13px;min-height:44px}
+    .simple-mode .fx-panel .button-primary,.simple-mode .fx-panel .button-secondary,
+    .simple-mode .fx-rowgap button,.simple-mode .fx-actions button,
+    .simple-mode .settings-actions button{font-size:14px;min-height:44px}
+    .simple-mode .data-panel p,.simple-mode .fx-help,.simple-mode .preference-description{font-size:13px;line-height:1.65}
+    .simple-mode .field label,.simple-mode .fx-field label{font-size:13px}
+    .simple-mode .field input,.simple-mode .field select,.simple-mode .fx-entry-field,
+    .simple-mode .fx-set-pair input,.simple-mode .fx-search{font-size:16px;min-height:44px}
+    .simple-mode .meal-card{min-height:0;gap:4px}
+    .simple-mode .meal-card .simple-summary{min-height:40px;font-size:14px}
+    .simple-mode .meal-card .simple-fold-body{padding-top:12px}
+    .simple-mode .fx-grid{margin:10px 0}
+    .simple-mode .fx-stat{padding:13px}
+    .simple-mode .fx-stat strong{font-size:26px}
+    .simple-mode #main-content .simple-compact-stats{padding:11px 16px;margin-bottom:11px;background:var(--paper);border:1px solid var(--line);border-radius:17px}
+    .simple-mode .fx-bank-card{display:block}
+    .simple-mode .simple-summary .simple-caption{font-size:11px}
+    @media(max-width:650px){
+      .simple-mode main{padding-left:16px;padding-right:16px}
+      .simple-mode .simple-main-toggle{padding:13px 15px}
+      .simple-mode .simple-summary{min-height:54px;font-size:17px}
+      .simple-mode .fx-exercise-titleline{flex-wrap:wrap}
+      .simple-mode .fx-set-controls{flex-wrap:wrap}
+      .simple-mode .fx-set-card .fx-set-titleline{flex-wrap:wrap}
+      .simple-mode .fx-panel{padding:13px 15px}
+      .simple-mode .fx-item .fx-actions button{font-size:14px}
+    }
+    @media(prefers-reduced-motion:reduce){.simple-summary:after{transition:none}}
   </style>
 </head>
 <body>
@@ -499,17 +567,19 @@
   const PREF_KEY='tallysprig_preferences_v5';
   const HEALTH_KEY='tallysprig_health_v6';
   const FITNESS_KEY='tallysprig_fitness_v7';
-  const DEFAULT_PREFS={macroChart:false,healthMacroChart:true,healthMode:false,theme:'light'};
+  const DEFAULT_PREFS={macroChart:false,healthMacroChart:true,healthMode:false,theme:'light',simpleMode:false};
   function normalizePrefs(obj){return {
     macroChart: typeof obj?.macroChart==='boolean'?obj.macroChart:false,
     healthMacroChart:typeof obj?.healthMacroChart==='boolean'?obj.healthMacroChart:true,
     healthMode:typeof obj?.healthMode==='boolean'?obj.healthMode:false,
-    theme:obj?.theme==='dark'?'dark':'light'
+    theme:obj?.theme==='dark'?'dark':'light',
+    simpleMode:typeof obj?.simpleMode==='boolean'?obj.simpleMode:false
   }}
   function loadPrefs(){try {return normalizePrefs(JSON.parse(localStorage.getItem(PREF_KEY)||'{}'));} catch(_){return {...DEFAULT_PREFS}}}
   let prefs=loadPrefs();
   function applyTheme(){
     document.documentElement.dataset.theme=prefs.theme;
+    document.documentElement.classList.toggle('simple-mode',!!prefs.simpleMode);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content',prefs.theme==='dark'?'#102922':'#173e38');
   }
   function savePrefs(next,message){
@@ -517,7 +587,7 @@
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.5', MEDICAL_VERSION='1.3';
+  const PRIVACY_VERSION='1.6', MEDICAL_VERSION='1.3';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -537,10 +607,11 @@
     });
   }
 
-  const EMPTY_HEALTH={age:null,heightCm:null,weightKg:null,physiology:'unspecified',activity:'moderate',goals:{p:null,c:null,f:null}};
+  const EMPTY_HEALTH={age:null,heightCm:null,weightKg:null,unitSystem:'metric',physiology:'unspecified',activity:'moderate',goals:{p:null,c:null,f:null}};
   function healthNumber(v,min,max){if(v===''||v===null||v===undefined)return null;const n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max?n:null}
   function normalizeHealth(obj){const h=obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{};const g=h.goals||{};
     return {age:healthNumber(h.age,1,120),heightCm:healthNumber(h.heightCm,60,260),weightKg:healthNumber(h.weightKg,10,500),
+      unitSystem:['metric','us'].includes(h.unitSystem)?h.unitSystem:'metric',
       physiology:['male','female','unspecified'].includes(h.physiology)?h.physiology:'unspecified',
       activity:['sedentary','light','moderate','active','very-active'].includes(h.activity)?h.activity:'moderate',
       goals:{p:healthNumber(g.p,1,500),c:healthNumber(g.c,1,800),f:healthNumber(g.f,1,300)}};
@@ -704,6 +775,81 @@
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
+  // I1: only the display units change; canonical saved height/weight remain cm/kg.
+  const LB_PER_KG=2.20462262185, CM_PER_IN=2.54;
+  function oneDecimal(value){return value===null||value===undefined?'':String(Math.round((value+Number.EPSILON)*10)/10)}
+  function usHeightFromCm(cm){
+    if(cm===null||cm===undefined)return {ft:'',inch:''};
+    const tenths=Math.round(cm/CM_PER_IN*10);
+    return {ft:String(Math.floor(tenths/120)),inch:oneDecimal((tenths%120)/10)};
+  }
+  function healthUnitFields(){
+    const units=health.unitSystem==='us'?'us':'metric';
+    const us=usHeightFromCm(health.heightCm);
+    return `<div class="field health-unit-select"><label for="healthUnits">Height &amp; weight units</label><select id="healthUnits" aria-label="Height and weight units"><option value="metric" ${units==='metric'?'selected':''}>Metric (cm, kg)</option><option value="us" ${units==='us'?'selected':''}>US (ft, in, lb)</option></select></div>
+      <div class="field" id="healthMetricHeight" ${units==='us'?'hidden':''}><label for="healthHeight">Height (cm)</label><input id="healthHeight" type="text" inputmode="decimal" data-health-decimal="1" value="${oneDecimal(health.heightCm)}" placeholder="Optional" autocomplete="off"></div>
+      <div class="field" id="healthMetricWeight" ${units==='us'?'hidden':''}><label for="healthWeight">Weight (kg)</label><input id="healthWeight" type="text" inputmode="decimal" data-health-decimal="1" value="${oneDecimal(health.weightKg)}" placeholder="Optional" autocomplete="off"></div>
+      <div class="height-imperial" id="healthUsHeight" ${units==='metric'?'hidden':''}>
+        <div class="field"><label for="healthFeet">Height (feet)</label><input id="healthFeet" type="text" inputmode="numeric" data-health-integer="1" value="${us.ft}" placeholder="ft" autocomplete="off"></div>
+        <div class="field"><label for="healthInches">Height (inches)</label><input id="healthInches" type="text" inputmode="decimal" data-health-decimal="1" value="${us.inch}" placeholder="0–11.9" autocomplete="off"></div>
+      </div>
+      <div class="field" id="healthUsWeight" ${units==='metric'?'hidden':''}><label for="healthPounds">Weight (lb)</label><input id="healthPounds" type="text" inputmode="decimal" data-health-decimal="1" value="${health.weightKg===null?'':oneDecimal(health.weightKg*LB_PER_KG)}" placeholder="Optional" autocomplete="off"></div>
+      <p class="health-unit-note">Enter at most one digit after the decimal. Height and weight are saved locally in cm/kg for compatibility with existing profiles and backups.</p>`;
+  }
+  function sanitizeHealthNumber(raw,integer){
+    let cleaned=String(raw).replace(/[^\d.]/g,'');
+    const dot=cleaned.indexOf('.');
+    if(dot!==-1)cleaned=cleaned.slice(0,dot+1)+cleaned.slice(dot+1).replace(/\./g,'').slice(0,integer?0:1);
+    return integer?cleaned.split('.')[0]:cleaned;
+  }
+  function readHealthDecimal(id,label,min,max){
+    const raw=(document.getElementById(id)?.value||'').trim();
+    if(!raw)return null;
+    if(!/^\d+(?:\.\d?)?$/.test(raw))throw Error(`${label} allows at most one decimal place.`);
+    const num=Number(raw);
+    if(num<min||num>max)throw Error(`${label} must be between ${min} and ${max}.`);
+    return num;
+  }
+  function readHealthHeightUs(){
+    const rawFeet=(document.getElementById('healthFeet')?.value||'').trim();
+    const rawInches=(document.getElementById('healthInches')?.value||'').trim();
+    if(!rawFeet&&!rawInches)return null;
+    if(!/^\d+$/.test(rawFeet))throw Error('Enter a whole number of feet before inches.');
+    const ft=Number(rawFeet);
+    if(ft>9)throw Error('Height feet must be between 0 and 9.');
+    const inches=rawInches?readHealthDecimal('healthInches','Inches',0,11.9):0;
+    const cm=Number(((ft*12+inches)*CM_PER_IN).toFixed(5));
+    if(cm<60||cm>260)throw Error('Height must be equivalent to 60–260 cm.');
+    return cm;
+  }
+  function changeHealthDisplayUnits(select){
+    const next=select.value;
+    const holder=document.getElementById('healthProfileForm');
+    const prior=holder?.dataset.currentUnits||health.unitSystem;
+    if(prior===next)return;
+    try{
+      if(prior==='metric'){
+        const cm=readHealthDecimal('healthHeight','Height',60,260);
+        const kg=readHealthDecimal('healthWeight','Weight',10,500);
+        const result=usHeightFromCm(cm);
+        document.getElementById('healthFeet').value=result.ft;
+        document.getElementById('healthInches').value=result.inch;
+        document.getElementById('healthPounds').value=kg===null?'':oneDecimal(kg*LB_PER_KG);
+      }else{
+        const cm=readHealthHeightUs();
+        const lb=readHealthDecimal('healthPounds','Weight',0,1200);
+        const kg=lb===null?null:lb/LB_PER_KG;
+        if(kg!==null&&(kg<10||kg>500))throw Error('Weight must be equivalent to 10–500 kg.');
+        document.getElementById('healthHeight').value=oneDecimal(cm);
+        document.getElementById('healthWeight').value=oneDecimal(kg);
+      }
+      document.getElementById('healthMetricHeight').hidden=next!=='metric';
+      document.getElementById('healthMetricWeight').hidden=next!=='metric';
+      document.getElementById('healthUsHeight').hidden=next!=='us';
+      document.getElementById('healthUsWeight').hidden=next!=='us';
+      holder.dataset.currentUnits=next;
+    }catch(error){select.value=prior;showToast(error.message||'Check the current values before switching units.');}
+  }
   function healthSettingsHtml(){
     const estimate=adultEstimate();const age=health.age;
     const estimateHtml=age!==null&&age<18?
@@ -725,10 +871,9 @@
       <div class="preference-row"><div><div class="preference-name">Enable Health Mode</div><div class="preference-description">Show nutrition references for each selected day. No strict calorie limits or over-limit warnings.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMode}" aria-label="Enable Health Mode" data-action="togglehealth"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
       <div class="preference-row"><div><div class="preference-name">Health Mode macro chart</div><div class="preference-description">Health Mode defaults to the chart. Turn this off to use the original calorie and macro cards instead.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMacroChart}" aria-label="Show macro chart in Health Mode" data-action="togglehealthmacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
       <p class="data-detail">Your Health Mode display choice is independent of the Classic Mode chart setting.</p>
-      ${prefs.healthMode?`<form id="healthProfileForm"><h3 style="font-size:15px;margin:19px 0 0">Optional health profile</h3><p>Stored only in this browser. You can leave fields blank or delete the profile at any time. Profile details are not sent to Open Food Facts.</p>
+      ${prefs.healthMode?`<form id="healthProfileForm" data-current-units="${health.unitSystem}"><h3 style="font-size:15px;margin:19px 0 0">Optional health profile</h3><p>Stored only in this browser. You can leave fields blank or delete the profile at any time. Profile details are not sent to Open Food Facts.</p>
       <div class="health-profile-grid"><div class="field"><label for="healthAge">Age (years)</label><input id="healthAge" type="number" inputmode="numeric" min="1" max="120" step="1" value="${age??''}" placeholder="Optional"></div>
-      <div class="field"><label for="healthHeight">Height (cm)</label><input id="healthHeight" type="number" inputmode="decimal" min="60" max="260" step="0.1" value="${health.heightCm??''}" placeholder="Optional"></div>
-      <div class="field"><label for="healthWeight">Weight (kg)</label><input id="healthWeight" type="number" inputmode="decimal" min="10" max="500" step="0.1" value="${health.weightKg??''}" placeholder="Optional"></div>
+      ${healthUnitFields()}
       <div class="field"><label for="healthPhysiology">Adult estimate equation</label><select id="healthPhysiology"><option value="unspecified" ${health.physiology==='unspecified'?'selected':''}>Don't calculate</option><option value="male" ${health.physiology==='male'?'selected':''}>Male equation</option><option value="female" ${health.physiology==='female'?'selected':''}>Female equation</option></select></div>
       <div class="field"><label for="healthActivity">Activity level</label><select id="healthActivity">${[['sedentary','Mostly sitting'],['light','Light activity'],['moderate','Moderate activity'],['active','Active'],['very-active','Very active']].map(([k,label])=>`<option value="${k}" ${health.activity===k?'selected':''}>${label}</option>`).join('')}</select></div></div>
       <h3 style="font-size:15px;margin:12px 0 0">Optional macro references</h3><p>Enter your own informational references, or use the optional adult examples below. Goals are not limits.</p><div class="health-profile-grid">${goalFields}</div>
@@ -740,7 +885,12 @@
   function saveHealthForm(){
     try{const a=readOptionalNumber('healthAge','Age',1,120);
       if(a!==null&&!Number.isInteger(a))throw Error('Age must be a whole number.');
-      const next={age:a,heightCm:readOptionalNumber('healthHeight','Height',60,260),weightKg:readOptionalNumber('healthWeight','Weight',10,500),physiology:document.getElementById('healthPhysiology').value,activity:document.getElementById('healthActivity').value,
+      const units=document.getElementById('healthUnits').value;
+      const heightCm=units==='us'?readHealthHeightUs():readHealthDecimal('healthHeight','Height',60,260);
+      const lb=units==='us'?readHealthDecimal('healthPounds','Weight (lb)',0,1200):null;
+      const weightKg=units==='us'?(lb===null?null:Number((lb/LB_PER_KG).toFixed(5))):readHealthDecimal('healthWeight','Weight',10,500);
+      if(weightKg!==null&&(weightKg<10||weightKg>500))throw Error('Weight must be equivalent to 10–500 kg.');
+      const next={age:a,heightCm,weightKg,unitSystem:units,physiology:document.getElementById('healthPhysiology').value,activity:document.getElementById('healthActivity').value,
       goals:{p:readOptionalNumber('healthGoalp','Protein reference',1,500),c:readOptionalNumber('healthGoalc','Carb reference',1,800),f:readOptionalNumber('healthGoalf','Fat reference',1,300)}};
       saveHealth(next,'Health profile and references saved.');
     }catch(err){showToast(err.message||'Please check the inputs.');}
@@ -960,7 +1110,7 @@
     return `<section class="fx-panel"><div class="section-row"><h2>Exercise library</h2><button class="button-secondary" data-action="fxcustom">＋ Custom exercise</button></div><input class="fx-search" id="fxExerciseSearch" type="search" placeholder="Search exercises..." value="${esc(fxSearch)}" aria-label="Search exercise library"><div class="fx-rowgap">${['All',...MUSCLES].map(k=>`<button class="filter ${fxMuscle===k?'active':''}" data-action="fxmuscle" data-muscle="${esc(k)}">${esc(k)}</button>`).join('')}</div><div id="fxExerciseResults">${fxLibraryResults(x)}</div></section>`;
   }
   function fxLibraryResults(list){const draft=editingWorkout()||activeWorkout();return list.length?list.map(x=>`<div class="fx-item"><div><b>${esc(x.name)}</b><small>${esc(x.equipment)} · ${esc(x.muscle)}${x.custom?' · Your exercise':''}</small></div><div class="fx-actions">${draft?`<button data-action="fxaddexercise" data-id="${esc(x.id)}">Add +</button>`:''}${x.custom?`<button data-action="fxcustom" data-id="${esc(x.id)}">Edit</button><button class="fx-danger" data-action="fxdeletecustom" data-id="${esc(x.id)}">Delete</button>`:''}</div></div>`).join(''):'<div class="empty-state">No matching exercises. You can create one.</div>'}
-  function refreshExerciseResults(){const r=document.getElementById('fxExerciseResults');if(r)r.innerHTML=fxLibraryResults(fitnessCatalog().filter(x=>x.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||fxMuscle===x.muscle)).slice(0,120))}
+  function refreshExerciseResults(){const r=document.getElementById('fxExerciseResults');if(r){r.innerHTML=fxLibraryResults(fitnessCatalog().filter(x=>x.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||fxMuscle===x.muscle)).slice(0,120));if(prefs.simpleMode)r.querySelectorAll('.fx-item').forEach((row,i)=>simpleFoldControls(row,'library-item-'+i,'Show actions'));}}
   function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="${w.status==='bank'?'bank':'home'}">← ${w.status==='bank'?'Workout Bank':'Fitness home'}</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':w.status==='bank'?'Workout Bank template · autosaved':'Editing completed session · autosaved'}</span></div>
     <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div>${w.status==='bank'?'':`<div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div>`}</div>
     <div class="fx-field"><label for="fxWorkoutNotes">Session notes (optional)</label><textarea class="fx-note" id="fxWorkoutNotes" data-fx-field="notes" maxlength="1200" placeholder="How did the session feel?">${esc(w.notes)}</textarea></div>
@@ -1180,7 +1330,7 @@
     const w={id:idFitness('w'),date:localISO(new Date()),title:'New workout',notes:'',status:'draft',exercises:[]};fitness.sessions.push(w);if(!saveFitness()){fitness.sessions.pop();return}fxEditingId=w.id;fxScreen='editor';render();}
   function fxNewSet(){return {id:idFitness('s'),targetWeightKg:null,targetReps:null,actualWeightKg:null,actualReps:null,targetMinutes:null,actualMinutes:null,targetMiles:null,actualMiles:null,type:'work',done:false,comment:'',restSeconds:null}}
   function fxAddExercise(id){const w=editingWorkout()||activeWorkout(),x=getFitnessExercise(id);if(!w||!x)return;if(w.exercises.length>=60){showToast('Maximum 60 exercises per workout.');return}
-    w.exercises.push({id:idFitness('x'),exerciseId:x.id,name:x.name,equipment:x.equipment,trackingType:x.muscle==='Cardio'?'cardio':'strength',restSeconds:null,sets:[fxNewSet()]});saveFitness();fxEditingId=w.id;fxScreen='editor';render();}
+    const fresh={id:idFitness('x'),exerciseId:x.id,name:x.name,equipment:x.equipment,trackingType:x.muscle==='Cardio'?'cardio':'strength',restSeconds:null,sets:[fxNewSet()]};w.exercises.push(fresh);simpleOpen.add('exercise-'+fresh.id);simpleOpen.add('set-'+fresh.id+'-'+fresh.sets[0].id);saveFitness();fxEditingId=w.id;fxScreen='editor';render();}
   function fxFindSet(target){const w=editingWorkout();const ex=w?.exercises.find(x=>x.id===target.dataset.ex);return ex?.sets.find(s=>s.id===target.dataset.set)}
   function onFitnessInput(el){const w=editingWorkout();if(!w)return;const field=el.dataset.fxField;
     if(['title','date','notes'].includes(field)){
@@ -1292,7 +1442,7 @@
       if(fxReorder(kind,exId,srcId,items[to].id,dir===1))showToast(kind==='exercise'?'Exercise order saved.':'Set order saved.');
       return;
     }
-    if(action==='fxaddset'){const ex=editingWorkout()?.exercises.find(x=>x.id===btn.dataset.id);if(!ex)return;if(ex.sets.length>=80){showToast('Maximum 80 sets per exercise.');return}ex.sets.push(fxNewSet());saveFitness();render();return}
+    if(action==='fxaddset'){const ex=editingWorkout()?.exercises.find(x=>x.id===btn.dataset.id);if(!ex)return;if(ex.sets.length>=80){showToast('Maximum 80 sets per exercise.');return}const fresh=fxNewSet();ex.sets.push(fresh);simpleOpen.add('exercise-'+ex.id);simpleOpen.add('set-'+ex.id+'-'+fresh.id);saveFitness();render();return}
     if(action==='fxremoveset'){const ex=editingWorkout()?.exercises.find(x=>x.id===btn.dataset.ex);if(!ex)return;const s=ex.sets.find(x=>x.id===btn.dataset.set);if(!s||!confirm(`Remove this set from ${ex.name}? This cannot be undone.`))return;if(fxRestTimer?.setId===s.id)fxStopRest();ex.sets=ex.sets.filter(x=>x.id!==s.id);saveFitness();render();return}
     if(action==='fxsetcomment'){fxSetCommentModal(btn.dataset.ex,btn.dataset.set);return}
     if(action==='fxsavecomment'){fxSaveComment(btn.dataset.ex,btn.dataset.set);return}
@@ -1316,6 +1466,7 @@
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
     return heading('Settings & your data.','Choose how your journal looks, manage backups, and review your documents.')+
+    `<section class="simple-main-toggle" aria-label="Simple Mode setting"><div class="preference-row"><div><div class="preference-name">Simple Mode</div><div class="preference-description">${prefs.simpleMode?'On — tap a section or set to expand its options.':'Off — all details and options are shown as usual.'} Bigger touch targets and compact menus, especially for Fitness. Your data stays the same.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.simpleMode}" aria-label="Enable Simple Mode" data-action="togglesimple"><span class="pref-switch-knob" aria-hidden="true"></span></button></div></section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
     <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
@@ -1327,7 +1478,97 @@
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
-  function render(){if(fxDrag)fxDragClear();document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});renderQuick()}
+
+  // I2: native <details> keeps the keyboard, screen reader, and touch experiences aligned.
+  // Open panels are interface state only; workouts and food records are not rewritten.
+  const simpleOpen = new Set();
+  function makeSimpleFold(host,key,label,caption='',preserveHead=false){
+    if(!host||host.dataset.simpleEnhanced)return;
+    host.dataset.simpleEnhanced='1';
+    const details=document.createElement('details');details.className='simple-fold';details.dataset.simpleKey=key;
+    const summary=document.createElement('summary');summary.className='simple-summary';
+    const title=document.createElement('span');title.className='simple-summary-title';title.textContent=label;
+    if(caption){const small=document.createElement('span');small.className='simple-caption';small.textContent=caption;title.appendChild(small)}
+    summary.appendChild(title);
+    const body=document.createElement('div');body.className='simple-fold-body';
+    if(preserveHead){
+      const header=host.firstElementChild;
+      while(header?.nextSibling)body.appendChild(header.nextSibling);
+    }else{while(host.firstChild)body.appendChild(host.firstChild)}
+    details.append(summary,body);host.appendChild(details);
+    if(simpleOpen.has(key))details.open=true;
+    details.addEventListener('toggle',()=>{
+      if(!details.isConnected)return;
+      if(details.open)simpleOpen.add(key);else simpleOpen.delete(key);
+    });
+    return details;
+  }
+  function simpleFoldControls(row,key,label='Actions'){
+    const actions=row?.querySelector(':scope > .fx-actions');
+    if(!actions)return;
+    const wrap=document.createElement('div');row.appendChild(wrap);
+    wrap.append(actions);
+    makeSimpleFold(wrap,key,label);
+  }
+  function enhanceSimpleUI(){
+    if(!prefs.simpleMode)return;
+    const root=document.getElementById('main-content');if(!root)return;
+    if(view==='about'){
+      const panels=[...root.querySelectorAll(':scope > .data-panel, :scope > section.data-panel')];
+      panels.forEach((panel,i)=>{
+        const label=panel.querySelector('h2')?.textContent?.trim()||`More settings ${i+1}`;
+        const key=panel.id==='health-mode-panel'?'settings-health':'settings-'+i;
+        panel.classList.add('simple-panel');makeSimpleFold(panel,key,label,'Tap to view and change options');
+      });
+    }
+    if(view==='today'){
+      root.querySelectorAll('.meal-card').forEach((card,i)=>{
+        card.classList.add('simple-meal');
+        const head=card.querySelector(':scope > .meal-header');
+        if(!head)return;
+        const label=card.querySelector('.meal-name')?.textContent?.trim()||'Meal';
+        const count=card.querySelectorAll('.logged-item').length;
+        makeSimpleFold(card,'meal-'+i,`${count} ${count===1?'entry':'entries'} — expand`,'Tap to see foods and edit entries',true);
+      });
+      const progress=root.querySelector('.health-progress');
+      if(progress){progress.classList.add('simple-panel');makeSimpleFold(progress,'today-health','Daily macro references','Tap to view your nutrient comparisons');}
+    }
+    if(view==='fitness'){
+      if(fxScreen==='editor'&&editingWorkout()){
+        const panel=root.querySelector('.fx-panel');
+        if(panel){panel.classList.add('simple-panel');makeSimpleFold(panel,'workout-details-'+editingWorkout().id,'Workout details','Name, date, session notes and tips');}
+        root.querySelectorAll('.fx-exercise').forEach(ex=>{
+          const id=ex.dataset.fxId;
+          ex.querySelectorAll(':scope > .fx-set-card').forEach(set=>{
+            const sid=set.dataset.fxId;
+            const title=set.querySelector('.fx-set-titleline strong')?.textContent||'Set';
+            makeSimpleFold(set,'set-'+id+'-'+sid,'Edit '+title.toLowerCase(),'Targets, results, rest and comments',true);
+          });
+          const name=ex.querySelector('.fx-exercise-titleline h3')?.textContent||'Exercise';
+          const count=ex.querySelectorAll(':scope > .fx-set-card').length;
+          ex.classList.add('simple-exercise');
+          makeSimpleFold(ex,'exercise-'+id,'Show sets & rest',`${count} ${count===1?'set / interval':'sets / intervals'} · ${name}`,true);
+        });
+      }else if(fxScreen==='home'){
+        const grid=root.querySelector('.fx-grid');
+        if(grid){const holder=document.createElement('div');holder.className='simple-compact-stats';grid.before(holder);holder.append(grid);makeSimpleFold(holder,'fitness-stats','Training summary','Sessions and exercises from the last seven days');}
+        root.querySelectorAll('.fx-panel').forEach((panel,i)=>{
+          // The primary Start/Resume button must remain visible in Simple Mode.
+          if(i===0)return;
+          const title=panel.querySelector('h2')?.textContent?.trim()||'Training options';
+          panel.classList.add('simple-panel');makeSimpleFold(panel,'fitness-overview-'+i,title,'Tap to expand');
+        });
+      }else if(['history','bank','library'].includes(fxScreen)){
+        root.querySelectorAll('.fx-item').forEach((row,i)=>simpleFoldControls(row,fxScreen+'-item-'+i,'Show actions'));
+        root.querySelectorAll('.fx-bank-card').forEach((row,i)=>simpleFoldControls(row,'bank-item-'+i,'Use, edit or manage'));
+        if(fxScreen==='library'){
+          const filterbar=root.querySelector('.fx-search + .fx-rowgap');
+          if(filterbar){const wrap=document.createElement('div');wrap.className='simple-compact-stats';filterbar.before(wrap);wrap.append(filterbar);makeSimpleFold(wrap,'fitness-categories','Filter exercise categories','Chest, back, cardio and more');}
+        }
+      }
+    }
+  }
+  function render(){if(fxDrag)fxDragClear();document.getElementById('main-content').innerHTML=view==='today'?renderToday():view==='history'?renderHistory():view==='about'?renderAbout():view==='fitness'?renderFitness():renderFoods();document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b.dataset.view===view);b.setAttribute('aria-current',b.dataset.view===view?'page':'false')});enhanceSimpleUI();renderQuick()}
   function openModal(content){document.getElementById('modalDialog').innerHTML=content;document.getElementById('modalBackdrop').classList.add('show');document.body.style.overflow='hidden';setTimeout(()=>document.querySelector('#modalDialog input,#modalDialog select,#modalDialog button')?.focus(),20)}
   function closeModal(){barcodeRequestSeq++;stopScanner().catch(()=>{});document.getElementById('modalBackdrop').classList.remove('show');document.body.style.overflow='';chosenFood=null;editingEntryId=null;editingCustomId=null;pendingRemovalId=null;activeProduct=null}
   function referenceModal(){
@@ -1673,7 +1914,7 @@
     if(d.health!==undefined){
       const h=d.health,g=h?.goals;if(!h||typeof h!=='object'||Array.isArray(h)||!g||typeof g!=='object'||Array.isArray(g))throw Error('Backup has invalid health data.');
       const numeric=(n,lo,hi)=>n===null||(typeof n==='number'&&Number.isFinite(n)&&n>=lo&&n<=hi);
-      if(!numeric(h.age,1,120)||h.age!==null&&!Number.isInteger(h.age)||!numeric(h.heightCm,60,260)||!numeric(h.weightKg,10,500)||!['male','female','unspecified'].includes(h.physiology)||!['sedentary','light','moderate','active','very-active'].includes(h.activity)||!numeric(g.p,1,500)||!numeric(g.c,1,800)||!numeric(g.f,1,300))throw Error('Backup has invalid health profile or macro references.');
+      if(!numeric(h.age,1,120)||h.age!==null&&!Number.isInteger(h.age)||!numeric(h.heightCm,60,260)||!numeric(h.weightKg,10,500)||(h.unitSystem!==undefined&&!['metric','us'].includes(h.unitSystem))||!['male','female','unspecified'].includes(h.physiology)||!['sedentary','light','moderate','active','very-active'].includes(h.activity)||!numeric(g.p,1,500)||!numeric(g.c,1,800)||!numeric(g.f,1,300))throw Error('Backup has invalid health profile or macro references.');
     }
     const entryIds=new Set(),foodIds=new Set();
     for(const f of d.customFoods){
@@ -1814,10 +2055,11 @@
     else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
+    else if(action==='togglesimple'){simpleOpen.clear();savePrefs({...prefs,simpleMode:!prefs.simpleMode},'Simple Mode '+(prefs.simpleMode?'disabled.':'enabled.'))}
     else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Classic Mode chart '+(prefs.macroChart?'disabled.':'enabled.'))}
     else if(action==='togglehealth'){savePrefs({...prefs,healthMode:!prefs.healthMode},'Health Mode '+(prefs.healthMode?'disabled.':'enabled.'))}
     else if(action==='togglehealthmacro'){savePrefs({...prefs,healthMacroChart:!prefs.healthMacroChart},'Health Mode chart '+(prefs.healthMacroChart?'disabled.':'enabled.'))}
-    else if(action==='gotohealth'){view='about';render();document.getElementById('health-mode-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
+    else if(action==='gotohealth'){simpleOpen.add('settings-health');view='about';render();document.getElementById('health-mode-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
     else if(action==='clearhealth'){clearHealth();}
     else if(action==='useadultmacros'){useAdultMacroSuggestion();}
     else if(action==='themelight'||action==='themedark'){savePrefs({...prefs,theme:action==='themedark'?'dark':'light'},'Appearance updated.')}
@@ -1843,9 +2085,9 @@
   document.addEventListener('click',onClick);
   document.getElementById('importBackupFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f&&consentOk)importFullBackup(f)});
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
-  document.addEventListener('input',e=>{if(e.target.matches('[data-fx-field]')){onFitnessInput(e.target)}else if(e.target.id==='fxExerciseSearch'){fxSearch=e.target.value;refreshExerciseResults()}else if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
+  document.addEventListener('input',e=>{if(e.target.matches('[data-health-decimal],[data-health-integer]')){const fixed=sanitizeHealthNumber(e.target.value,e.target.hasAttribute('data-health-integer'));if(e.target.value!==fixed)e.target.value=fixed;}if(e.target.matches('[data-fx-field]')){onFitnessInput(e.target)}else if(e.target.id==='fxExerciseSearch'){fxSearch=e.target.value;refreshExerciseResults()}else if(e.target.id==='quantity'){updatePreview()}else if(e.target.id==='quickSearch'){quickQuery=e.target.value;renderQuick()}else if(e.target.id==='librarySearch'){const pos=e.target.selectionStart;libQuery=e.target.value;const grid=document.querySelector('.library-grid');const temp=document.createElement('div');temp.innerHTML=renderFoods();grid.innerHTML=temp.querySelector('.library-grid').innerHTML;e.target.focus();try{e.target.setSelectionRange(pos,pos)}catch(_){}}});
   document.addEventListener('submit',e=>{if(e.target.id==='fxExerciseForm'){e.preventDefault();saveFitnessExerciseForm()}else if(e.target.id==='healthProfileForm'){e.preventDefault();saveHealthForm()}else if(e.target.id==='customForm'){e.preventDefault();saveCustom()}else if(e.target.id==='referenceForm'){e.preventDefault();saveReference()}else if(e.target.id==='barcodeForm'){e.preventDefault();lookupBarcode(document.getElementById('barcodeInput')?.value)}else if(e.target.id==='productReviewForm'){e.preventDefault();logReviewedProduct()}});
-  document.addEventListener('change',e=>{if(e.target.matches('[data-action="fxprsoundtoggle"]')){fitness.prSound=e.target.checked;saveFitness();if(fitness.prSound)fxPrepareAudio();showToast('Personal-best sound '+(fitness.prSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxrestsoundtoggle"]')){fitness.restSound=e.target.checked;saveFitness();if(fitness.restSound)fxPrepareAudio();showToast('Rest-timer sound '+(fitness.restSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
+  document.addEventListener('change',e=>{if(e.target.id==='healthUnits'){changeHealthDisplayUnits(e.target);return}if(e.target.matches('[data-action="fxprsoundtoggle"]')){fitness.prSound=e.target.checked;saveFitness();if(fitness.prSound)fxPrepareAudio();showToast('Personal-best sound '+(fitness.prSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxrestsoundtoggle"]')){fitness.restSound=e.target.checked;saveFitness();if(fitness.restSound)fxPrepareAudio();showToast('Rest-timer sound '+(fitness.restSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
