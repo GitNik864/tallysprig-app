@@ -1,3 +1,22 @@
+TALLYSPRIG I2.1 — FAVORITE EXERCISES UPDATE
+
+Built directly on the complete Tallysprig I2 package (V7.7 + Health 6.1).
+
+NEW
+- Favorite/unfavorite built-in or custom exercises in Fitness > Exercises > Actions.
+- Favorite/unfavorite an exercise from the workout editor (Classic or Simple Mode).
+- Fitness > Exercises > Favorites filter shows only starred exercises.
+- Exercise favorites persist on the same device and are included in JSON backups.
+- Older saved fitness data and backups remain compatible.
+- Deleting a custom exercise also removes it from favorites (prior workout records remain).
+
+UPLOAD
+1. Export a full JSON backup of your current app.
+2. Upload the contents of this ZIP to your EXISTING GitHub Pages repository ROOT,
+   replacing matching files (do not upload the ZIP itself).
+3. Commit; visit the HTTPS website while online to update the offline cache.
+4. Do not uninstall the app or clear its local browser storage.
+
 TALLYSPRIG I2 — SIMPLE MODE (BUILT ON I1 / V7.7)
 
 NEW: Simple Mode in Settings & Data. Disabled by default. Switch it on to get larger tap targets and collapsible settings, workout sections, exercise sets, history actions, and meals. Clicking an arrow expands details. Every prior food, Health Mode, Workout Bank, sound, workout and rest timer feature is preserved. It uses the existing preferences storage key and is included in full backups.

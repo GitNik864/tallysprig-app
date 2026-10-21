@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and strength-training journal for meals, exercise sets, and workout history.">
-  <title>Tallysprig I2 (V7.7) — Food & Fitness Journal</title>
+  <title>Tallysprig I2.1 (V7.7) — Food & Fitness Journal</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -363,6 +363,9 @@
     .fx-item{padding:13px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
     .fx-item:last-child{border-bottom:0}.fx-item b{display:block;font-size:13px}.fx-item small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
     .fx-actions{display:flex;gap:7px;flex-wrap:wrap}.fx-actions button{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:800}
+    .fx-actions .fx-fav-button{white-space:nowrap;color:var(--ink2);border-color:var(--line);min-height:38px}
+    .fx-actions .fx-fav-button.is-favorite{color:#8b5d13;background:var(--paper);border-color:#d8bc75}
+    .fx-actions .fx-fav-button:focus-visible{outline:3px solid #6dae89;outline-offset:2px}
     .fx-actions .fx-danger{color:#bd594f}.fx-pill{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:6px 10px;color:var(--muted);font-size:10px;font-weight:750}
     .fx-title-input,.fx-entry-field{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px}
     .fx-title-input{font-weight:800;font-size:18px}.fx-search{width:100%;background:var(--paper);color:var(--ink);border:1px solid var(--line);padding:13px;border-radius:11px;font-size:13px;box-sizing:border-box}
@@ -912,15 +915,16 @@
     ['Plank','Bodyweight','Core'],['Crunch','Bodyweight','Core'],['Cable Crunch','Cable','Core'],['Hanging Knee Raise','Bodyweight','Core'],['Russian Twist','Bodyweight','Core'],['Deadlift','Barbell','Full body'],['Farmer Carry','Dumbbell','Full body'],
     ['Outdoor Running','Other','Cardio'],['Treadmill Running','Machine','Cardio'],['Walking','Other','Cardio'],['Treadmill Walking','Machine','Cardio'],['Cycling','Other','Cardio'],['Stationary Cycling','Machine','Cardio'],['Rowing','Machine','Cardio'],['Elliptical','Machine','Cardio'],['Swimming','Other','Cardio'],['Hiking','Other','Cardio'],['Stair Climber','Machine','Cardio']
   ].map(([name,equipment,muscle],i)=>({id:'built'+(i+1),name,equipment,muscle}));
-  function emptyFitness(){return {unit:'lb',sessions:[],bank:[],customExercises:[],prCelebrations:true,prSound:false,restSound:false}}
+  function emptyFitness(){return {unit:'lb',sessions:[],bank:[],customExercises:[],favoriteExercises:[],prCelebrations:true,prSound:false,restSound:false}}
   function idFitness(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}
   function validFitnessNumber(v,max,nullable=false){return (nullable&&v===null)||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function validRestSeconds(v){return v===null||(Number.isInteger(v)&&v>=0&&v<=3600)}
   function validCardio(v,max){return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=max)}
   function isCardio(ex){return ex.trackingType==='cardio'||(!ex.trackingType&&(getFitnessExercise(ex.exerciseId)?.muscle==='Cardio'))}
   function verifyFitness(f){
-    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises)||(f.bank!==undefined&&!Array.isArray(f.bank))||(f.prCelebrations!==undefined&&typeof f.prCelebrations!=='boolean')||(f.prSound!==undefined&&typeof f.prSound!=='boolean')||(f.restSound!==undefined&&typeof f.restSound!=='boolean'))throw Error('Backup has an invalid fitness section.');
-    if(f.sessions.length>10000||(f.bank||[]).length>1000||f.customExercises.length>1000)throw Error('Backup has too many fitness records.');
+    if(!f||typeof f!=='object'||Array.isArray(f)||!['lb','kg'].includes(f.unit)||!Array.isArray(f.sessions)||!Array.isArray(f.customExercises)||(f.bank!==undefined&&!Array.isArray(f.bank))||(f.favoriteExercises!==undefined&&!Array.isArray(f.favoriteExercises))||(f.prCelebrations!==undefined&&typeof f.prCelebrations!=='boolean')||(f.prSound!==undefined&&typeof f.prSound!=='boolean')||(f.restSound!==undefined&&typeof f.restSound!=='boolean'))throw Error('Backup has an invalid fitness section.');
+    if(f.sessions.length>10000||(f.bank||[]).length>1000||f.customExercises.length>1000||(f.favoriteExercises||[]).length>2000)throw Error('Backup has too many fitness records.');
+    if((f.favoriteExercises||[]).some(id=>!validText(id,90)))throw Error('Backup has an invalid favorite exercise ID.');
     let seen=new Set();let exerciseIds=new Set(EXERCISES.map(x=>x.id));
     for(const x of f.customExercises){
       if(!x||!validText(x.id,90)||exerciseIds.has(x.id)||!validText(x.name,100)||!EQUIPMENT.includes(x.equipment)||!MUSCLES.includes(x.muscle))throw Error('Backup contains an invalid custom exercise.');
@@ -965,7 +969,7 @@
         actualReps:Object.hasOwn(set,'actualReps')?set.actualReps:(set.done?set.reps:null)
       }))
     }))};}
-    return {unit:value.unit,customExercises:value.customExercises,
+    return {unit:value.unit,customExercises:value.customExercises,favoriteExercises:[...new Set(value.favoriteExercises||[])],
       prCelebrations:value.prCelebrations!==false,
       prSound:value.prSound===true,restSound:value.restSound===true,
       sessions:value.sessions.map(normalizeWorkout),bank:(value.bank||[]).map(normalizeWorkout)};
@@ -1005,6 +1009,10 @@
   }
   function saveFitness(){try{localStorage.setItem(FITNESS_KEY,JSON.stringify(fitness));return true}catch(_){showToast('Workout could not be saved. Download a backup and check storage.');return false}}
   function fitnessCatalog(){return [...fitness.customExercises,...EXERCISES]}
+  // Exercise favorites are separate from food favorites and stored in the existing fitness record.
+  function fxIsFavorite(id){return fitness.favoriteExercises.includes(id)}
+  function fxFavoriteButton(id,name){const active=fxIsFavorite(id);return `<button type="button" class="fx-fav-button ${active?'is-favorite':''}" data-action="fxfavorite" data-id="${esc(id)}" aria-label="${active?'Remove '+esc(name)+' from favorites':'Favorite '+esc(name)}" aria-pressed="${active}" title="${active?'Remove favorite':'Favorite exercise'}">${active?'★ Favorited':'☆ Favorite'}</button>`}
+  function fxFilteredExercises(){return fitnessCatalog().filter(x=>x.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||(fxMuscle==='Favorites'?fxIsFavorite(x.id):fxMuscle===x.muscle))).slice(0,120)}
   function getFitnessExercise(id){return fitnessCatalog().find(x=>x.id===id)}
   function editingWorkout(){return fitness.sessions.find(w=>w.id===fxEditingId)||fitness.bank.find(w=>w.id===fxEditingId)||null}
   function fxUnits(v){return v===null?'':(fitness.unit==='lb'?Math.round(v/KG_PER_LB*10)/10:Math.round(v*10)/10)}
@@ -1106,11 +1114,11 @@
     return `<section class="fx-panel"><div class="section-row"><h2>Workout history & plans</h2><span class="fx-pill">${done.length} session${done.length===1?'':'s'}</span></div><div class="fx-rowgap"><label class="fx-help" for="fxHistoryDate">Filter by date</label><input class="fx-date-filter" id="fxHistoryDate" type="date" value="${esc(fxHistoryDate)}"><button class="button-secondary" data-action="fxclearfilter">All dates</button></div>
     ${done.length?done.map(fxHistoryItem).join(''):'<div class="empty-state" style="margin-top:15px">No matching sessions. Completed and copied workouts will appear here.</div>'}</section>`;
   }
-  function renderFxLibrary(){const x=fitnessCatalog().filter(e=>e.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||fxMuscle===e.muscle)).slice(0,120);
-    return `<section class="fx-panel"><div class="section-row"><h2>Exercise library</h2><button class="button-secondary" data-action="fxcustom">＋ Custom exercise</button></div><input class="fx-search" id="fxExerciseSearch" type="search" placeholder="Search exercises..." value="${esc(fxSearch)}" aria-label="Search exercise library"><div class="fx-rowgap">${['All',...MUSCLES].map(k=>`<button class="filter ${fxMuscle===k?'active':''}" data-action="fxmuscle" data-muscle="${esc(k)}">${esc(k)}</button>`).join('')}</div><div id="fxExerciseResults">${fxLibraryResults(x)}</div></section>`;
+  function renderFxLibrary(){const x=fxFilteredExercises();
+    return `<section class="fx-panel"><div class="section-row"><h2>Exercise library</h2><button class="button-secondary" data-action="fxcustom">＋ Custom exercise</button></div><input class="fx-search" id="fxExerciseSearch" type="search" placeholder="Search exercises..." value="${esc(fxSearch)}" aria-label="Search exercise library"><div class="fx-rowgap">${['All','Favorites',...MUSCLES].map(k=>`<button class="filter ${fxMuscle===k?'active':''}" data-action="fxmuscle" data-muscle="${esc(k)}">${k==='Favorites'?'★ Favorites':esc(k)}</button>`).join('')}</div><div id="fxExerciseResults">${fxLibraryResults(x)}</div></section>`;
   }
-  function fxLibraryResults(list){const draft=editingWorkout()||activeWorkout();return list.length?list.map(x=>`<div class="fx-item"><div><b>${esc(x.name)}</b><small>${esc(x.equipment)} · ${esc(x.muscle)}${x.custom?' · Your exercise':''}</small></div><div class="fx-actions">${draft?`<button data-action="fxaddexercise" data-id="${esc(x.id)}">Add +</button>`:''}${x.custom?`<button data-action="fxcustom" data-id="${esc(x.id)}">Edit</button><button class="fx-danger" data-action="fxdeletecustom" data-id="${esc(x.id)}">Delete</button>`:''}</div></div>`).join(''):'<div class="empty-state">No matching exercises. You can create one.</div>'}
-  function refreshExerciseResults(){const r=document.getElementById('fxExerciseResults');if(r){r.innerHTML=fxLibraryResults(fitnessCatalog().filter(x=>x.name.toLowerCase().includes(fxSearch.toLowerCase())&&(fxMuscle==='All'||fxMuscle===x.muscle)).slice(0,120));if(prefs.simpleMode)r.querySelectorAll('.fx-item').forEach((row,i)=>simpleFoldControls(row,'library-item-'+i,'Show actions'));}}
+  function fxLibraryResults(list){const draft=editingWorkout()||activeWorkout();return list.length?list.map(x=>`<div class="fx-item"><div><b>${esc(x.name)}</b><small>${esc(x.equipment)} · ${esc(x.muscle)}${x.custom?' · Your exercise':''}</small></div><div class="fx-actions">${fxFavoriteButton(x.id,x.name)}${draft?`<button data-action="fxaddexercise" data-id="${esc(x.id)}">Add +</button>`:''}${x.custom?`<button data-action="fxcustom" data-id="${esc(x.id)}">Edit</button><button class="fx-danger" data-action="fxdeletecustom" data-id="${esc(x.id)}">Delete</button>`:''}</div></div>`).join(''):`<div class="empty-state">${fxMuscle==='Favorites'?"No favorite exercises yet. Use an exercise’s Actions to select ☆ Favorite.":"No matching exercises. You can create one."}</div>`}
+  function refreshExerciseResults(){const r=document.getElementById('fxExerciseResults');if(r){r.innerHTML=fxLibraryResults(fxFilteredExercises());if(prefs.simpleMode)r.querySelectorAll('.fx-item').forEach((row,i)=>simpleFoldControls(row,'library-item-'+i,'Show actions'));}}
   function renderFxEditor(w){return `<div class="fx-rowgap" style="margin:0 0 12px"><button class="button-secondary" data-action="fxnav" data-screen="${w.status==='bank'?'bank':'home'}">← ${w.status==='bank'?'Workout Bank':'Fitness home'}</button><span class="fx-pill">${w.status==='draft'?'Unfinished · autosaved':w.status==='planned'?'Scheduled plan · autosaved':w.status==='bank'?'Workout Bank template · autosaved':'Editing completed session · autosaved'}</span></div>
     <section class="fx-panel"><div class="fx-fields"><div class="fx-field"><label for="fxWorkoutTitle">Workout name</label><input class="fx-title-input" type="text" id="fxWorkoutTitle" data-fx-field="title" maxlength="100" value="${esc(w.title)}"></div>${w.status==='bank'?'':`<div class="fx-field"><label for="fxWorkoutDate">Date</label><input class="fx-entry-field" type="date" id="fxWorkoutDate" data-fx-field="date" value="${esc(w.date)}"></div>`}</div>
     <div class="fx-field"><label for="fxWorkoutNotes">Session notes (optional)</label><textarea class="fx-note" id="fxWorkoutNotes" data-fx-field="notes" maxlength="1200" placeholder="How did the session feel?">${esc(w.notes)}</textarea></div>
@@ -1183,7 +1191,7 @@
     const value=plan?set.targetWeightKg:set.actualWeightKg;
     return `<div class="fx-set-group"><h4>${plan?'Planned target':'Actually achieved'}</h4><div class="fx-set-pair"><div><label>Weight (${fitness.unit})</label><input data-fx-field="${weight}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="0" max="${fitness.unit==='lb'?4400:2000}" step="any" inputmode="decimal" value="${fxUnits(value)}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} weight"></div><div><label>Reps</label><input data-fx-field="${reps}" data-ex="${esc(exId)}" data-set="${esc(set.id)}" type="number" min="1" max="1000" inputmode="numeric" value="${set[reps]??''}" placeholder="—" aria-label="Set ${i+1} ${plan?'planned':'actual'} reps"></div></div></div>`;
   }
-  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x),cardio=isCardio(x),unitLabel=cardio?'interval':'set';return `<section class="fx-exercise" data-fx-sort-item="exercise" data-fx-id="${esc(x.id)}"><div class="fx-exercise-head"><div class="fx-exercise-titleline"><button type="button" class="fx-drag-handle" data-fx-drag="exercise" data-ex="${esc(x.id)}" aria-label="Move ${esc(x.name)}. Drag to reorder, or use up and down arrow keys." title="Drag to reorder exercise; ↑ and ↓ work too" aria-grabbed="false">⠿</button><span class="fx-nudge"><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="up" aria-label="Move ${esc(x.name)} up" ${ei===0?'disabled':''}>↑</button><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="down" aria-label="Move ${esc(x.name)} down" ${ei===editingWorkout()?.exercises.length-1?'disabled':''}>↓</button></span><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${cardio?'Cardio · time & miles · ':''}${totals.done} / ${x.sets.length} ${unitLabel}s completed</p></div></div><div class="fx-actions"><button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
+  function renderFxExerciseBlock(x,ei){const totals=fxTotals(x),cardio=isCardio(x),unitLabel=cardio?'interval':'set';return `<section class="fx-exercise" data-fx-sort-item="exercise" data-fx-id="${esc(x.id)}"><div class="fx-exercise-head"><div class="fx-exercise-titleline"><button type="button" class="fx-drag-handle" data-fx-drag="exercise" data-ex="${esc(x.id)}" aria-label="Move ${esc(x.name)}. Drag to reorder, or use up and down arrow keys." title="Drag to reorder exercise; ↑ and ↓ work too" aria-grabbed="false">⠿</button><span class="fx-nudge"><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="up" aria-label="Move ${esc(x.name)} up" ${ei===0?'disabled':''}>↑</button><button type="button" data-action="fxmove" data-kind="exercise" data-ex="${esc(x.id)}" data-dir="down" aria-label="Move ${esc(x.name)} down" ${ei===editingWorkout()?.exercises.length-1?'disabled':''}>↓</button></span><div><h3>${esc(x.name)}</h3><p>${esc(x.equipment)} · ${cardio?'Cardio · time & miles · ':''}${totals.done} / ${x.sets.length} ${unitLabel}s completed</p></div></div><div class="fx-actions">${fxFavoriteButton(x.exerciseId,x.name)}<button class="fx-danger" data-action="fxremoveexercise" data-id="${esc(x.id)}">Remove</button></div></div>
     <div class="fx-rest-default"><label for="fxExRest${esc(x.id)}">Exercise default rest (seconds)</label><input id="fxExRest${esc(x.id)}" type="number" data-fx-field="exerciseRest" data-ex="${esc(x.id)}" value="${x.restSeconds??''}" min="0" max="3600" step="5" inputmode="numeric" placeholder="Optional"><span class="fx-meta">Leave blank for no default. Each ${unitLabel} may override it.</span></div>
     <div class="fx-set-progress">${fxProgressHtml(totals)}</div>
     ${x.sets.map((set,i)=>`<div class="fx-set-card" data-fx-sort-item="set" data-fx-id="${esc(set.id)}" data-fx-parent="${esc(x.id)}"><div class="fx-set-top"><div class="fx-set-titleline"><button type="button" class="fx-drag-handle" data-fx-drag="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Move ${cardio?'interval':'set'} ${i+1} in ${esc(x.name)}. Drag to reorder, or use up and down arrow keys." title="Drag to reorder ${unitLabel}; ↑ and ↓ work too" aria-grabbed="false">⠿</button><span class="fx-nudge"><button type="button" data-action="fxmove" data-kind="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" data-dir="up" aria-label="Move ${unitLabel} ${i+1} up" ${i===0?'disabled':''}>↑</button><button type="button" data-action="fxmove" data-kind="set" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" data-dir="down" aria-label="Move ${unitLabel} ${i+1} down" ${i===x.sets.length-1?'disabled':''}>↓</button></span><strong>${cardio?'Interval':'Set'} ${i+1}</strong></div><div class="fx-set-controls"><select data-fx-field="type" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} type"><option value="work" ${set.type==='work'?'selected':''}>Work</option><option value="warmup" ${set.type==='warmup'?'selected':''}>Warm-up</option></select><label><input type="checkbox" data-fx-field="done" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="${unitLabel} ${i+1} completed" ${set.done?'checked':''}> Completed</label><button class="fx-tiny" data-action="fxremoveset" data-ex="${esc(x.id)}" data-set="${esc(set.id)}" aria-label="Remove ${unitLabel} ${i+1}" title="Remove ${unitLabel}">×</button></div></div>
@@ -1429,9 +1437,20 @@
     if(action==='fxpreviewrest'){fxPlaySound('rest');return}
     if(action==='fxunit'){const unit=btn.dataset.unit;if(!['lb','kg'].includes(unit))return;fitness.unit=unit;saveFitness();render();return}
     if(action==='fxmuscle'){fxMuscle=btn.dataset.muscle;render();return}
+    if(action==='fxfavorite'){
+      const id=btn.dataset.id;
+      const exercise=fitnessCatalog().find(x=>x.id===id);
+      if(!exercise)return;
+      const prior=[...fitness.favoriteExercises];
+      fitness.favoriteExercises=fxIsFavorite(id)?fitness.favoriteExercises.filter(x=>x!==id):[...fitness.favoriteExercises,id];
+      if(!saveFitness()){fitness.favoriteExercises=prior;return}
+      const added=fxIsFavorite(id);
+      render();showToast(added?`${exercise.name} added to favorite exercises.`:`${exercise.name} removed from favorites.`);
+      return;
+    }
     if(action==='fxclearfilter'){fxHistoryDate='';render();return}
     if(action==='fxcustom'){fitnessCustomModal(btn.dataset.id);return}
-    if(action==='fxdeletecustom'){const id=btn.dataset.id,x=fitness.customExercises.find(x=>x.id===id);if(!x||!confirm(`Delete ${x.name} from the library? Workouts already logged with it will keep their original entries.`))return;fitness.customExercises=fitness.customExercises.filter(a=>a.id!==id);saveFitness();render();showToast('Custom exercise deleted.');return}
+    if(action==='fxdeletecustom'){const id=btn.dataset.id,x=fitness.customExercises.find(x=>x.id===id);if(!x||!confirm(`Delete ${x.name} from the library? Workouts already logged with it will keep their original entries.`))return;fitness.customExercises=fitness.customExercises.filter(a=>a.id!==id);fitness.favoriteExercises=fitness.favoriteExercises.filter(a=>a!==id);saveFitness();render();showToast('Custom exercise deleted.');return}
     if(action==='fxpick'){fxScreen='library';fxSearch='';fxMuscle='All';render();return}
     if(action==='fxaddexercise'){fxAddExercise(btn.dataset.id);return}
     if(action==='fxmove'){
@@ -1473,7 +1492,7 @@
     <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
     </section>`+
     healthSettingsHtml()+
-    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your meals, custom foods, favorites, fitness sessions, Workout Bank templates, custom exercises, unit preference, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your meals, custom foods, favorites, fitness sessions, Workout Bank templates, custom exercises, favorite exercises, unit preference, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
     `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
     `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
@@ -1563,7 +1582,7 @@
         root.querySelectorAll('.fx-bank-card').forEach((row,i)=>simpleFoldControls(row,'bank-item-'+i,'Use, edit or manage'));
         if(fxScreen==='library'){
           const filterbar=root.querySelector('.fx-search + .fx-rowgap');
-          if(filterbar){const wrap=document.createElement('div');wrap.className='simple-compact-stats';filterbar.before(wrap);wrap.append(filterbar);makeSimpleFold(wrap,'fitness-categories','Filter exercise categories','Chest, back, cardio and more');}
+          if(filterbar){const wrap=document.createElement('div');wrap.className='simple-compact-stats';filterbar.before(wrap);wrap.append(filterbar);makeSimpleFold(wrap,'fitness-categories','Filter exercise categories','Favorites, chest, back, cardio and more');}
         }
       }
     }
@@ -1958,7 +1977,7 @@
       else if(incomingFitness){
         const sessions=new Map(fitness.sessions.map(w=>[w.id,w]));for(const w of incomingFitness.sessions)if(!sessions.has(w.id))sessions.set(w.id,w);
         const exercises=new Map(fitness.customExercises.map(x=>[x.id,x]));for(const x of incomingFitness.customExercises)if(!exercises.has(x.id))exercises.set(x.id,x);
-        nextFitness={...fitness,sessions:[...sessions.values()],customExercises:[...exercises.values()]};
+        nextFitness={...fitness,sessions:[...sessions.values()],customExercises:[...exercises.values()],favoriteExercises:[...new Set([...fitness.favoriteExercises,...incomingFitness.favoriteExercises])]};
       }
       verifyFitness(nextFitness);
       const priorJournal=localStorage.getItem(KEY),priorPrefs=localStorage.getItem(PREF_KEY),priorHealth=localStorage.getItem(HEALTH_KEY),priorFitness=localStorage.getItem(FITNESS_KEY);
@@ -1976,7 +1995,7 @@
     }catch(err){showToast(err instanceof SyntaxError?'This JSON file could not be read.':err?.message||'Restore failed.');}
   }
   function deleteAllLocalData(){
-    if(!confirm('Delete all Tallysprig data on this device, including saved meals, workouts, custom exercises, foods, favorites, health profile, appearance settings, scanned cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
+    if(!confirm('Delete all Tallysprig data on this device, including saved meals, workouts, custom exercises, favorite exercises, foods, favorites, health profile, appearance settings, scanned cache, and policy acknowledgements? This cannot be undone. Back up first if you want to keep anything.'))return;
     const typed=prompt('Type DELETE to confirm permanent deletion of local Tallysprig data.','');
     if(typed!=='DELETE'){showToast('Nothing deleted.');return}
     try{
