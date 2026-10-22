@@ -1,5 +1,5 @@
-// Tallysprig V8.3.2 (built cumulatively on I2.1 / I2 / I1 / V7.7) offline app-shell cache. Retains existing browser-local food log.
-const CACHE_NAME = 'tallysprig-shell-v8-3-2-20261022a';
+// Tallysprig V8.3.3 (built cumulatively on I2.1 / I2 / I1 / V7.7) offline app-shell cache. Retains existing browser-local food log.
+const CACHE_NAME = 'tallysprig-shell-v8-3-3-20261022a';
 const SHELL = ['./','./index.html','./manifest.webmanifest','./privacy.html','./medical.html','./icons/icon-v812-192.png','./icons/icon-v812-512.png','./icons/icon-v812-maskable-512.png'];
 self.addEventListener('install', event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));

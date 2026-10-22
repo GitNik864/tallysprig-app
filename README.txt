@@ -1,12 +1,14 @@
-TALLYSPRIG V8.3.2 — TODAY TITLE AND PIE CHART SETTING FIX
+TALLYSPRIG V8.3.3 — COMPLETE JSON BACKUP / RESTORE FIX
 
-A cumulative update on V8.3.1. This retains the V8.3 vivid Default Mode, Classic/Simple modes, food logging, nutrition insights, fitness, workouts, streaks, backups, and previous settings.
+Cumulative update from V8.3.2. Includes all previous Tallysprig features.
 
-Changes:
-1. Today title is always "Every meal in view." in every display mode (including Default).
-2. Settings > Appearance > Today macro pie chart now switches the currently viewed Today chart between the doughnut chart and four summary cards. Works with Health Mode enabled or disabled, regardless of Default/Classic/Simple display mode. Health Mode and standard tracking still remember their chart choices independently.
-3. Bumped the offline shell cache and displayed build label.
+Settings > EVERYTHING backup · JSON:
+- Backs up every meal on every date, custom foods and favorites, calorie references, all display preferences, Health Mode profile and macro references, workouts (draft/planned/complete), Workout Bank templates, custom and favorite exercises, fitness sound preferences, logging streaks, and cached barcode product records.
+- Validates JSON before triggering download; file name begins tallysprig-EVERYTHING-backup-.
+- Restore defaults to REPLACE to put back settings, health profile, all workouts and Bank templates. MERGE preserves existing settings and adds missing records INCLUDING Bank workouts. For a fresh install, MERGE also imports settings from the backup.
+- Older V1 backups remain accepted. Missing sections in old backups no longer clear fitness or health on REPLACE.
+- CSV is explicitly labeled MEALS ONLY and does not contain workouts, settings, Bank, or health profile.
+- Legal acknowledgement and short-lived API rate-limiter counters intentionally remain device-specific and are not exported.
+- Updated privacy draft to version 1.9 for inclusion of barcode cache and improved restore description; users must reacknowledge.
 
-Deploy: Export a full JSON backup in the app, extract the ZIP, upload all files to the existing GitHub Pages repository root replacing matching files, commit, then reopen Tallysprig online. Check Settings > Display mode shows Current build: V8.3.2.
-
-Do not uninstall the PWA or clear its browser storage. No data migration or new permissions; policy pages and icons unchanged.
+DEPLOY: Download a current full JSON backup first; extract this ZIP and upload ALL files to your existing GitHub Pages repository root, replacing matching files. Commit, reopen while online and confirm Current build: V8.3.3. Do not uninstall or clear data. Never upload personal JSON backups into the public repository.

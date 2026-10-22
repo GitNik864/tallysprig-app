@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.3.2 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.3.3 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -1024,7 +1024,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3.2 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3.3 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -1033,7 +1033,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     <button class="button-secondary scan-sidebar scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button>
     <div class="quiet-label" id="quickHeading">POPULAR FOODS</div>
     <div id="quickFoodList" class="food-list"></div>
-    <div class="note-card"><strong>🌿 A more mindful food log</strong><p>Nutrition numbers are estimates, not rules. Pay attention to variety, hunger, energy, and how you feel, too.</p><button data-action="export">↗ Export your log</button></div>
+    <div class="note-card"><strong>🌿 A more mindful food log</strong><p>Nutrition numbers are estimates, not rules. Pay attention to variety, hunger, energy, and how you feel, too.</p><button data-action="export">↗ Export MEALS ONLY (CSV)</button></div>
   </aside>
 </div>
 <nav class="mobile-nav" aria-label="Mobile navigation">
@@ -1093,7 +1093,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.8', MEDICAL_VERSION='1.4';
+  const PRIVACY_VERSION='1.9', MEDICAL_VERSION='1.4';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -1310,9 +1310,9 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+(vibrant?v83Banner:'')+healthLead+statsArea+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
-  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
+  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Meals only · CSV</button><button class="button-secondary" data-action="import">↙ Import meals CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
-  function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+(prefs.uiMode==='default'?`<div class="v83-history-banner"><span>✦ YOUR JOURNAL, AT A GLANCE</span><strong>Every day tells a story.</strong><p>Explore your records across the week, without pressure or targets.</p></div>`:'')+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
+  function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Meals only · CSV</button>`)+(prefs.uiMode==='default'?`<div class="v83-history-banner"><span>✦ YOUR JOURNAL, AT A GLANCE</span><strong>Every day tells a story.</strong><p>Explore your records across the week, without pressure or targets.</p></div>`:'')+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
   // I1: only the display units change; canonical saved height/weight remain cm/kg.
   const LB_PER_KG=2.20462262185, CM_PER_IN=2.54;
   function oneDecimal(value){return value===null||value===undefined?'':String(Math.round((value+Number.EPSILON)*10)/10)}
@@ -2170,17 +2170,17 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only saved records are analyzed. Blank actual results, unfinished workouts, and unlogged meals are excluded rather than interpreted as zero.</p>`+
       `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>${insightIcon('training')}Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
       `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>${insightIcon('nutrition')}Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
-      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3.2 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3.3 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
   }
 
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.3.2 · Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.3.3 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
       <div class="ts-mode-grid" role="group" aria-label="Display mode">
         ${[['default','✦','Default','Bright dashboard, vibrant cards and playful effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
-      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3.2</strong></p>
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3.3</strong></p>
       ${prefs.uiMode==='default'?`<div class="ts-demo-bar"><div><strong>See the effects in action</strong><span>Preview the button, pop-up, and expandable-panel animations.</span></div><button class="button-primary" type="button" data-action="previewdefault">Try Default effects ↗</button></div>`:''}</section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Today macro pie chart</div><div class="preference-description">Switch between the doughnut chart and four summary cards on Today. Currently controls ${prefs.healthMode?'Health Mode':'standard tracking'}; the other mode remembers its own display choice.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${isHealthChart()}" aria-label="Show macro pie chart on Today" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
@@ -2188,9 +2188,9 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
     </section>`+
     healthSettingsHtml()+
-    `<div class="data-panel"><h2>↗ Complete backup</h2><p>Download a JSON copy of your meals, custom foods, favorites, fitness sessions, Workout Bank templates, custom exercises, favorite exercises, unit preference, energy reference, appearance settings, and optional health profile and macro references. Backup files stay on your device unless you choose to share them.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">Download full backup</button><button class="button-secondary" data-action="restorefull">Restore a backup</button></div><p class="data-detail">Last full backup: ${esc(backupText)}. Choose Merge to add missing records without duplicates, or Replace to restore a full backup as it was saved (including appearance and health settings when available).</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
+    `<div class="data-panel"><h2>↗ EVERYTHING backup · JSON</h2><p><strong>This is the backup to use before updates or when switching phones.</strong> It includes all food dates (not only Today), custom foods, favorites, energy reference, macro settings, Health Mode profile, display mode and theme, Fitness history and planned workouts, Workout Bank templates, exercises and favorites, sound settings, logging streaks and barcode product cache.</p><div class="settings-actions"><button class="button-primary" data-action="backupfull">⬇ Download EVERYTHING · JSON</button><button class="button-secondary" data-action="restorefull">⬆ Restore EVERYTHING · JSON</button></div><p class="data-detail">The file name begins <strong>tallysprig-EVERYTHING-backup</strong>. It is different from meal-only CSV. Restoring defaults to <strong>REPLACE</strong> so workouts, Bank templates and settings come back too. MERGE adds missing records and keeps existing settings.</p><p class="data-detail">Last full backup: ${esc(backupText)}. Only policy acknowledgments and temporary API lookup limits stay device-specific. A new device must acknowledge the Privacy Policy and Medical Disclaimer itself.</p><p class="data-detail"><strong>Privacy reminder:</strong> Anyone with a copy of your backup can read your food journal. Store it privately and do not upload it to a public GitHub repository.</p></div>`+
     `<div class="data-panel"><h2>Documents & acknowledgement</h2><p>These documents can be read at any time. If either version changes, Tallysprig will request new acknowledgement before normal use resumes.</p><div class="legal-links"><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy · v${PRIVACY_VERSION} ↗</a><a href="./medical.html" target="_blank" rel="noopener noreferrer">Medical Disclaimer · v${MEDICAL_VERSION} ↗</a></div><p class="data-detail">Your acknowledgment is stored on this device. It is not a server-verified signature.</p></div>`+
-    `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals as CSV</button><button class="button-secondary" data-action="import">Import CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
+    `<div class="data-panel"><h2>Manage local storage</h2><p>Clearing this device's site data can permanently remove your food and workout logs, settings, and stored acknowledgement. Create a full backup before clearing anything.</p><div class="settings-actions"><button class="button-secondary" data-action="export">Export meals ONLY (CSV)</button><button class="button-secondary" data-action="import">Import meals CSV</button><button class="button-danger" data-action="deletealllocal">Delete all local Tallysprig data</button></div></div>`;
   }
   function renderQuick(){const list=document.getElementById('quickFoodList');const q=quickQuery.trim(),recentIds=[...new Set([...store.entries].reverse().map(e=>e.foodId).filter(Boolean))];const recents=recentIds.map(getFood).filter(Boolean);let foods=q?filterFoods(q,'All').slice(0,9):[...recents,...DB.filter(f=>['banana','chicken','rice','oats','yogurt','apple','bread','tofu'].includes(f.id)).filter(f=>!recentIds.includes(f.id))].slice(0,9);document.getElementById('quickHeading').textContent=q?'SEARCH RESULTS':recents.length?'RECENT & POPULAR':'POPULAR FOODS';list.innerHTML=foods.length?foods.map(f=>`<button class="food-btn" data-action="choose" data-id="${esc(f.id)}"><span class="food-icon">${esc(f.emoji)}</span><span class="food-info"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div></span><span class="food-kcal">${fmt(f.cal)}</span></button>`).join(''):'<div class="helper">No matches. Create a custom food instead.</div>'}
 
@@ -2612,20 +2612,53 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     if(save())recordLoggingDay();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
   }
 
-  // V4 backup format deliberately excludes document acknowledgement, scanner cache, and rate counters.
-  // Agreement acceptance remains device-local; a different device must acknowledge for itself.
+  // V8.3.3: Portable JSON backups contain ALL user-facing saved data, unlike meal-only CSV.
+  // Legal acknowledgements, the most recent backup timestamp, and short-lived lookup rate
+  // counters intentionally remain device-local. Re-acknowledgement is required on new installs.
+  function readScannerCache(){
+    const raw=localStorage.getItem(OFF_CACHE_KEY);
+    if(!raw)return {};
+    let cache;try{cache=JSON.parse(raw)}catch(_){throw Error('The barcode cache could not be read. Your other data has NOT been exported. Try repairing browser storage first.')}
+    return verifyScannerCache(cache);
+  }
+  function verifyScannerCache(cache){
+    if(!cache||typeof cache!=='object'||Array.isArray(cache))throw Error('Backup contains an invalid barcode cache.');
+    const items=Object.entries(cache);
+    if(items.length>50)throw Error('Backup has too many barcode cache records.');
+    for(const [barcode,item] of items){
+      if(!/^\d{8,14}$/.test(barcode)||!item||typeof item!=='object'||Array.isArray(item)||!Number.isFinite(item.date)||!item.product||typeof item.product!=='object'||Array.isArray(item.product))throw Error('Backup contains invalid barcode cache details.');
+    }
+    if(JSON.stringify(cache).length>6000000)throw Error('Barcode cache exceeds the safe backup size.');
+    return cache;
+  }
+  function currentBackupData(){
+    return {entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,
+      energyReference:store.energyReference,preferences:normalizePrefs(prefs),health:normalizeHealth(health),
+      fitness:normalizeFitness(fitness),barcodeCache:readScannerCache()};
+  }
+  function backupSummary(d){
+    const f=d.fitness||{};
+    return `${d.entries.length} meal entries, ${d.customFoods.length} custom foods, ${(f.sessions||[]).length} workouts, ${(f.bank||[]).length} Workout Bank templates, ${(f.customExercises||[]).length} custom exercises, and settings`;
+  }
   function exportFullBackup(){
-    const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,exportedAt:new Date().toISOString(),data:{entries:store.entries,customFoods:store.customFoods,favorites:store.favorites,energyReference:store.energyReference,preferences:prefs,health,fitness}};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-    const link=URL.createObjectURL(blob),a=document.createElement('a');a.href=link;a.download='tallysprig-full-backup-'+localISO(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(link),5000);
-    try{localStorage.setItem(LAST_BACKUP_KEY,new Date().toISOString())}catch(_){}
-    render();showToast('Full JSON backup downloaded. Keep it private.');
+    try{
+      const data=currentBackupData();
+      const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:2,appVersion:'V8.3.3',exportedAt:new Date().toISOString(),data};
+      verifyBackup(payload); // Never label a damaged or partial file as a full backup.
+      const content=JSON.stringify(payload,null,2);
+      if(content.length>10000000)throw Error('Full backup exceeds the 10 MB import limit. Nothing was downloaded.');
+      const blob=new Blob([content],{type:'application/json'});
+      const link=URL.createObjectURL(blob),a=document.createElement('a');a.href=link;
+      a.download='tallysprig-EVERYTHING-backup-'+localISO(new Date())+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(link),5000);
+      try{localStorage.setItem(LAST_BACKUP_KEY,new Date().toISOString())}catch(_){}
+      render();showToast('Full JSON backup prepared: '+backupSummary(data)+'.');
+    }catch(err){showToast(err?.message||'Could not prepare a full backup. No file was downloaded.');}
   }
   function validText(s,max=255){return typeof s==='string'&&s.length>0&&s.length<=max}
   function validDate(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const date=new Date(s+'T12:00:00Z');return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===s}
   function validN(n,max){return typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=max}
   function verifyBackup(raw){
-    if(!raw||raw.app!=='Tallysprig'||raw.format!=='tallysprig-backup'||raw.formatVersion!==1||!raw.data)throw Error('Not a supported Tallysprig full backup.');
+    if(!raw||raw.app!=='Tallysprig'||raw.format!=='tallysprig-backup'||![1,2].includes(raw.formatVersion)||!raw.data)throw Error('Not a supported Tallysprig full backup. CSV files contain meals only.');
     const d=raw.data;
     if(!Array.isArray(d.entries)||!Array.isArray(d.customFoods)||!Array.isArray(d.favorites))throw Error('Backup is missing journal sections.');
     if(d.entries.length>20000||d.customFoods.length>5000||d.favorites.length>10000)throw Error('Backup contains too many records.');
@@ -2637,6 +2670,8 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       const numeric=(n,lo,hi)=>n===null||(typeof n==='number'&&Number.isFinite(n)&&n>=lo&&n<=hi);
       if(!numeric(h.age,1,120)||h.age!==null&&!Number.isInteger(h.age)||!numeric(h.heightCm,60,260)||!numeric(h.weightKg,10,500)||(h.unitSystem!==undefined&&!['metric','us'].includes(h.unitSystem))||!['male','female','unspecified'].includes(h.physiology)||!['sedentary','light','moderate','active','very-active'].includes(h.activity)||!numeric(g.p,1,500)||!numeric(g.c,1,800)||!numeric(g.f,1,300))throw Error('Backup has invalid health profile or macro references.');
     }
+    if(d.barcodeCache!==undefined)verifyScannerCache(d.barcodeCache);
+    if(raw.formatVersion===2&&(!d.preferences||!d.health||!d.fitness||!d.barcodeCache))throw Error('This full backup is missing settings, health, fitness, or barcode data. Nothing was restored.');
     const entryIds=new Set(),foodIds=new Set();
     for(const f of d.customFoods){
       if(!f||!validText(f.id,90)||!validText(f.name,100)||!validText(f.serving,100)||!['Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'].includes(f.category)||!validText(f.emoji,16)||!['cal','p','c','f'].every(k=>validN(f[k],20000))||foodIds.has(f.id))throw Error('Backup contains an invalid or duplicate custom food.');
@@ -2650,50 +2685,66 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       entryIds.add(e.id);
     }
     if(d.favorites.some(id=>!validText(id,90)))throw Error('Backup has an invalid favorite ID.');
-    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference,preferences:d.preferences?normalizePrefs(d.preferences):null,health:d.health?normalizeHealth(d.health):null,fitness:d.fitness?normalizeFitness(d.fitness):null};
+    return {entries:d.entries,customFoods:d.customFoods,favorites:[...new Set(d.favorites)],energyReference:d.energyReference,
+      preferences:d.preferences?normalizePrefs(d.preferences):null,health:d.health?normalizeHealth(d.health):null,
+      fitness:d.fitness?normalizeFitness(d.fitness):null,barcodeCache:d.barcodeCache===undefined?null:verifyScannerCache(d.barcodeCache)};
   }
   async function importFullBackup(file){
     try{
       if(file.size>10000000)throw Error('Backup file is too large (10 MB maximum).');
-      const incoming=verifyBackup(JSON.parse(await file.text()));
-      const choice=prompt(`Valid Tallysprig backup found:\n${incoming.entries.length} meal entries, ${incoming.customFoods.length} custom foods, ${incoming.fitness?.sessions.length||0} workouts.\n\nType MERGE to add missing records, or REPLACE to completely replace your current journal and settings.\n\nCancel leaves everything unchanged.`,'MERGE');
+      const raw=JSON.parse(await file.text());
+      const incoming=verifyBackup(raw);
+      const oldBackup=raw.formatVersion===1;
+      const info=backupSummary(incoming);
+      const choice=prompt(`Valid ${oldBackup?'older':'complete'} Tallysprig JSON backup:\n${info}.\n\nREPLACE = restore ALL backed-up records, Workout Bank, Health Mode and settings (recommended for a new phone).\nMERGE = combine missing meals, workouts, Bank templates and favorites; keep existing settings when present.\n\nType REPLACE or MERGE. Cancel changes nothing.`, 'REPLACE');
       if(choice===null)return;
       const mode=choice.trim().toUpperCase();
-      if(mode!=='MERGE'&&mode!=='REPLACE'){showToast('Enter MERGE or REPLACE. Nothing changed.');return}
-      const question=mode==='REPLACE'?`REPLACE all current Tallysprig meal and workout records and settings with this backup?\n\n${!incoming.fitness?'This older backup contains no workout history; replacing will CLEAR workouts currently on this device.\n\n':''}This cannot be undone. Download a backup of your current data first.`:`MERGE this backup into your existing log? Matching entry IDs are skipped to avoid duplicates. Existing settings and foods win conflicts.`;
+      if(mode!=='MERGE'&&mode!=='REPLACE'){showToast('Enter REPLACE or MERGE. Nothing changed.');return;}
+      const legacyNotice=oldBackup?' This older backup may not contain Health Mode, workouts or settings; missing sections will be KEPT from this device.':'';
+      const question=mode==='REPLACE'?`Restore ALL categories from this backup? This will replace your currently saved meals, workouts, Workout Bank, and settings wherever present in the file.\n\n${info}.\n\n${legacyNotice}\n\nExisting records not in the backup may be lost. Make a NEW backup of this device first.`:`MERGE this backup into your existing app? Missing meals, workouts, Workout Bank templates and custom exercises will be added. Current settings take priority, unless no settings are saved yet.\n\n${legacyNotice}`;
       if(!confirm(question))return;
-      const {preferences:incomingPrefs,health:incomingHealth,fitness:incomingFitness,...incomingJournal}=incoming;
+      const {preferences:incomingPrefs,health:incomingHealth,fitness:incomingFitness,barcodeCache:incomingCache,...incomingJournal}=incoming;
+      const rawJournal=localStorage.getItem(KEY),rawPrefs=localStorage.getItem(PREF_KEY),rawHealth=localStorage.getItem(HEALTH_KEY),rawFitness=localStorage.getItem(FITNESS_KEY),rawCache=localStorage.getItem(OFF_CACHE_KEY);
       let next;
       if(mode==='REPLACE')next=incomingJournal;
       else{
-        const entries=new Map(store.entries.map(e=>[e.id,e]));for(const e of incoming.entries){if(!entries.has(e.id))entries.set(e.id,e)}
-        const foods=new Map(store.customFoods.map(f=>[f.id,f]));for(const f of incoming.customFoods){if(!foods.has(f.id))foods.set(f.id,f)}
-        next={...store,entries:[...entries.values()],customFoods:[...foods.values()],favorites:[...new Set([...store.favorites,...incoming.favorites])],energyReference:store.energyReference??incoming.energyReference};
+        const entries=new Map(store.entries.map(e=>[e.id,e]));for(const e of incoming.entries)if(!entries.has(e.id))entries.set(e.id,e);
+        const foods=new Map(store.customFoods.map(f=>[f.id,f]));for(const f of incoming.customFoods)if(!foods.has(f.id))foods.set(f.id,f);
+        next={...store,entries:[...entries.values()],customFoods:[...foods.values()],favorites:[...new Set([...store.favorites,...incoming.favorites])],energyReference:rawJournal===null?incoming.energyReference:(store.energyReference??incoming.energyReference)};
       }
-      // Validate the combined result BEFORE replacing the active journal. An unsuccessful save restores the previous copy.
-      verifyBackup({app:'Tallysprig',format:'tallysprig-backup',formatVersion:1,data:next});
-      const nextPrefs=mode==='REPLACE'&&incomingPrefs?incomingPrefs:prefs;
-      const nextHealth=mode==='REPLACE'?(incomingHealth||normalizeHealth({})):health;
+      const nextPrefs=incomingPrefs&&(mode==='REPLACE'||rawPrefs===null)?incomingPrefs:prefs;
+      const nextHealth=incomingHealth&&(mode==='REPLACE'||rawHealth===null)?incomingHealth:health;
       let nextFitness=fitness;
-      if(mode==='REPLACE')nextFitness=incomingFitness||emptyFitness();
-      else if(incomingFitness){
-        const sessions=new Map(fitness.sessions.map(w=>[w.id,w]));for(const w of incomingFitness.sessions)if(!sessions.has(w.id))sessions.set(w.id,w);
-        const exercises=new Map(fitness.customExercises.map(x=>[x.id,x]));for(const x of incomingFitness.customExercises)if(!exercises.has(x.id))exercises.set(x.id,x);
-        nextFitness={...fitness,sessions:[...sessions.values()],customExercises:[...exercises.values()],favoriteExercises:[...new Set([...fitness.favoriteExercises,...incomingFitness.favoriteExercises])]};
+      if(incomingFitness){
+        if(mode==='REPLACE'||rawFitness===null)nextFitness=incomingFitness;
+        else{
+          const sessions=new Map(fitness.sessions.map(w=>[w.id,w]));for(const w of incomingFitness.sessions)if(!sessions.has(w.id))sessions.set(w.id,w);
+          const bank=new Map(fitness.bank.map(w=>[w.id,w]));for(const w of incomingFitness.bank)if(!bank.has(w.id))bank.set(w.id,w);
+          const exercises=new Map(fitness.customExercises.map(x=>[x.id,x]));for(const x of incomingFitness.customExercises)if(!exercises.has(x.id))exercises.set(x.id,x);
+          nextFitness={...fitness,sessions:[...sessions.values()],bank:[...bank.values()],customExercises:[...exercises.values()],favoriteExercises:[...new Set([...fitness.favoriteExercises,...incomingFitness.favoriteExercises])]};
+        }
       }
-      verifyFitness(nextFitness);
-      const priorJournal=localStorage.getItem(KEY),priorPrefs=localStorage.getItem(PREF_KEY),priorHealth=localStorage.getItem(HEALTH_KEY),priorFitness=localStorage.getItem(FITNESS_KEY);
+      let nextCache=null;
+      if(incomingCache!==null){
+        if(mode==='REPLACE'||rawCache===null)nextCache=incomingCache;
+        else nextCache=Object.fromEntries([...Object.entries(incomingCache),...Object.entries(readScannerCache())].sort((a,b)=>b[1].date-a[1].date).slice(0,50));
+      }
+      verifyBackup({app:'Tallysprig',format:'tallysprig-backup',formatVersion:2,data:{...next,preferences:nextPrefs,health:nextHealth,fitness:nextFitness,barcodeCache:nextCache??readScannerCache()}});
+      // Write all keys as a unit; roll back their originals if one write fails.
+      const originals=[[KEY,rawJournal],[PREF_KEY,rawPrefs],[HEALTH_KEY,rawHealth],[FITNESS_KEY,rawFitness],[OFF_CACHE_KEY,rawCache]];
       try{
         localStorage.setItem(KEY,JSON.stringify(next));
-        if(mode==='REPLACE'&&incomingPrefs)localStorage.setItem(PREF_KEY,JSON.stringify(nextPrefs));
-        if(mode==='REPLACE')localStorage.setItem(HEALTH_KEY,JSON.stringify(nextHealth));
+        localStorage.setItem(PREF_KEY,JSON.stringify(nextPrefs));
+        localStorage.setItem(HEALTH_KEY,JSON.stringify(nextHealth));
         localStorage.setItem(FITNESS_KEY,JSON.stringify(nextFitness));
+        if(nextCache!==null)localStorage.setItem(OFF_CACHE_KEY,JSON.stringify(nextCache));
         store=next;prefs=nextPrefs;health=nextHealth;fitness=nextFitness;fxScreen='home';fxEditingId=null;applyTheme();
       }catch(e){
-        try{priorJournal===null?localStorage.removeItem(KEY):localStorage.setItem(KEY,priorJournal);priorPrefs===null?localStorage.removeItem(PREF_KEY):localStorage.setItem(PREF_KEY,priorPrefs);priorHealth===null?localStorage.removeItem(HEALTH_KEY):localStorage.setItem(HEALTH_KEY,priorHealth);priorFitness===null?localStorage.removeItem(FITNESS_KEY):localStorage.setItem(FITNESS_KEY,priorFitness);}catch(_){}
-        throw Error('Could not save restored data. Storage might be full; previous data was retained where possible.');
+        for(const [key,value] of originals){try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value)}catch(_){}}
+        throw Error('Could not write the restored backup. Storage might be full; previous data was retained where possible.');
       }
-      selectedDate=localISO(new Date());view='today';closeModal();render();showToast(mode==='MERGE'?'Backup merged.':'Backup restored.');
+      selectedDate=localISO(new Date());view='today';closeModal();render();
+      showToast('Restored '+backupSummary({ ...next,fitness:nextFitness })+'.');
     }catch(err){showToast(err instanceof SyntaxError?'This JSON file could not be read.':err?.message||'Restore failed.');}
   }
   function deleteAllLocalData(){
