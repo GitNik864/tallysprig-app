@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.3 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.3.2 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -595,7 +595,7 @@
     .ts-brand-image{width:32px;height:32px;object-fit:cover;border-radius:10px;margin-right:6px;vertical-align:middle;flex-shrink:0}
     .ts-consent-image{width:48px;height:48px;object-fit:cover;border-radius:15px;vertical-align:middle;flex-shrink:0}
 
-    /* V8.3 — visibly enhanced Default Mode. Classic and Simple remain unchanged. */
+    /* V8.3.2 — visibly enhanced Default Mode. Classic and Simple remain unchanged. */
     html.default-mode body{
       background:radial-gradient(ellipse at 65% 0%,rgba(87,209,168,.15),transparent 54%),
                  radial-gradient(ellipse at 0% 70%,rgba(94,165,223,.07),transparent 60%),var(--bg);
@@ -734,7 +734,7 @@
       html.default-mode .ts-ripple{display:none!important;}
     }
   
-/* V8.3 — BOLD DEFAULT DASHBOARD. Exclusively .default-mode; Classic & Simple are unchanged. */
+/* V8.3.2 — BOLD DEFAULT DASHBOARD. Exclusively .default-mode; Classic & Simple are unchanged. */
 html.default-mode {
   --v83-lime:#d4ff72;--v83-mint:#8ff6c5;--v83-sky:#9de8ff;
   --v83-coral:#ffc59b;--v83-violet:#d9c4ff;--v83-ink:#183328;
@@ -921,6 +921,7 @@ html.default-mode .mobile-nav button{color:#447666!important;min-height:52px;pad
 html.default-mode .mobile-nav button.active{background:rgba(255,255,255,.7)!important;box-shadow:0 4px 0 #4b917535,inset 0 0 0 1px #7bd79e!important;color:#105944!important;border-radius:14px}
 html.default-mode .mobile-nav button span{color:inherit!important}
 html.default-mode .ts-demo-bar{background:linear-gradient(120deg,#cdffae,#aff1f6)!important;color:#2a614b;border-color:#a3e4c0}
+html.default-mode .ts-demo-bar strong{color:#234d3b} /* Keep title readable over the light mint panel in dark and light themes. */
 html.default-mode .ts-demo-bar span{color:#527c66}
 @media(max-width:1100px){html.default-mode .v83-top-grid{grid-template-columns:1fr}}
 @media(max-width:650px){
@@ -1023,7 +1024,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3.2 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -1306,7 +1307,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     const v83Banner=`<section class="v83-day-banner" aria-label="Daily dashboard summary"><div class="v83-banner-text"><span class="v83-kicker">✦ YOUR DAY · YOUR STORY</span><strong>Your daily snapshot.</strong><p>Little moments add up. See what you've logged, all in one colorful place.</p><div class="v83-chips"><span>◉ ${entries.length} food ${entries.length===1?'entry':'entries'}</span><span>✧ ${occupied} meal ${occupied===1?'moment':'moments'}</span></div></div><div class="v83-banner-art" aria-hidden="true"><span class="v83-art-orbit"></span><span class="v83-art-spark">✳</span><span class="v83-art-dot"></span></div></section>`;
     const chart=isHealthChart()?macroChartHtml(v,entries.length):statHtml;
     const statsArea=vibrant?`<div class="v83-top-grid">${chart}${referenceHtml}</div>`:referenceHtml+chart;
-    return heading(vibrant?'Your day, in color.':'Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+(vibrant?v83Banner:'')+healthLead+statsArea+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
+    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+(vibrant?v83Banner:'')+healthLead+statsArea+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
@@ -1407,7 +1408,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     return `<section class="data-panel" id="health-mode-panel" aria-label="Health Mode settings"><h2>Health Mode</h2><p>Keep Classic tracking or turn on optional daily nutrition insights. Your journal remains the same in either mode.</p>
       <div class="preference-row"><div><div class="preference-name">Enable Health Mode</div><div class="preference-description">Show nutrition references for each selected day. No strict calorie limits or over-limit warnings.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMode}" aria-label="Enable Health Mode" data-action="togglehealth"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
       <div class="preference-row"><div><div class="preference-name">Health Mode macro chart</div><div class="preference-description">Health Mode defaults to the chart. Turn this off to use the original calorie and macro cards instead.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.healthMacroChart}" aria-label="Show macro chart in Health Mode" data-action="togglehealthmacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
-      <p class="data-detail">Your Health Mode display choice is independent of the Classic Mode chart setting.</p>
+      <p class="data-detail">Health Mode remembers its own chart choice. While Health Mode is enabled, this switch and the Today macro pie chart switch in Appearance control the same view.</p>
       ${prefs.healthMode?`<form id="healthProfileForm" data-current-units="${health.unitSystem}"><h3 style="font-size:15px;margin:19px 0 0">Optional health profile</h3><p>Stored only in this browser. You can leave fields blank or delete the profile at any time. Profile details are not sent to Open Food Facts.</p>
       <div class="health-profile-grid"><div class="field"><label for="healthAge">Age (years)</label><input id="healthAge" type="number" inputmode="numeric" min="1" max="120" step="1" value="${age??''}" placeholder="Optional"></div>
       ${healthUnitFields()}
@@ -2169,20 +2170,20 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only saved records are analyzed. Blank actual results, unfinished workouts, and unlogged meals are excluded rather than interpreted as zero.</p>`+
       `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>${insightIcon('training')}Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
       `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>${insightIcon('nutrition')}Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
-      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3.2 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
   }
 
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.3 · Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.3.2 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
       <div class="ts-mode-grid" role="group" aria-label="Display mode">
         ${[['default','✦','Default','Bright dashboard, vibrant cards and playful effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
-      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3</strong></p>
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3.2</strong></p>
       ${prefs.uiMode==='default'?`<div class="ts-demo-bar"><div><strong>See the effects in action</strong><span>Preview the button, pop-up, and expandable-panel animations.</span></div><button class="button-primary" type="button" data-action="previewdefault">Try Default effects ↗</button></div>`:''}</section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
-    <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
+    <div class="preference-row"><div><div class="preference-name">Today macro pie chart</div><div class="preference-description">Switch between the doughnut chart and four summary cards on Today. Currently controls ${prefs.healthMode?'Health Mode':'standard tracking'}; the other mode remembers its own display choice.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${isHealthChart()}" aria-label="Show macro pie chart on Today" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
     <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
     <div class="theme-options" role="group" aria-label="Color theme"><button type="button" class="theme-option" data-action="themelight" aria-pressed="${prefs.theme==='light'}">☀ Light</button><button type="button" class="theme-option" data-action="themedark" aria-pressed="${prefs.theme==='dark'}">☾ Dark</button></div>
     </section>`+
@@ -2780,7 +2781,13 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     else if(action==='previewdefault'){showDefaultEffectsPreview()}
     else if(action==='previewburst'){const stage=document.getElementById('tsDemoStage');if(stage){stage.classList.remove('burst');void stage.offsetWidth;stage.classList.add('burst');setTimeout(()=>stage.classList.remove('burst'),740)}}
     else if(action==='setuimode'){const mode=btn.dataset.mode;if(['default','classic','simple'].includes(mode)){simpleOpen.clear();savePrefs({...prefs,uiMode:mode,simpleMode:mode==='simple'},mode[0].toUpperCase()+mode.slice(1)+' Mode selected.')}}
-    else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Classic Mode chart '+(prefs.macroChart?'disabled.':'enabled.'))}
+    else if(action==='togglemacro'){
+      // V8.3.2: the visible Settings switch must control the chart on Today,
+      // whether Health Mode is enabled or standard tracking is in use.
+      const enable=!isHealthChart();
+      const next=prefs.healthMode?{...prefs,healthMacroChart:enable}:{...prefs,macroChart:enable};
+      savePrefs(next,'Today macro pie chart '+(enable?'enabled.':'disabled.'));
+    }
     else if(action==='togglehealth'){savePrefs({...prefs,healthMode:!prefs.healthMode},'Health Mode '+(prefs.healthMode?'disabled.':'enabled.'))}
     else if(action==='togglehealthmacro'){savePrefs({...prefs,healthMacroChart:!prefs.healthMacroChart},'Health Mode chart '+(prefs.healthMacroChart?'disabled.':'enabled.'))}
     else if(action==='gotohealth'){simpleOpen.add('settings-health');view='about';render();document.getElementById('health-mode-panel')?.scrollIntoView({behavior:'smooth',block:'start'});}
