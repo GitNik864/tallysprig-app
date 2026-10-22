@@ -1,18 +1,22 @@
-TALLYSPRIG V8.1.2 — ANDROID DISPLAY/ICON UPDATE
+TALLYSPRIG V8.3 — VIBRANT DEFAULT MODE DESIGN UPDATE
 
-Cumulative release based directly on V8.1.1 (and therefore V8.1, V8.0.1, I2.1, I2, I1 and V7.7).
+Cumulative update built on V8.1.2, retaining all earlier releases: V8.1, V8.0.1, I2.1, I2, I1, V7.7 and earlier.
 
-What is fixed:
-- Includes V8.1.1’s clearer Default Mode visuals, touch feedback and the effects preview in Settings > Display mode.
-- Uses NEW ICON FILE PATHS in manifest.webmanifest, so Android/Chrome can detect icon changes. Existing installed app identity is unchanged (id, scope, start_url).
-- Updates the build label to V8.1.2 and offline shell version.
+What's new:
+- Default Mode is redesigned with a vivid multicolor dashboard, higher contrast, stronger section hierarchy and expressive cards.
+- Today: eye-catching daily snapshot banner, reordered macro chart and energy reference on wider screens, colorful meal cards and macro panels.
+- Fitness: a training studio banner, brighter progress blocks, vivid exercise/Workout Bank cards and clearer action buttons.
+- History: a colorful header and enhanced 7-day chart. Insights: colorful header, filters and insight cards.
+- Settings: brighter display-mode chooser and settings panels. Library: richer card styling.
+- Classic and Simple keep their previous layout and theme. Any existing display-mode choice is preserved.
+- Reduced-motion system preference disables decorative transitions/animations.
+- No new storage keys, permissions, servers, analytics tracking, or account features.
 
-How to install:
-1. Open your previous Tallysprig and export a FULL JSON BACKUP. Keep the backup somewhere outside the app.
-2. Extract this ZIP. Upload the full CONTENTS to the ROOT of your existing GitHub Pages repo (including new icons/ files). Replace index.html, manifest.webmanifest and sw.js, and commit. Do NOT place everything inside a subfolder.
-3. Reopen Tallysprig while online after GitHub Pages publishes. Settings shows 'Current build: V8.1.2'.
-4. To check Default Mode, open Settings > Display mode, select Default, then tap 'Try Default effects'. It also has visible colored accents throughout the app.
-5. Android launcher icon updates are controlled by Chrome and Android and may require a 'Review app update' action or take time. The new manifest icon URLs signal a change, but no web developer can guarantee immediate replacement of an already-installed launcher icon.
-6. Please do not clear website storage or uninstall until you have independently verified your full JSON backup. Browser local data is independent of GitHub repository files.
+Deployment:
+1. Download and verify a full JSON backup from the current Tallysprig installation.
+2. Extract the ZIP and upload its contents to the ROOT of the existing GitHub Pages repository, replacing matching files (don't create a nested folder).
+3. Once GitHub Pages publishes, open Tallysprig while online and check Settings > Display mode for 'Current build: V8.3'.
+4. Choose Default for the new vivid dashboard. Classic and Simple retain their existing interfaces.
+5. Do not uninstall the Android PWA or clear site data without confirming you have a usable backup.
 
-All nutrition, scanning, workout, cardio, Workout Bank, UI mode, local history, and full JSON backup features are retained.
+Notes: Refreshing from an earlier service worker may require reopening while online. Existing local data should remain; the app still uses the same browser-local storage keys and manifest identity. Visual design was browser-tested, not physically tested on Android.

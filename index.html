@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.1.2 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.3 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -595,7 +595,7 @@
     .ts-brand-image{width:32px;height:32px;object-fit:cover;border-radius:10px;margin-right:6px;vertical-align:middle;flex-shrink:0}
     .ts-consent-image{width:48px;height:48px;object-fit:cover;border-radius:15px;vertical-align:middle;flex-shrink:0}
 
-    /* V8.1.2 — visibly enhanced Default Mode. Classic and Simple remain unchanged. */
+    /* V8.3 — visibly enhanced Default Mode. Classic and Simple remain unchanged. */
     html.default-mode body{
       background:radial-gradient(ellipse at 65% 0%,rgba(87,209,168,.15),transparent 54%),
                  radial-gradient(ellipse at 0% 70%,rgba(94,165,223,.07),transparent 60%),var(--bg);
@@ -733,7 +733,271 @@
       }
       html.default-mode .ts-ripple{display:none!important;}
     }
-  </style>
+  
+/* V8.3 — BOLD DEFAULT DASHBOARD. Exclusively .default-mode; Classic & Simple are unchanged. */
+html.default-mode {
+  --v83-lime:#d4ff72;--v83-mint:#8ff6c5;--v83-sky:#9de8ff;
+  --v83-coral:#ffc59b;--v83-violet:#d9c4ff;--v83-ink:#183328;
+}
+html.default-mode body{
+  background:radial-gradient(circle at 88% 3%,rgba(135,244,185,.27),transparent 42%),
+             radial-gradient(circle at 5% 46%,rgba(201,164,255,.17),transparent 48%),var(--bg);
+}
+html.default-mode main{padding-top:28px}
+html.default-mode .main-top{
+  background:linear-gradient(110deg,#d2ffa0 0%,#a7f8d2 49%,#abedff 100%)!important;
+  border:2px solid #c9f8b7!important;box-shadow:0 9px 0 rgba(72,162,111,.12),0 16px 32px rgba(65,148,109,.12)!important;
+  color:var(--v83-ink);margin-bottom:27px;min-height:68px;border-radius:22px!important;
+}
+html.default-mode .main-top .eyebrow,html.default-mode .main-top .date-pill{color:#1d5c45!important;font-weight:900}
+html.default-mode .main-top::before{box-shadow:0 4px 10px #30694b36!important}
+html.default-mode .date-switch button{background:rgba(255,255,255,.62);color:#174d39;border:2px solid #a3e6ae;min-width:40px;min-height:40px}
+html.default-mode .heading-row{align-items:center!important;margin-bottom:15px!important;gap:13px}
+html.default-mode .heading-row h1{
+  background:linear-gradient(105deg,#194e3d,#16896b 52%,#596dd3)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+  font-size:clamp(32px,3.7vw,56px);line-height:1.07;letter-spacing:-2.7px;font-weight:930;
+}
+html[data-theme="dark"].default-mode .heading-row h1{
+  background:linear-gradient(105deg,#f0ffee,#b8ffdd 58%,#c5c5ff)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+}
+html.default-mode .heading-row h1::after{width:96px;height:7px;margin-top:14px;background:linear-gradient(90deg,#b8f86c,#7eebcf,#a8baff,#ffb4ab)}
+html.default-mode .subheading{font-size:14px;max-width:540px;color:var(--ink2);font-weight:600}
+html.default-mode .button-primary{
+  background:linear-gradient(105deg,#ceff6d 0%,#8ff5c1 58%,#8ce0fb 100%)!important;
+  color:#0f4336!important;border:2px solid #9dedb5!important;border-radius:16px!important;
+  font-size:14px;font-weight:900;box-shadow:0 6px 0 #419d7745,0 13px 22px #54b98d28!important;
+  min-height:45px;
+}
+html.default-mode .button-primary:hover{filter:brightness(1.035);box-shadow:0 9px 0 #419d7735,0 18px 25px #54b98d3a!important}
+html.default-mode .button-secondary,html.default-mode .energy-ref-edit{
+  background:linear-gradient(115deg,var(--paper),color-mix(in srgb,#b7ffc7 27%,var(--paper)))!important;
+  border:2px solid color-mix(in srgb,#9ae5b5 61%,var(--line))!important;
+  border-radius:14px;color:var(--ink);font-weight:850;min-height:42px;
+}
+html.default-mode .v83-day-banner,html.default-mode .v83-fitness-banner,html.default-mode .v83-history-banner{
+  position:relative;isolation:isolate;overflow:hidden;border-radius:29px;padding:26px 28px;margin:21px 0 23px;
+  border:2px solid rgba(255,255,255,.65);box-shadow:0 9px 0 rgba(47,136,100,.1),0 19px 42px rgba(48,123,99,.17);
+  color:var(--v83-ink);
+}
+html.default-mode .v83-day-banner{background:linear-gradient(123deg,#d6ff82 0%,#a2ffcf 50%,#a8eaff 100%);min-height:198px}
+html.default-mode .v83-fitness-banner{background:linear-gradient(120deg,#ffdeb3 0%,#ffe7a0 35%,#d4ff88 74%,#a6f8d4 100%);min-height:195px}
+html.default-mode .v83-history-banner{background:linear-gradient(115deg,#c6ffbb,#adf1ff 45%,#d7c5ff 100%);min-height:154px}
+html.default-mode .v83-banner-text,html.default-mode .v83-fitness-banner > div:first-child{position:relative;z-index:2;max-width:67%}
+html.default-mode .v83-kicker,html.default-mode .v83-history-banner>span{display:block;font-size:10px;letter-spacing:2px;font-weight:950;margin-bottom:9px;color:#2f7250}
+html.default-mode .v83-day-banner strong,html.default-mode .v83-fitness-banner strong,html.default-mode .v83-history-banner strong{
+  display:block;font-size:clamp(25px,3.4vw,39px);line-height:1.07;letter-spacing:-1.3px;font-weight:950;max-width:420px;
+}
+html.default-mode .v83-day-banner p,html.default-mode .v83-fitness-banner p,html.default-mode .v83-history-banner p{
+  font-size:13px;line-height:1.5;color:#34664c;font-weight:650;margin:11px 0 14px;max-width:410px;
+}
+html.default-mode .v83-chips{display:flex;flex-wrap:wrap;gap:8px}
+html.default-mode .v83-chips span{padding:8px 11px;border-radius:99px;background:rgba(255,255,255,.6);border:1px solid #fff8;color:#275f46;font-size:11px;font-weight:900}
+html.default-mode .v83-banner-art{position:absolute;right:23px;top:15px;width:180px;height:180px;z-index:1;pointer-events:none}
+html.default-mode .v83-art-orbit{position:absolute;width:155px;height:155px;right:3px;top:3px;border-radius:50%;background:linear-gradient(138deg,#8cd8ff,#dfc1ff 54%,#ffe29b);box-shadow:inset -11px -12px 0 #7e98d71c,0 18px 32px #5c6f9650}
+html.default-mode .v83-art-orbit::after{content:'';position:absolute;inset:18px;border:3px solid rgba(255,255,255,.65);border-radius:50%;transform:rotate(-25deg) skew(9deg)}
+html.default-mode .v83-art-spark{position:absolute;right:37px;top:52px;font-size:65px;color:#fffdf2;text-shadow:0 5px 22px #5999a9ad}
+html.default-mode .v83-art-dot{position:absolute;left:2px;bottom:19px;width:45px;height:45px;background:#ffbda6;border:5px solid #fff5;border-radius:50%;box-shadow:0 7px 19px #ac767f66}
+html.default-mode .v83-fitness-art{position:absolute;right:26px;top:11px;font-size:165px;line-height:1;color:#f99e78;text-shadow:8px 9px 0 #ffdaaa,0 18px 20px #967c3a36;transform:rotate(12deg)}
+html.default-mode .v83-top-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(210px,.8fr);align-items:stretch;gap:15px;margin:16px 0 22px}
+html.default-mode .v83-top-grid .macro-panel{margin:0;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:11px;box-shadow:0 7px 0 #a7d8b02e,0 13px 28px #4da47d23!important}
+html.default-mode .v83-top-grid .energy-reference{margin:0;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:26px}
+html.default-mode .v83-top-grid .energy-ref-actions{flex-wrap:wrap;align-items:start;justify-content:space-between;gap:13px}
+html.default-mode .macro-panel{
+  background:linear-gradient(135deg,#f0e3ff 0%,#d9e9ff 39%,#c1fbea 100%)!important;
+  border:2px solid #f4ebff!important;border-radius:25px!important;
+  box-shadow:0 9px 0 #9ecfb634,0 20px 29px #56c3941e!important;color:#253b49!important;
+}
+html.default-mode .macro-panel .macro-headline,html.default-mode .macro-panel .macro-calories{color:#233f46!important}
+html.default-mode .macro-panel .macro-center-label,html.default-mode .macro-panel .macro-subtitle{color:#587075!important}
+html.default-mode .macro-panel .macro-ring-bg{stroke:rgba(255,255,255,.7)!important}
+html.default-mode .macro-panel .macro-ring-segment{stroke-width:30;filter:drop-shadow(0 2px 4px #263b4c2c)}
+html.default-mode .macro-panel .macro-legend-row{background:rgba(255,255,255,.60);border:1px solid #fff9;border-radius:12px;color:#30454e!important}
+html.default-mode .macro-panel .macro-percent,html.default-mode .macro-panel .macro-notes{color:#506875!important}
+html.default-mode .energy-reference{background:linear-gradient(145deg,#ffebb9,#ffd6c8 55%,#ffe7ef)!important;border:2px solid #fff1d1!important;border-radius:24px;box-shadow:0 8px 0 #e2bca133,0 17px 24px #dda79928!important}
+html.default-mode .energy-ref-title{font-weight:950;font-size:15px;color:#5c4636!important}
+html.default-mode .energy-ref-desc{font-size:12px;color:#7b6358!important}
+html.default-mode .energy-ref-value{font-size:clamp(23px,3vw,32px);color:#594238!important}
+html.default-mode .energy-ref-value small{color:#6f5b53!important}
+html.default-mode .energy-ref-edit{background:#fff6e8!important;color:#5d503b!important;border-color:#edcb9f!important}
+html.default-mode .health-intro{background:linear-gradient(105deg,#ccfbf0,#cdeffe)!important;border:2px solid #c4f3f7!important;border-radius:22px;padding:17px 20px;margin:16px 0;color:#244f52}
+html.default-mode .health-intro h2{font-size:17px;color:#225755}
+html.default-mode .health-intro p{color:#44696a!important}
+html.default-mode .mode-pill{background:#b8ffd1;color:#236a45;border:1px solid #79cda0;padding:9px 14px;font-weight:900;letter-spacing:.5px}
+html.default-mode .health-progress{border:2px solid #ddecc2;border-radius:25px;background:linear-gradient(120deg,#f6ffd8,#e5f9dc)!important;box-shadow:0 9px 25px #63b68d1e}
+html.default-mode .health-progress h2,html.default-mode .health-progress .goal-name{color:#275f43}
+html.default-mode .health-progress p,html.default-mode .health-progress .goal-note{color:#5e7664!important}
+html.default-mode .goal-tile{border:1px solid #e6e7c9;border-radius:16px;background:#fffef6;color:#375c43;box-shadow:0 5px 14px #67a57714}
+html.default-mode .goal-value{color:#204d36!important}
+html.default-mode .goal-bar{background:#dce9d3}
+html.default-mode .section-row:has(+ .meals-grid) h2{font-size:27px;color:var(--ink);letter-spacing:-1.1px}
+html.default-mode .section-row:has(+ .meals-grid)::after{content:'✦';color:#6ac49d;font-size:25px;margin-left:auto}
+html.default-mode .meals-grid{gap:15px;grid-template-columns:repeat(2,minmax(0,1fr))}
+html.default-mode .meal-card{min-height:179px;padding:20px;border:2px solid transparent!important;border-radius:23px!important;box-shadow:0 9px 0 #3b74501a,0 18px 28px #3b74501c!important;}
+html.default-mode .meal-card:nth-child(4n+1){background:linear-gradient(135deg,#fff2cf,#ffe2cf 74%,#ffcad0)!important;--meal-ink:#7d4938}
+html.default-mode .meal-card:nth-child(4n+2){background:linear-gradient(135deg,#d5ffe0,#bdf7d5 74%,#a8ebdf)!important;--meal-ink:#235d49}
+html.default-mode .meal-card:nth-child(4n+3){background:linear-gradient(135deg,#eae3ff,#d4deff 74%,#c6e7ff)!important;--meal-ink:#4b4877}
+html.default-mode .meal-card:nth-child(4n+4){background:linear-gradient(135deg,#fff0d6,#ffe0f2 64%,#ebd3ff)!important;--meal-ink:#775273}
+html.default-mode .meal-name{font-size:17px;font-weight:950;color:var(--meal-ink,#254b3a)!important}
+html.default-mode .meal-total,html.default-mode .item-sub,html.default-mode .empty-meal{color:color-mix(in srgb,var(--meal-ink,#45634d) 85%,#777 15%)!important}
+html.default-mode .item-title,html.default-mode .item-cal{color:var(--meal-ink,#264939)!important}
+html.default-mode .meal-emoji{background:#fff9!important;box-shadow:0 6px 11px #4d725327!important;border:1px solid #fff9}
+html.default-mode .plus{width:44px;height:44px;display:grid;place-items:center;background:#fff9!important;border:2px solid #fffa!important;color:#254b3b!important;font-size:29px;box-shadow:0 4px 0 #76895b1c}
+html.default-mode .item-icon{background:#fffa!important}
+html.default-mode .item-edit,html.default-mode .item-remove{color:var(--meal-ink,#316143)!important;font-size:20px;min-width:31px;min-height:37px}
+html.default-mode .history-wrap{border-radius:26px;border:2px solid #d3eddd;background:linear-gradient(140deg,#d7ffe6,#dcf4ff 72%,#e6dcff)!important;box-shadow:0 11px 26px #55a79029!important}
+html.default-mode .history-wrap h2{font-size:23px;color:#215944!important}
+html.default-mode .history-visual{border-color:#a6d6c5}
+html.default-mode .history-bar{background:linear-gradient(0deg,#8eeeb5,#b8fae4);border-radius:11px 11px 1px 1px;box-shadow:0 3px 11px #36a47b29}
+html.default-mode .history-bar.active{background:linear-gradient(0deg,#826ef2,#ed8cdb);box-shadow:0 4px 15px #9e67df65}
+html.default-mode .history-amount,html.default-mode .history-day{color:#3d6969!important}
+html.default-mode .history-list{gap:11px}
+html.default-mode .history-row{border:2px solid #d2f1dc;background:linear-gradient(110deg,#e2ffde,#dbfaff)!important;color:#295c51;border-radius:17px;min-height:66px;font-weight:800;box-shadow:0 4px 12px #92bca31d}
+html.default-mode .history-row:nth-child(even){background:linear-gradient(110deg,#f2e5ff,#dce6ff)!important;border-color:#e1d4ff}
+html.default-mode .history-row span[style]{color:#537970!important}
+html.default-mode .insights-hero{background:linear-gradient(125deg,#bffeb0,#a4f0fa 49%,#d9bdff)!important;color:#24444a!important;min-height:165px;border:2px solid #d8f5fc;border-radius:27px;padding:26px;box-shadow:0 10px 0 #5facb321,0 19px 30px #548ea132}
+html.default-mode .insights-hero .insights-overline{color:#286454!important;font-size:11px}
+html.default-mode .insights-hero h2{font-size:clamp(25px,3vw,35px);color:#294b52!important}
+html.default-mode .insights-hero p{color:#416b66!important;font-weight:600}
+html.default-mode .insights-count{border:2px solid #c9f5d7;background:linear-gradient(140deg,#d3ffe8,#c4f5f5);border-radius:20px;box-shadow:0 5px 14px #6da79b21}
+html.default-mode .insights-count:nth-child(2){background:linear-gradient(130deg,#ffe6c9,#ffe6e4);border-color:#ffebc8}
+html.default-mode .insights-count:nth-child(3){background:linear-gradient(130deg,#e6e0ff,#d8eaff);border-color:#e8e0ff}
+html.default-mode .insights-count strong{color:#315a53!important;font-size:30px}
+html.default-mode .insights-count small{color:#5e7973!important}
+html.default-mode .insights-card{border:2px solid #d8f5e7!important;background:linear-gradient(135deg,#e0fff0,#e6f5ff)!important;border-radius:23px!important;box-shadow:0 6px 0 #5da58b18,0 12px 22px #5da58b22!important}
+html.default-mode .insights-card:nth-child(2n){border-color:#eadbff!important;background:linear-gradient(130deg,#f1e3ff,#fce3eb)!important}
+html.default-mode .insights-card h3,html.default-mode .insights-card .insights-card-type{color:#2b615b!important}
+html.default-mode .insights-card p,html.default-mode .insights-card .insights-basis{color:#526f71!important}
+html.default-mode .insights-card .insights-advice{background:rgba(255,255,255,.58)!important;border-radius:12px;color:#425c66!important}
+html.default-mode .insights-filters button[aria-pressed="true"]{background:linear-gradient(110deg,#c8ff82,#a5f8d0)!important;border:2px solid #a4eaa0;color:#225c48!important;box-shadow:0 4px 0 #7aad882e}
+html.default-mode .insights-filters button{border-radius:13px;min-height:43px;font-weight:850}
+html.default-mode .fx-grid{gap:15px;margin:22px 0}
+html.default-mode .fx-stat{border:2px solid #c9f2d8!important;border-radius:23px;background:linear-gradient(135deg,#bdffe4,#9eeaff)!important;box-shadow:0 8px 0 #64aa991e,0 15px 22px #64aa9922!important;padding:21px}
+html.default-mode .fx-stat:nth-child(even){background:linear-gradient(135deg,#ffe0ad,#ffe0e2)!important;border-color:#ffe0be!important}
+html.default-mode .fx-stat strong{font-size:44px;color:#275a4e!important;letter-spacing:-2px}
+html.default-mode .fx-stat small{font-size:12px;color:#4a6f64!important;font-weight:800}
+html.default-mode .fx-panel{background:linear-gradient(140deg,#ddffea,#d9f5ff)!important;border:2px solid #c7f3d9!important;border-radius:24px!important;box-shadow:0 6px 0 #5da98e1a,0 13px 23px #5da98e1d!important;margin-bottom:18px;padding:21px}
+html.default-mode .fx-panel:nth-of-type(even){background:linear-gradient(135deg,#f0e4ff,#e3eaff)!important;border-color:#e9dafa!important}
+html.default-mode .fx-panel h2{color:#315451;font-size:21px;font-weight:950}
+html.default-mode .fx-help,html.default-mode .fx-meta{color:#526e6d!important;font-size:12px}
+html.default-mode .fx-exercise{background:linear-gradient(120deg,#ddfff0,#d5ebff)!important;border:2px solid #bdebd6!important;border-radius:23px!important;box-shadow:0 5px 0 #60b2991c!important}
+html.default-mode .fx-exercise h3{color:#24554b;font-size:18px}
+html.default-mode .fx-exercise-head p{color:#51726d!important}
+html.default-mode .fx-set-card{background:#fffdf8!important;border:2px solid #ddf3e4;border-radius:18px;box-shadow:0 4px 12px #4c99721b}
+html.default-mode .fx-set-card strong,html.default-mode .fx-set-card label{color:#345949!important}
+html.default-mode .fx-set-group{background:linear-gradient(145deg,#eefcf1,#f6f8ff)!important;border-color:#d6e8dd}
+html.default-mode .fx-set-card input,html.default-mode .fx-set-card select{background:#fff!important;color:#2a5549!important}
+html.default-mode .fx-bank-card{background:linear-gradient(130deg,#fff0d8,#e6ffe9)!important;border:2px solid #f9e5c0;border-radius:19px;padding:17px}
+html.default-mode .fx-sound-row,html.default-mode .fx-rest-default{background:rgba(255,255,255,.62)!important;border:1px solid #cfebda}
+html.default-mode .fx-pill{background:#f8ffeb;color:#2e6c4d;border-color:#c8e8bc;font-weight:900}
+html.default-mode .fx-actions button{background:#faffeb!important;color:#285c47!important;border-color:#bcdabb}
+html.default-mode .fx-toolbar button.active{background:linear-gradient(110deg,#d0ff81,#9ef4d6)!important;color:#215741!important;border:2px solid #9ce1a2!important}
+html.default-mode .data-panel{background:linear-gradient(135deg,#e7fff1,#dff5ff)!important;border:2px solid #ceefdb!important;border-radius:25px!important;box-shadow:0 6px 0 #66a78d21,0 14px 25px #57a38a24!important;padding:24px}
+html.default-mode .data-panel:nth-of-type(even){background:linear-gradient(135deg,#f1e7ff,#e2f1ff)!important;border-color:#e5dbff!important}
+html.default-mode .data-panel h2{color:#2b5c50!important;font-size:23px;font-weight:950}
+html.default-mode .data-panel p,html.default-mode .data-panel .data-detail,html.default-mode .data-panel .preference-description{color:#526f6a!important}
+html.default-mode .ts-mode-choice{background:#fffefb!important;border:2px solid #cee9dc;border-radius:19px;box-shadow:0 4px 0 #6faaa41a;min-height:120px}
+html.default-mode .ts-mode-choice.selected{background:linear-gradient(145deg,#d1ff8c,#9ff6c6 65%,#b9f1ff)!important;border:3px solid #7dd89a!important;box-shadow:0 6px 0 #54a66d42,0 14px 21px #5faf9e2a!important}
+html.default-mode .ts-mode-choice.selected strong{color:#205b42}
+html.default-mode .ts-mode-choice.selected small{color:#4b715c!important}
+html.default-mode .ts-mode-icon{color:#25845f;font-size:26px}
+html.default-mode .ts-mode-check{color:#2b8b58;font-size:21px}
+html.default-mode .theme-option[aria-pressed="true"]{background:#c3fc9a!important;color:#1a553b!important;border:2px solid #8bd8aa!important}
+html.default-mode .library-food{background:linear-gradient(130deg,#e6fff1,#e4f3ff)!important;border:2px solid #d3f1e4;border-radius:21px!important;box-shadow:0 5px 0 #5fa58b1a}
+html.default-mode .library-food:nth-child(3n+2){background:linear-gradient(130deg,#fff0d5,#ffe3e5)!important;border-color:#ffe0d5}
+html.default-mode .library-food:nth-child(3n+3){background:linear-gradient(130deg,#efe6ff,#ddedff)!important;border-color:#e4e2ff}
+html.default-mode .library-food .food-name,html.default-mode .library-food .food-kcal{color:#2f5850!important}
+html.default-mode .library-food .food-serving{color:#63817b!important}
+html.default-mode .library-food .plus{background:#fff!important}
+html.default-mode .filter.active{background:linear-gradient(110deg,#baff90,#8decbe)!important;color:#205843!important;border:2px solid #9bdfa7}
+html.default-mode .sidebar{background:linear-gradient(173deg,#123e35 12%,#185a4a 70%,#244c59 100%)}
+html.default-mode .sidebar .side-link.active{background:linear-gradient(110deg,#d2ff77,#99f3d6)!important;border-radius:17px;color:#205342;box-shadow:0 5px 0 #203d352b}
+html.default-mode .right-panel{background:linear-gradient(150deg,#edfff0,#e4f8ff);border-left:2px solid #d0eedc}
+html.default-mode .right-panel .note-card{background:linear-gradient(120deg,#d8ffb3,#bff7d5);color:#2b5544}
+html.default-mode .right-panel .note-card p{color:#446e5b}
+html.default-mode .mobile-nav{background:linear-gradient(115deg,#d7ffbf,#b6f9df 55%,#c0eaff)!important;border-top:2px solid #a3e1ca;box-shadow:0 -8px 28px #63ab9a35;backdrop-filter:none}
+html.default-mode .mobile-nav button{color:#447666!important;min-height:52px;padding:6px 1px;font-weight:900}
+html.default-mode .mobile-nav button.active{background:rgba(255,255,255,.7)!important;box-shadow:0 4px 0 #4b917535,inset 0 0 0 1px #7bd79e!important;color:#105944!important;border-radius:14px}
+html.default-mode .mobile-nav button span{color:inherit!important}
+html.default-mode .ts-demo-bar{background:linear-gradient(120deg,#cdffae,#aff1f6)!important;color:#2a614b;border-color:#a3e4c0}
+html.default-mode .ts-demo-bar span{color:#527c66}
+@media(max-width:1100px){html.default-mode .v83-top-grid{grid-template-columns:1fr}}
+@media(max-width:650px){
+  html.default-mode main{padding:17px 15px 38px}
+  html.default-mode .main-top{padding:10px 12px 10px 53px;border-radius:18px!important;min-height:61px;margin-bottom:22px}
+  html.default-mode .main-top::before{left:10px;width:33px;height:33px}
+  html.default-mode .heading-row{align-items:flex-start!important;gap:10px}
+  html.default-mode .heading-row h1{font-size:clamp(30px,8vw,38px);letter-spacing:-1.9px}
+  html.default-mode .heading-row h1::after{height:6px;width:65px;margin:10px 0 6px}
+  html.default-mode .heading-row .subheading{font-size:12px;line-height:1.5}
+  html.default-mode .heading-row .button-primary{font-size:12px;min-height:48px;padding:10px 13px;border-radius:14px!important;max-width:124px;white-space:normal}
+  html.default-mode .v83-day-banner,html.default-mode .v83-fitness-banner,html.default-mode .v83-history-banner{margin:14px 0 20px;padding:20px 17px;border-radius:23px;min-height:155px}
+  html.default-mode .v83-banner-text,html.default-mode .v83-fitness-banner > div:first-child{max-width:76%}
+  html.default-mode .v83-day-banner strong,html.default-mode .v83-fitness-banner strong,html.default-mode .v83-history-banner strong{font-size:clamp(24px,6.2vw,30px)}
+  html.default-mode .v83-day-banner p,html.default-mode .v83-fitness-banner p,html.default-mode .v83-history-banner p{font-size:11px;margin:9px 0 11px}
+  html.default-mode .v83-chips span{font-size:10px;padding:7px 9px}
+  html.default-mode .v83-banner-art{right:-37px;top:2px;transform:scale(.72)}
+  html.default-mode .v83-fitness-art{right:0;top:18px;font-size:99px}
+  html.default-mode .v83-top-grid{grid-template-columns:1fr;gap:13px;margin:15px 0 22px}
+  html.default-mode .v83-top-grid .macro-panel{grid-template-columns:1fr;gap:10px;margin:0;padding:16px}
+  html.default-mode .macro-graphic{width:min(100%,215px)}
+  html.default-mode .v83-top-grid .energy-reference{gap:12px;padding:17px 19px;flex-direction:row;flex-wrap:wrap}
+  html.default-mode .v83-top-grid .energy-ref-actions{gap:9px;margin-left:auto}
+  html.default-mode .v83-top-grid .energy-ref-value{font-size:23px}
+  html.default-mode .health-intro{padding:14px 17px;margin:12px 0}
+  html.default-mode .section-row:has(+ .meals-grid) h2{font-size:25px}
+  html.default-mode .meals-grid{grid-template-columns:1fr;gap:14px}
+  html.default-mode .meal-card{min-height:143px;padding:16px 17px}
+  html.default-mode .history-row{font-size:12px;gap:9px}
+  html.default-mode .insights-hero{padding:21px 17px}
+  html.default-mode .insights-count{padding:12px 8px}
+  html.default-mode .insights-count strong{font-size:24px}
+  html.default-mode .fx-panel{padding:16px}
+  html.default-mode .fx-stat{padding:18px}
+  html.default-mode .data-panel{padding:19px}
+  html.default-mode .ts-mode-choice{min-height:0}
+  html.default-mode .mobile-nav{padding:7px 3px max(7px,env(safe-area-inset-bottom))}
+  html.default-mode .mobile-nav button{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ html.default-mode .v83-banner-art,html.default-mode .v83-fitness-art{animation:none!important}
+}
+/* Contrast pass for dark-theme users: pastel surfaces always use dark foreground. */
+html.default-mode .fx-panel,html.default-mode .fx-exercise,html.default-mode .fx-bank-card,
+html.default-mode .data-panel,html.default-mode .ts-mode-choice,html.default-mode .library-food,
+html.default-mode .insights-card,html.default-mode .insights-count,html.default-mode .health-progress,
+html.default-mode .health-intro{color:#294f46!important}
+html.default-mode .fx-panel .empty-state{color:#507568!important;background:rgba(255,255,255,.5);border-color:#a3ceba}
+html.default-mode .fx-panel .fx-pr-switch label,html.default-mode .fx-panel .fx-sound-row strong,
+html.default-mode .fx-panel .fx-sound-row label,html.default-mode .fx-panel .fx-sound-row .fx-help,
+html.default-mode .fx-panel .fx-item b,html.default-mode .fx-panel .fx-item small,
+html.default-mode .fx-bank-card b,html.default-mode .fx-bank-card small,
+html.default-mode .fx-panel .fx-sound-actions label{color:#315a50!important}
+html.default-mode .data-panel .field label,html.default-mode .data-panel .fx-field label,
+html.default-mode .data-panel .preference-name,html.default-mode .data-panel .preference-row,
+html.default-mode .data-panel .data-detail{color:#315b51!important}
+html.default-mode .ts-mode-choice{color:#254d42!important}
+html.default-mode .ts-mode-choice small{color:#57766c!important}
+html.default-mode .right-panel .food-btn,html.default-mode .right-panel .right-title,
+html.default-mode .right-panel .food-name,html.default-mode .right-panel .food-kcal,
+html.default-mode .right-panel .quiet-label{color:#275749!important}
+html.default-mode .right-panel .food-serving{color:#638074!important}
+html.default-mode .fx-set-card .fx-comment-preview{color:#547468!important}
+
+/* Respect the user's existing cards-vs-chart preference in every display mode. */
+html.default-mode .v83-top-grid .stats-grid{margin:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-self:stretch}
+html.default-mode .v83-top-grid .stat.energy{grid-column:1/-1;background:linear-gradient(120deg,#d4ff86,#a4f7c9)!important;border:2px solid #c3e7a9!important;color:#215743!important;border-radius:22px!important}
+html.default-mode .v83-top-grid .stat.energy .stat-number,html.default-mode .v83-top-grid .stat.energy .unit{color:#275a43!important}
+html.default-mode .v83-top-grid .stat.energy .stat-dot{background:#287a5c}
+html.default-mode .v83-top-grid .stat:not(.energy){border:2px solid #c9eddf!important;background:linear-gradient(135deg,#bcffe6,#c8f7f3)!important;border-radius:18px!important;box-shadow:0 4px 10px #6bad8e18!important;color:#26574e!important}
+html.default-mode .v83-top-grid .stat:nth-child(3){border-color:#f4d6d5!important;background:linear-gradient(140deg,#ffe6d0,#ffe0e6)!important}
+html.default-mode .v83-top-grid .stat:nth-child(4){border-color:#dbdbfa!important;background:linear-gradient(140deg,#eee5ff,#d9e7ff)!important}
+html.default-mode .v83-top-grid .stat .stat-number,html.default-mode .v83-top-grid .stat .stat-label{color:#275a50!important}
+html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
+@media(max-width:650px){html.default-mode .v83-top-grid .stats-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin:0}}
+
+</style>
 </head>
 <body>
 <section id="consentScreen" class="consent-screen" aria-labelledby="consentTitle">
@@ -759,7 +1023,7 @@
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.1.2 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -1037,12 +1301,17 @@
     let meals=MEALS.map(meal=>{const items=entries.filter(e=>e.meal===meal.id),mv=sum(items);return `<section class="meal-card"><div class="meal-header"><div class="meal-left"><div class="meal-emoji" style="background:${meal.color}">${meal.emoji}</div><div><div class="meal-name">${meal.id}</div><div class="meal-total">${fmt(mv.cal)} kcal</div></div></div><button class="plus" data-action="add" data-meal="${meal.id}" aria-label="Add food to ${meal.id}" title="Add food to ${meal.id}">+</button></div>${items.length?`<div class="meal-items">${items.map(e=>`<div class="logged-item"><span class="item-icon">${esc(e.emoji||'🍽️')}</span><div class="item-desc"><div class="item-title" title="${esc(e.name)}">${esc(e.name)}</div><div class="item-sub">${fmt(e.qty*100)/100} × ${esc(e.serving)}</div></div><div class="item-cal">${fmt(e.cal)}</div><button class="item-edit" data-action="editentry" data-id="${esc(e.id)}" aria-label="Edit ${esc(e.name)}" title="Edit entry">✎</button><button class="item-remove" data-action="remove" data-id="${esc(e.id)}" aria-label="Remove ${esc(e.name)}" title="Remove entry">×</button></div>`).join('')}</div>`:`<div class="empty-meal">Nothing logged yet.<br>Tap + to add a food.</div>`}</section>`}).join('');
     const referenceHtml=`<section class="energy-reference" aria-label="Daily energy reference"><div><div class="energy-ref-title">✳ Daily energy reference</div><div class="energy-ref-desc">An optional personal reference, not a limit or ceiling.</div></div><div class="energy-ref-actions"><div class="energy-ref-value">${store.energyReference===null?'Not set':`${fmt(store.energyReference)} <small>kcal/day</small>`}</div><button class="energy-ref-edit" data-action="editreference" aria-label="${store.energyReference===null?'Set':'Edit'} daily energy reference">${store.energyReference===null?'Set reference':'Edit ✎'}</button></div></section>`;
     const healthLead=prefs.healthMode?`<div class="mode-pill">✳ HEALTH MODE · OPTIONAL INSIGHTS</div><section class="health-intro"><h2>Nutrition in context.</h2><p>Track patterns, not perfection. Goals are flexible references, not ceilings; Tallysprig never blocks a meal or calculates calories remaining. ${health.age!==null&&health.age<18?'For growing users, numeric calorie estimates are not provided.':''}</p></section>`:'';
-    return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+healthLead+referenceHtml+(isHealthChart()?macroChartHtml(v,entries.length):statHtml)+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
+    const vibrant=prefs.uiMode==='default';
+    const occupied=MEALS.filter(m=>entries.some(e=>e.meal===m.id)).length;
+    const v83Banner=`<section class="v83-day-banner" aria-label="Daily dashboard summary"><div class="v83-banner-text"><span class="v83-kicker">✦ YOUR DAY · YOUR STORY</span><strong>Your daily snapshot.</strong><p>Little moments add up. See what you've logged, all in one colorful place.</p><div class="v83-chips"><span>◉ ${entries.length} food ${entries.length===1?'entry':'entries'}</span><span>✧ ${occupied} meal ${occupied===1?'moment':'moments'}</span></div></div><div class="v83-banner-art" aria-hidden="true"><span class="v83-art-orbit"></span><span class="v83-art-spark">✳</span><span class="v83-art-dot"></span></div></section>`;
+    const chart=isHealthChart()?macroChartHtml(v,entries.length):statHtml;
+    const statsArea=vibrant?`<div class="v83-top-grid">${chart}${referenceHtml}</div>`:referenceHtml+chart;
+    return heading(vibrant?'Your day, in color.':'Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+(vibrant?v83Banner:'')+healthLead+statsArea+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
   function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Export CSV</button><button class="button-secondary" data-action="import">↙ Import CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
-  function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
+  function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Export CSV</button>`)+(prefs.uiMode==='default'?`<div class="v83-history-banner"><span>✦ YOUR JOURNAL, AT A GLANCE</span><strong>Every day tells a story.</strong><p>Explore your records across the week, without pressure or targets.</p></div>`:'')+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
   // I1: only the display units change; canonical saved height/weight remain cm/kg.
   const LB_PER_KG=2.20462262185, CM_PER_IN=2.54;
   function oneDecimal(value){return value===null||value===undefined?'':String(Math.round((value+Number.EPSILON)*10)/10)}
@@ -1291,7 +1560,8 @@
     else if(fxScreen==='bank')content=renderFxBank();
     else if(fxScreen==='library')content=renderFxLibrary();
     else content=renderFxHome();
-    return fxHeading('Your workouts.','Your strength and cardio training journal.')+fxNav()+content;
+    const v83Fit=prefs.uiMode==='default'&&fxScreen==='home'?`<section class="v83-fitness-banner" aria-label="Fitness overview"><div><span class="v83-kicker">✦ FITNESS STUDIO</span><strong>Make every move count.</strong><p>Strength, cardio, and your training history, all in one place.</p><div class="v83-chips"><span>◆ STRENGTH</span><span>◉ CARDIO</span><span>✦ PROGRESS</span></div></div><div class="v83-fitness-art" aria-hidden="true">✳</div></section>`:'';
+    return fxHeading('Your workouts.','Your strength and cardio training journal.')+fxNav()+v83Fit+content;
   }
   function renderFxHome(){
     const completed=fitness.sessions.filter(w=>w.status==='complete');const now=localISO(new Date()),seven=addDays(now,-6);
@@ -1899,17 +2169,17 @@
       `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only saved records are analyzed. Blank actual results, unfinished workouts, and unlogged meals are excluded rather than interpreted as zero.</p>`+
       `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>${insightIcon('training')}Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
       `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>${insightIcon('nutrition')}Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
-      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.1 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
   }
 
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.1.2 · Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.3 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
       <div class="ts-mode-grid" role="group" aria-label="Display mode">
-        ${[['default','✦','Default','Polished transitions and interaction effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
-      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.1.2</strong></p>
+        ${[['default','✦','Default','Bright dashboard, vibrant cards and playful effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3</strong></p>
       ${prefs.uiMode==='default'?`<div class="ts-demo-bar"><div><strong>See the effects in action</strong><span>Preview the button, pop-up, and expandable-panel animations.</span></div><button class="button-primary" type="button" data-action="previewdefault">Try Default effects ↗</button></div>`:''}</section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
