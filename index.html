@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.0.1 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.1 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -555,15 +555,54 @@
     html[data-theme="dark"] .insights-card .insights-card-type{color:#a8d9ba}
     @media(max-width:650px){.mobile-nav{padding-left:2px;padding-right:2px}.mobile-nav button{font-size:9px;gap:3px;padding:0 1px}.mobile-nav button span{font-size:18px}.insights-hero{padding:18px}.insights-hero h2{font-size:21px}.insights-cards{grid-template-columns:1fr}.insights-count{padding:12px 8px}.insights-count strong{font-size:22px}.insights-count small{font-size:10px}.insights-filters{gap:6px}.insights-filters button{padding:9px 11px}}
     @media(max-width:350px){.mobile-nav button{font-size:8px}.insights-counts{gap:5px}}
+
+    /* V8.1 - display mode selection: independent of Health Mode. */
+    .ts-mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+    .ts-mode-choice{display:flex;gap:10px;align-items:flex-start;position:relative;min-height:113px;padding:17px 12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:15px;text-align:left;cursor:pointer}
+    .ts-mode-choice.selected{border-color:#43a67e;background:color-mix(in srgb,var(--paper) 88%,#86ddb8 12%);box-shadow:0 0 0 2px rgba(76,172,125,.10)}
+    .ts-mode-icon{font-size:22px;color:var(--green);line-height:1.1}.ts-mode-choice strong{display:block;font-size:14px}.ts-mode-choice small{display:block;font-size:11px;color:var(--muted);line-height:1.5;margin-top:5px}.ts-mode-check{margin-left:auto;color:var(--green);font-size:16px;font-weight:850}
+    @media(max-width:750px){.ts-mode-grid{grid-template-columns:1fr}.ts-mode-choice{min-height:0;align-items:center;padding:14px}.ts-mode-choice small{margin-top:2px}}
+    /* Default Mode: deliberately lightweight, polished feedback. Classic and Simple keep their existing presentation. */
+    .default-mode #main-content > .heading-row,.default-mode #main-content > .main-top,.default-mode #main-content > section,.default-mode #main-content > .fx-grid,.default-mode #main-content > .insights-cards{animation:ts-content-enter .28s ease-out both}
+    .default-mode .meal-card,.default-mode .fx-panel,.default-mode .fx-exercise,.default-mode .stat,.default-mode .data-panel,.default-mode .insights-card,.default-mode .fx-stat{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+    .default-mode .meal-card:hover,.default-mode .fx-panel:hover,.default-mode .fx-exercise:hover,.default-mode .data-panel:hover,.default-mode .insights-card:hover{transform:translateY(-2px);box-shadow:0 10px 27px rgba(23,62,56,.10)}
+    .default-mode button:not(:disabled){transition:transform .14s ease,background-color .22s ease,border-color .22s ease,box-shadow .22s ease;position:relative;overflow:hidden;isolation:isolate}
+    .default-mode button:not(:disabled):active{transform:scale(.976)}
+    .default-mode button:focus-visible{outline:3px solid #78cca6;outline-offset:2px}
+    .default-mode .modal-backdrop.show .modal{animation:ts-modal-pop .26s cubic-bezier(.2,.85,.2,1.1) both}
+    .default-mode details[open] > *:not(summary){animation:ts-detail-open .24s ease-out both}
+    .default-mode .toast.show{animation:ts-toast-pop .24s ease-out both}
+    .default-mode .pref-switch-knob{transition:transform .24s cubic-bezier(.2,.9,.2,1.1)}
+    .ts-ripple{pointer-events:none;position:absolute;border-radius:50%;width:16px;height:16px;background:rgba(130,222,171,.38);transform:translate(-50%,-50%) scale(0);animation:ts-ripple .62s ease-out both;z-index:2}
+    @keyframes ts-content-enter{from{opacity:.45;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes ts-modal-pop{from{opacity:.6;transform:translateY(13px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes ts-detail-open{from{opacity:.3;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes ts-toast-pop{from{transform:translateY(10px);opacity:.3}to{transform:translateY(0);opacity:1}}
+    @keyframes ts-ripple{to{transform:translate(-50%,-50%) scale(24);opacity:0}}
+    /* Every mode shares the same nonjudgmental logging streak celebration. */
+    .streak-backdrop{position:fixed;inset:0;background:rgba(7,24,19,.72);z-index:3000;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
+    .streak-backdrop.show{opacity:1;visibility:visible}
+    .streak-dialog{width:min(100%,440px);position:relative;overflow:hidden;isolation:isolate;border-radius:27px;border:1px solid rgba(253,223,169,.25);padding:32px 24px 27px;text-align:center;background:linear-gradient(160deg,#213c34,#152a27 73%);color:#fff;box-shadow:0 24px 75px rgba(0,0,0,.35);transform:scale(.92) translateY(12px);transition:transform .36s cubic-bezier(.2,.85,.2,1.1)}
+    .streak-backdrop.show .streak-dialog{transform:scale(1) translateY(0)}
+    .streak-glow{position:absolute;left:15%;top:-130px;width:70%;height:270px;border-radius:50%;background:rgba(246,143,57,.17);filter:blur(35px);z-index:-1}
+    .streak-fire{font-size:97px;line-height:1.4;position:relative;width:135px;margin:auto;filter:drop-shadow(0 0 17px rgba(255,123,40,.35));animation:ts-flame-bounce 1.5s ease-in-out infinite alternate;transform-origin:50% 90%}
+    .streak-fire span{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);font-size:37px;line-height:1;font-weight:950;color:#522a17;text-shadow:0 1px 1px rgba(255,225,165,.6)}
+    .streak-dialog h2{margin:1px 0 12px;font-size:25px;color:#fff}.streak-dialog p{color:#d5e8df;font-size:15px;line-height:1.55;margin:0 0 11px}
+    .streak-dialog .streak-extra{font-size:12px;color:#a9c4b7;margin-bottom:22px}
+    .streak-dialog button{width:100%;max-width:290px;background:#8be6b3;color:#123e30;border:0;font-weight:800}
+    @keyframes ts-flame-bounce{from{transform:translateY(0) rotate(-4deg) scale(.97)}to{transform:translateY(-7px) rotate(4deg) scale(1.04)}}
+    @media(prefers-reduced-motion:reduce){.default-mode #main-content > *,.default-mode .modal-backdrop.show .modal,.default-mode details[open] > *,.default-mode .toast.show,.ts-ripple,.streak-fire{animation:none!important}.default-mode button,.default-mode .meal-card,.default-mode .fx-panel,.default-mode .data-panel,.streak-dialog{transition:none!important}}
+    .ts-brand-image{width:32px;height:32px;object-fit:cover;border-radius:10px;margin-right:6px;vertical-align:middle;flex-shrink:0}
+    .ts-consent-image{width:48px;height:48px;object-fit:cover;border-radius:15px;vertical-align:middle;flex-shrink:0}
   </style>
 </head>
 <body>
 <section id="consentScreen" class="consent-screen" aria-labelledby="consentTitle">
   <div class="consent-card">
-    <div class="consent-logo"><span aria-hidden="true">✳</span><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
+    <div class="consent-logo"><img class="ts-consent-image" src="./icons/icon-192.png" alt="" aria-hidden="true"><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
     <h1 class="consent-title" id="consentTitle">Before you begin</h1>
     <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
-    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.7).</span></label></div>
+    <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.8).</span></label></div>
     <div class="agreement-box"><h2>♡ Medical Disclaimer</h2><p>Tallysprig is a food journal, not a medical professional. Food information and energy values are estimates.</p><a href="./medical.html" target="_blank" rel="noopener noreferrer">Read the complete Medical Disclaimer ↗</a><label><input id="agreeMedical" type="checkbox"> <span>I have read and agree to the Medical Disclaimer (version 1.4).</span></label></div>
     <button id="agreeContinue" class="button-primary" type="button" disabled>Agree &amp; Continue →</button>
     <div id="consentError" class="consent-error" role="alert" aria-live="polite"></div>
@@ -572,7 +611,7 @@
 </section>
 <div class="app">
   <aside class="sidebar">
-    <div class="brand"><span class="brand-symbol" aria-hidden="true">✳</span> tallysprig<span style="color:#b8dfb8">.</span></div>
+    <div class="brand"><img class="ts-brand-image" src="./icons/icon-192.png" alt="" aria-hidden="true"> tallysprig<span style="color:#b8dfb8">.</span></div>
     <div><div class="sidebar-label">WORKSPACE</div><nav aria-label="Main navigation">
       <button class="side-link active" data-view="today"><span class="nav-icon">◫</span> Today</button>
       <button class="side-link" data-view="history"><span class="nav-icon">▥</span> History</button>
@@ -581,7 +620,7 @@
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.0.1 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.1 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -599,6 +638,16 @@
 <button data-view="about"><span>⚙</span>Settings</button>
 </nav>
 <div class="modal-backdrop" id="modalBackdrop" role="presentation"><div class="modal" id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
+<div class="streak-backdrop" id="streakBackdrop" aria-hidden="true" role="presentation">
+  <div class="streak-dialog" role="dialog" aria-modal="true" aria-labelledby="streakTitle" aria-describedby="streakDescription">
+    <div class="streak-glow" aria-hidden="true"></div>
+    <div class="streak-fire" aria-hidden="true">🔥<span id="streakDayCount">5</span></div>
+    <h2 id="streakTitle">5-day logging streak!</h2>
+    <p id="streakDescription">Great job keeping track of your health. Keep it up!</p>
+    <p class="streak-extra">Each day you log food or finish a workout counts toward your streak. No nutrition targets are required.</p>
+    <button type="button" id="streakClose" class="button-primary" data-action="closestreak">Continue</button>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importBackupFile" accept=".json,application/json" aria-label="Choose a Tallysprig JSON backup" style="display:none">
 <input type="file" id="importCsvFile" accept=".csv,text/csv,text/plain" aria-label="Choose a Tallysprig CSV export" style="display:none">
@@ -611,27 +660,36 @@
   const PREF_KEY='tallysprig_preferences_v5';
   const HEALTH_KEY='tallysprig_health_v6';
   const FITNESS_KEY='tallysprig_fitness_v7';
-  const DEFAULT_PREFS={macroChart:false,healthMacroChart:true,healthMode:false,theme:'light',simpleMode:false};
-  function normalizePrefs(obj){return {
-    macroChart: typeof obj?.macroChart==='boolean'?obj.macroChart:false,
-    healthMacroChart:typeof obj?.healthMacroChart==='boolean'?obj.healthMacroChart:true,
-    healthMode:typeof obj?.healthMode==='boolean'?obj.healthMode:false,
-    theme:obj?.theme==='dark'?'dark':'light',
-    simpleMode:typeof obj?.simpleMode==='boolean'?obj.simpleMode:false
-  }}
+  const DEFAULT_PREFS={macroChart:false,healthMacroChart:true,healthMode:false,theme:'light',simpleMode:false,uiMode:'default',streakCount:0,streakLastLogDate:'',streakLastCelebrated:''};
+  function normalizePrefs(obj){
+    const requested=['default','classic','simple'].includes(obj?.uiMode)?obj.uiMode:(obj?.simpleMode===true?'simple':'default');
+    const day=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)?s:'';
+    return {
+      macroChart:typeof obj?.macroChart==='boolean'?obj.macroChart:false,
+      healthMacroChart:typeof obj?.healthMacroChart==='boolean'?obj.healthMacroChart:true,
+      healthMode:typeof obj?.healthMode==='boolean'?obj.healthMode:false,
+      theme:obj?.theme==='dark'?'dark':'light',
+      simpleMode:requested==='simple',
+      uiMode:requested,
+      streakCount:Number.isInteger(obj?.streakCount)&&obj.streakCount>=0&&obj.streakCount<=100000?obj.streakCount:0,
+      streakLastLogDate:day(obj?.streakLastLogDate),
+      streakLastCelebrated:day(obj?.streakLastCelebrated)
+    };
+  }
   function loadPrefs(){try {return normalizePrefs(JSON.parse(localStorage.getItem(PREF_KEY)||'{}'));} catch(_){return {...DEFAULT_PREFS}}}
   let prefs=loadPrefs();
   function applyTheme(){
     document.documentElement.dataset.theme=prefs.theme;
-    document.documentElement.classList.toggle('simple-mode',!!prefs.simpleMode);
+    document.documentElement.classList.toggle('simple-mode',prefs.uiMode==='simple');
+    document.documentElement.classList.toggle('default-mode',prefs.uiMode==='default');
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content',prefs.theme==='dark'?'#102922':'#173e38');
   }
   function savePrefs(next,message){
-    try {localStorage.setItem(PREF_KEY,JSON.stringify(next));prefs=next;applyTheme();render();showToast(message)}
+    try {const normalized=normalizePrefs(next);localStorage.setItem(PREF_KEY,JSON.stringify(normalized));prefs=normalized;applyTheme();render();showToast(message)}
     catch(_) {showToast('Could not save preferences. Check browser storage.')}
   }
   applyTheme();
-  const PRIVACY_VERSION='1.7', MEDICAL_VERSION='1.4';
+  const PRIVACY_VERSION='1.8', MEDICAL_VERSION='1.4';
   let consentOk=false;
   function acceptedDocuments(){
     try { const c=JSON.parse(localStorage.getItem(CONSENT_KEY)||'null');return !!(c && c.privacyVersion===PRIVACY_VERSION && c.medicalVersion===MEDICAL_VERSION && typeof c.acceptedAt==='string'); }
@@ -761,10 +819,37 @@
   function dec(n){return Math.round(n*10)/10}
   function allFoods(){return [...store.customFoods,...DB]}
   function getFood(id){return allFoods().find(f=>f.id===id)}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){showToast('Could not save. Try exporting a backup.')}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(store));return true}catch(e){showToast('Could not save. Try exporting a backup.');return false}}
   function sum(items){return items.reduce((a,e)=>({cal:a.cal+e.cal,p:a.p+e.p,c:a.c+e.c,f:a.f+e.f}),{cal:0,p:0,c:0,f:0})}
   function todayEntries(){return store.entries.filter(e=>e.date===selectedDate)}
   function showToast(s){let el=document.getElementById('toast');el.textContent=s;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}
+  // V8.1: a usage streak counts actual food logging or completion of a workout.
+  // It is device-local, starts with logging on V8.1, and never measures diet adherence.
+  function recordLoggingDay(){
+    const today=localISO(new Date());
+    if(prefs.streakLastLogDate===today)return;
+    const consecutive=prefs.streakLastLogDate===addDays(today,-1);
+    const next=normalizePrefs({...prefs,streakCount:consecutive?prefs.streakCount+1:1,streakLastLogDate:today});
+    const milestone=next.streakCount>=5&&next.streakCount%5===0&&next.streakLastCelebrated!==today;
+    if(milestone)next.streakLastCelebrated=today;
+    try{localStorage.setItem(PREF_KEY,JSON.stringify(next));prefs=next;}catch(_){return}
+    if(milestone)setTimeout(()=>showStreakCelebration(next.streakCount),320);
+  }
+  function showStreakCelebration(days){
+    if(!consentOk)return;
+    const backdrop=document.getElementById('streakBackdrop');
+    if(!backdrop)return;
+    document.getElementById('streakDayCount').textContent=String(days);
+    document.getElementById('streakTitle').textContent=days+'-day logging streak!';
+    backdrop.classList.add('show');
+    backdrop.setAttribute('aria-hidden','false');
+    document.getElementById('streakClose')?.focus();
+  }
+  function closeStreakCelebration(){
+    const backdrop=document.getElementById('streakBackdrop');
+    backdrop?.classList.remove('show');
+    backdrop?.setAttribute('aria-hidden','true');
+  }
   const dateNav=()=>`<div class="date-switch"><button data-action="prevdate" title="Previous day" aria-label="Previous day">‹</button><span class="date-pill">${esc(shortDate(selectedDate))}</span><button data-action="nextdate" title="Next day" aria-label="Next day">›</button></div>`;
   function heading(title,subtitle,action=''){return `<div class="main-top"><div class="eyebrow">✳ &nbsp; TALLYSPRIG</div>${dateNav()}</div><div class="heading-row"><div><h1>${title}</h1><p class="subheading">${subtitle}</p></div>${action}</div>`}
   function macroChartHtml(v,entryCount){
@@ -1040,7 +1125,7 @@
         osc.type=kind==='record'?'sine':'triangle';osc.frequency.value=frequency;
         const start=t+delay;
         gain.gain.setValueAtTime(.0001,start);
-        gain.gain.exponentialRampToValueAtTime(kind==='record'?.065:.048,start+.025);
+        gain.gain.exponentialRampToValueAtTime(kind==='record'?.125:.095,start+.025);
         gain.gain.exponentialRampToValueAtTime(.0001,start+length);
         osc.connect(gain);gain.connect(ctx.destination);
         osc.start(start);osc.stop(start+length+.02);
@@ -1514,7 +1599,7 @@
     if(action==='fxfinish'){const w=editingWorkout();if(!w)return;
       if(!w.exercises.some(ex=>ex.sets.some(s=>s.done))){showToast('Mark at least one set complete before finishing.');return}
       if(!confirm('Finish and save this workout? You can edit it later in History.'))return;
-      w.status='complete';saveFitness();fxEditingId=null;fxScreen='home';render();showToast('Workout saved to History.');return;
+      w.status='complete';if(saveFitness())recordLoggingDay();fxEditingId=null;fxScreen='home';render();showToast('Workout saved to History.');return;
     }
     if(action==='fxsavedone'){fxScreen='history';fxEditingId=null;render();showToast('Workout changes saved.');return}
     if(action==='fxedit'){const w=fitness.sessions.find(x=>x.id===btn.dataset.id);if(!w)return;fxEditingId=w.id;fxScreen='editor';render();return}
@@ -1669,20 +1754,23 @@
   function renderInsights(){
     const length=insightsWindow;
     return heading('Training & nutrition insights.','Recorded trends, comparisons, and practical context from your journal.')+
-      `<section class="insights-hero"><div class="insights-overline">✦ Tallysprig Intelligence · V8.0.1</div><h2>Analyze your recorded trends.</h2><p>Tallysprig calculates these insights <strong>on your device</strong> from logged workouts and foods. Results follow explicit rules, not a conversational AI model. No API, account, or internet connection is required for analysis.</p></section>`+
+      `<section class="insights-hero"><div class="insights-overline">✦ Tallysprig Intelligence · V8.1</div><h2>Analyze your recorded trends.</h2><p>Tallysprig calculates these insights <strong>on your device</strong> from logged workouts and foods. Results follow explicit rules, not a conversational AI model. No API, account, or internet connection is required for analysis.</p></section>`+
       `<div class="insights-filters" role="group" aria-label="Insights time window"><span class="insights-label">SHOW</span>${[7,28,90].map(n=>`<button type="button" data-action="insightswindow" data-days="${n}" aria-pressed="${insightsWindow===n}">${n} days</button>`).join('')}</div>`+
       `<div class="insights-filters" role="group" aria-label="Insights category"><span class="insights-label">TOPIC</span>${[['both','All'],['training','Training'],['nutrition','Nutrition']].map(([k,label])=>`<button type="button" data-action="insightsfocus" data-focus="${k}" aria-pressed="${insightsFocus===k}">${label}</button>`).join('')}</div>`+
       `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only saved records are analyzed. Blank actual results, unfinished workouts, and unlogged meals are excluded rather than interpreted as zero.</p>`+
       `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>${insightIcon('training')}Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
       `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>${insightIcon('nutrition')}Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
-      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.0.1 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.1 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
   }
 
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.0.1 · Choose how your journal looks, manage backups, and review your documents.')+
-    `<section class="simple-main-toggle" aria-label="Simple Mode setting"><div class="preference-row"><div><div class="preference-name">Simple Mode</div><div class="preference-description">${prefs.simpleMode?'On — tap a section or set to expand its options.':'Off — all details and options are shown as usual.'} Bigger touch targets and compact menus, especially for Fitness. Your data stays the same.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.simpleMode}" aria-label="Enable Simple Mode" data-action="togglesimple"><span class="pref-switch-knob" aria-hidden="true"></span></button></div></section>`+
+    return heading('Settings & your data.','Tallysprig V8.1 · Choose how your journal looks, manage backups, and review your documents.')+
+    `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
+      <div class="ts-mode-grid" role="group" aria-label="Display mode">
+        ${[['default','✦','Default','Polished transitions and interaction effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating.</p></section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
     <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
@@ -1832,7 +1920,7 @@
     if(qty!==Number(e.qty)){Object.assign(e,values);e.basis=basis}
     e.qty=qty;e.meal=meal;save();closeModal();render();showToast('Food entry updated.')}
 
-  function confirmAdd(){const qty=Number(document.getElementById('quantity').value);if(!Number.isFinite(qty)||qty<=0||qty>100){showToast('Enter a serving amount between 0.1 and 100.');return}const f=chosenFood;if(!f)return;const meal=document.getElementById('mealSelect').value;store.entries.push({id:'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),foodId:f.id,name:f.name,serving:f.serving,emoji:f.emoji,qty,meal,date:selectedDate,basis:{cal:f.cal,p:f.p,c:f.c,f:f.f},cal:dec(f.cal*qty),p:dec(f.p*qty),c:dec(f.c*qty),f:dec(f.f*qty)});save();closeModal();view='today';render();showToast(`${f.name} added to ${meal.toLowerCase()}.`)}
+  function confirmAdd(){const qty=Number(document.getElementById('quantity').value);if(!Number.isFinite(qty)||qty<=0||qty>100){showToast('Enter a serving amount between 0.1 and 100.');return}const f=chosenFood;if(!f)return;const meal=document.getElementById('mealSelect').value;store.entries.push({id:'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),foodId:f.id,name:f.name,serving:f.serving,emoji:f.emoji,qty,meal,date:selectedDate,basis:{cal:f.cal,p:f.p,c:f.c,f:f.f},cal:dec(f.cal*qty),p:dec(f.p*qty),c:dec(f.c*qty),f:dec(f.f*qty)});if(save())recordLoggingDay();closeModal();view='today';render();showToast(`${f.name} added to ${meal.toLowerCase()}.`)}
   function customModal(id=null){const food=id?store.customFoods.find(f=>f.id===id):null;
     if(id&&!food)return;editingCustomId=food?.id||null;
     openModal(`<div class="modal-header"><h3 id="modalTitle">${food?'Edit custom food':'Create a food'}</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div><p class="helper" style="margin:0 0 19px">Enter nutrition information for one serving, using a product label when available.</p>${food?'<p class="modal-info">Changes update this food for future logging. Foods already logged keep their original nutrition values.</p>':''}<form id="customForm"><div class="field"><label for="customName">Food name</label><input id="customName" maxlength="65" required placeholder="e.g. Homemade rice bowl" value="${food?esc(food.name):''}"></div><div class="field"><label for="customServing">Serving size</label><input id="customServing" maxlength="55" required placeholder="e.g. 1 bowl (250 g)" value="${food?esc(food.serving):''}"></div><div class="field-row"><div class="field"><label for="customCal">Calories (kcal)</label><input id="customCal" type="number" required step="any" min="0" max="20000" placeholder="0" value="${food?esc(food.cal):''}"></div><div class="field"><label for="customProtein">Protein (g)</label><input id="customProtein" type="number" step="any" min="0" max="2000" placeholder="0" value="${food?esc(food.p):'0'}" required></div><div class="field"><label for="customCarbs">Carbs (g)</label><input id="customCarbs" type="number" step="any" min="0" max="2000" value="${food?esc(food.c):'0'}" required></div><div class="field"><label for="customFat">Fat (g)</label><input id="customFat" type="number" step="any" min="0" max="2000" value="${food?esc(food.f):'0'}" required></div></div><button class="button-primary" type="submit" style="width:100%">${food?'Save changes →':'Save to food library →'}</button></form>`)}
@@ -2110,7 +2198,7 @@
     store.entries.push({id:'e'+Date.now().toString(36)+Math.random().toString(36).slice(2,8),foodId,
       name,serving,emoji:'🛒',qty:quantity,meal,date:selectedDate,
       basis:{cal,p,c,f},cal:dec(cal*quantity),p:dec(p*quantity),c:dec(c*quantity),f:dec(f*quantity)});
-    save();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
+    if(save())recordLoggingDay();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
   }
 
   // V4 backup format deliberately excludes document acknowledgement, scanner cache, and rate counters.
@@ -2279,7 +2367,7 @@
     else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
-    else if(action==='togglesimple'){simpleOpen.clear();savePrefs({...prefs,simpleMode:!prefs.simpleMode},'Simple Mode '+(prefs.simpleMode?'disabled.':'enabled.'))}
+    else if(action==='setuimode'){const mode=btn.dataset.mode;if(['default','classic','simple'].includes(mode)){simpleOpen.clear();savePrefs({...prefs,uiMode:mode,simpleMode:mode==='simple'},mode[0].toUpperCase()+mode.slice(1)+' Mode selected.')}}
     else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Classic Mode chart '+(prefs.macroChart?'disabled.':'enabled.'))}
     else if(action==='togglehealth'){savePrefs({...prefs,healthMode:!prefs.healthMode},'Health Mode '+(prefs.healthMode?'disabled.':'enabled.'))}
     else if(action==='togglehealthmacro'){savePrefs({...prefs,healthMacroChart:!prefs.healthMacroChart},'Health Mode chart '+(prefs.healthMacroChart?'disabled.':'enabled.'))}
@@ -2297,6 +2385,7 @@
     else if(action==='favorite'){const id=btn.dataset.id;store.favorites=store.favorites.includes(id)?store.favorites.filter(x=>x!==id):[...store.favorites,id];save();render()}
     else if(action==='custom'){customModal()}
     else if(action==='close'){closeModal()}
+    else if(action==='closestreak'){closeStreakCelebration()}
     else if(action==='qtydown'||action==='qtyup'){const el=document.getElementById('quantity');const v=Number(el.value)||1;el.value=Math.max(.1,Math.round((v+(action==='qtyup'?.25:-.25))*100)/100);updatePreview()}
     else if(action==='confirmadd'){confirmAdd()}
     else if(action==='export'){exportCSV()}
@@ -2306,6 +2395,15 @@
     else if(action==='import'){document.getElementById('importCsvFile').click()}
     else if(action==='clear'){if(confirm('Clear all logged meals? Your custom foods and favorites will remain. This cannot be undone.')){store.entries=[];save();render();showToast('Food log cleared.')}}
   }
+  // Default Mode's ripple is intentionally cosmetic and never captures events.
+  document.addEventListener('pointerdown',e=>{
+    if(prefs.uiMode!=='default'||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    const target=e.target.closest('button:not(:disabled)');if(!target)return;
+    const rect=target.getBoundingClientRect();if(!rect.width||!rect.height)return;
+    const ink=document.createElement('span');ink.className='ts-ripple';
+    ink.style.left=(e.clientX-rect.left)+'px';ink.style.top=(e.clientY-rect.top)+'px';
+    target.appendChild(ink);setTimeout(()=>ink.remove(),650);
+  },{passive:true});
   document.addEventListener('click',onClick);
   document.getElementById('importBackupFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f&&consentOk)importFullBackup(f)});
   document.getElementById('importCsvFile').addEventListener('change',e=>{const f=e.target.files?.[0];e.target.value='';if(f)importCSV(f)});
@@ -2314,7 +2412,8 @@
   document.addEventListener('change',e=>{if(e.target.id==='healthUnits'){changeHealthDisplayUnits(e.target);return}if(e.target.matches('[data-action="fxprsoundtoggle"]')){fitness.prSound=e.target.checked;saveFitness();if(fitness.prSound)fxPrepareAudio();showToast('Personal-best sound '+(fitness.prSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxrestsoundtoggle"]')){fitness.restSound=e.target.checked;saveFitness();if(fitness.restSound)fxPrepareAudio();showToast('Rest-timer sound '+(fitness.restSound?'enabled.':'disabled.'));return}if(e.target.matches('[data-action="fxprtoggle"]')){fitness.prCelebrations=e.target.checked;saveFitness();showToast('Personal-best celebrations '+(fitness.prCelebrations?'enabled.':'disabled.'));return}if(e.target.matches('[data-fx-field]'))onFitnessInput(e.target);if(e.target.id==='fxHistoryDate'){fxHistoryDate=e.target.value;render();}});
   document.getElementById('modalBackdrop').addEventListener('change',e=>{if(e.target.id==='barcodeImageFile'){const f=e.target.files?.[0];e.target.value='';if(f)scanImage(f)}});
   document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('streakBackdrop')?.classList.contains('show'))closeStreakCelebration();else closeModal()}});
+  document.getElementById('streakBackdrop').addEventListener('click',e=>{if(e.target.id==='streakBackdrop')closeStreakCelebration()});
   // Catch expiration after a throttled background interval once the app is visible again.
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)fxUpdateRestTimer()});
   window.addEventListener('focus',fxUpdateRestTimer);

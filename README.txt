@@ -1,4 +1,4 @@
-TALLYSPRIG V8.0.1 — INSIGHTS LANGUAGE & ICON REFINEMENT
+TALLYSPRIG V8.1 — INSIGHTS LANGUAGE & ICON REFINEMENT
 
 CUMULATIVE RELEASE: Includes I2.1 exercise favorites, I2 Simple Mode, I1 height/weight unit improvements, and all V7.7 fitness features.
 
@@ -113,10 +113,18 @@ V7.7 SOUND OPTIONS
 - Test sound buttons are provided. The Android browser/OS may delay or suppress sound while backgrounded, locked, or muted.
 - All V7.6 features and storage keys are retained. The updated cache name forces a fresh deployment.
 
-V8.0.1 changes:
+V8.1 changes:
 - Reworked Insights messages to be specific, neutral, and evidence-based rather than repeatedly encouraging food choices.
 - Existing dietary choices and clinician-directed nutrition plans are respected; food categories are not interpreted as deficiencies or dietary-plan compliance.
 - Training and Nutrition insight headings and cards reuse the exact Fitness and Foods navigation icon styles instead of emoji.
 - Oxford commas are used in generated lists, including category summaries.
 - Existing settings, logs, favorites, sound effects, and full backups are preserved.
 - No storage or information-sharing change; Privacy 1.7 and Medical 1.4 acknowledgement versions remain unchanged.
+
+V8.1 additions: Default visual mode selected for new/previously non-Simple users, Classic
+original visual mode, unchanged Simple Mode, lighter interaction animations and
+reduced-motion support, a device-local consecutive logging-day streak celebration
+at each 5-day milestone (logging food or completing workouts), louder optional
+personal-best/rest sounds, and a refreshed multi-food/fitness app icon.
+The streak begins with new log actions on V8.1; prior log dates do not reveal
+when the app was actually used. It does not depend on nutrition targets.
