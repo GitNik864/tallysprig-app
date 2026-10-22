@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.1 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.1.2 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="icon" href="./icons/icon-v812-192.png" type="image/png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <style>
@@ -594,12 +594,151 @@
     @media(prefers-reduced-motion:reduce){.default-mode #main-content > *,.default-mode .modal-backdrop.show .modal,.default-mode details[open] > *,.default-mode .toast.show,.ts-ripple,.streak-fire{animation:none!important}.default-mode button,.default-mode .meal-card,.default-mode .fx-panel,.default-mode .data-panel,.streak-dialog{transition:none!important}}
     .ts-brand-image{width:32px;height:32px;object-fit:cover;border-radius:10px;margin-right:6px;vertical-align:middle;flex-shrink:0}
     .ts-consent-image{width:48px;height:48px;object-fit:cover;border-radius:15px;vertical-align:middle;flex-shrink:0}
+
+    /* V8.1.2 — visibly enhanced Default Mode. Classic and Simple remain unchanged. */
+    html.default-mode body{
+      background:radial-gradient(ellipse at 65% 0%,rgba(87,209,168,.15),transparent 54%),
+                 radial-gradient(ellipse at 0% 70%,rgba(94,165,223,.07),transparent 60%),var(--bg);
+    }
+    html.default-mode #main-content{position:relative;}
+    html.default-mode #main-content::before{
+      content:'';position:absolute;top:-12px;left:0;right:0;height:4px;border-radius:30px;
+      background:linear-gradient(90deg,#42c886,#52bcd2,#e9ad72);opacity:.95;
+      box-shadow:0 3px 13px rgba(77,184,142,.17);pointer-events:none;
+    }
+    html.default-mode .main-top{
+      position:relative;display:flex;align-items:center;min-height:62px;
+      padding:12px 17px 12px 55px;margin-bottom:25px;border-radius:18px;
+      background:linear-gradient(110deg,rgba(116,224,169,.20),rgba(102,184,216,.13) 56%,rgba(235,175,118,.10));
+      border:1px solid color-mix(in srgb,var(--line) 68%,#77ceaa 32%);
+      box-shadow:0 7px 21px rgba(27,95,73,.045);
+    }
+    html.default-mode .main-top::before{
+      content:'';position:absolute;left:13px;top:50%;transform:translateY(-50%);
+      width:32px;height:32px;border-radius:10px;box-shadow:0 3px 10px rgba(24,72,45,.16);
+      background:url('./icons/icon-v812-192.png') center/cover no-repeat;
+    }
+    html.default-mode #main-content .eyebrow{color:var(--ink);letter-spacing:1.1px;font-size:10px}
+    html.default-mode #main-content .heading-row{margin-bottom:4px}
+    html.default-mode #main-content .heading-row h1{
+      background:linear-gradient(105deg,var(--ink) 28%,#238967 88%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    html[data-theme="dark"].default-mode #main-content .heading-row h1{
+      background:linear-gradient(110deg,var(--ink),#77dbb7);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    html.default-mode #main-content .heading-row h1::after{
+      content:'';display:block;width:42px;height:4px;margin:11px 0 6px;border-radius:8px;
+      background:linear-gradient(90deg,#4abf88,#70c5dc,#f3bc75);
+      animation:ts-line-grow .42s cubic-bezier(.15,.8,.25,1) both;
+      transform-origin:left center;
+    }
+    html.default-mode .meal-card,html.default-mode .fx-panel,html.default-mode .data-panel,
+    html.default-mode .insights-card,html.default-mode .fx-exercise,html.default-mode .fx-stat,
+    html.default-mode .stat:not(.energy){
+      background:linear-gradient(145deg,var(--paper) 75%,color-mix(in srgb,var(--paper) 91%,#8dd9b7 9%));
+      border-color:color-mix(in srgb,var(--line) 70%,#75cba6 30%);
+      box-shadow:0 8px 25px rgba(23,98,67,.075);
+      border-radius:20px;
+    }
+    html.default-mode .stat.energy{
+      background:linear-gradient(135deg,#174f42,#287964 66%,#317f82);
+      border-color:#287964;box-shadow:0 10px 25px rgba(20,103,73,.19);
+    }
+    html.default-mode .meal-card{border-top:3px solid color-mix(in srgb,#64cba3 72%,var(--paper) 28%);}
+    html.default-mode .meal-card .meal-emoji{box-shadow:0 4px 11px rgba(30,88,63,.12);}
+    html.default-mode .button-primary{
+      background:linear-gradient(110deg,#21845e,#196b71);
+      border-color:#247a6a;box-shadow:0 6px 17px rgba(29,119,88,.20);
+    }
+    html.default-mode .button-primary:hover{background:linear-gradient(110deg,#259c70,#198491);box-shadow:0 9px 22px rgba(29,119,88,.25)}
+    html.default-mode .button-secondary{
+      background:linear-gradient(135deg,var(--paper),color-mix(in srgb,var(--paper) 92%,#7fd3b5 8%));
+      border-color:color-mix(in srgb,var(--line) 75%,#69c5a2 25%);
+    }
+    html.default-mode .fx-toolbar button.active,
+    html.default-mode .insights-filters button.active{
+      background:linear-gradient(110deg,#267e60,#246f86);
+      border-color:#267e60;color:#fff;box-shadow:0 5px 15px rgba(39,116,95,.18);
+    }
+    html.default-mode .side-link.active{
+      background:linear-gradient(110deg,#b6efc1,#9ce1cf);color:#1a4b3c;
+      box-shadow:0 5px 18px rgba(40,150,94,.20);
+    }
+    html.default-mode .mobile-nav{
+      background:color-mix(in srgb,var(--paper) 92%,#80d8bd 8%);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border-top:1px solid color-mix(in srgb,var(--line) 67%,#65c3a2 33%);
+    }
+    html.default-mode .mobile-nav button.active{
+      background:linear-gradient(140deg,rgba(79,197,142,.19),rgba(73,165,202,.12));
+      border-radius:12px;color:#177154;box-shadow:inset 0 0 0 1px rgba(69,175,128,.13);
+    }
+    html[data-theme="dark"].default-mode .mobile-nav button.active{color:#a6f3d0}
+    html.default-mode .mobile-nav button.active > span{transform:translateY(-2px);transition:transform .25s ease}
+    html.default-mode button:not(:disabled):active{transform:scale(.945)}
+    html.default-mode .fx-toolbar button:not(:disabled):active,
+    html.default-mode .mobile-nav button:not(:disabled):active{transform:scale(.93)}
+    html.default-mode .fx-panel,html.default-mode .meal-card,html.default-mode .data-panel,
+    html.default-mode .insights-card,html.default-mode .fx-exercise{
+      transition:transform .26s cubic-bezier(.2,.8,.2,1),box-shadow .26s ease,border-color .26s ease;
+    }
+    html.default-mode .fx-panel:hover,html.default-mode .meal-card:hover,
+    html.default-mode .insights-card:hover,html.default-mode .fx-exercise:hover{
+      box-shadow:0 13px 30px rgba(25,106,78,.12);border-color:#78c9a6;
+    }
+    /* Make touch feedback obvious instead of relying on desktop hover. */
+    html.default-mode .ts-ripple{
+      width:24px;height:24px;background:radial-gradient(circle,rgba(82,222,177,.49) 0%,rgba(99,201,221,.25) 65%,transparent 76%);
+      animation:ts-ripple-v811 .58s ease-out both;mix-blend-mode:multiply;z-index:1;
+    }
+    html.default-mode .button-primary .ts-ripple{background:radial-gradient(circle,rgba(255,255,255,.55),rgba(188,254,225,.20) 60%,transparent 78%);mix-blend-mode:screen;}
+    html.default-mode .modal-backdrop.show{animation:ts-backdrop-v811 .25s ease-out both;}
+    html.default-mode .modal-backdrop.show .modal{
+      position:relative;border:1px solid rgba(96,198,149,.34);border-top:4px solid #61c99a;
+      box-shadow:0 34px 110px rgba(11,57,49,.27);
+      animation:ts-modal-v811 .42s cubic-bezier(.16,1,.25,1.05) both;
+    }
+    html.default-mode .toast.show{animation:ts-toast-pop .3s cubic-bezier(.15,.9,.3,1.1) both;}
+    html.default-mode details[open] > *:not(summary){animation:ts-detail-open .34s ease-out both;}
+    html.default-mode #main-content > .main-top{animation:ts-content-enter .42s ease-out both;}
+    html.default-mode #main-content > .heading-row{animation:ts-content-enter .42s .04s ease-out both;}
+    html.default-mode #main-content > .fx-grid,html.default-mode #main-content > .fx-toolbar,
+    html.default-mode #main-content > .insights-hero,html.default-mode #main-content > .stats-grid,
+    html.default-mode #main-content > .meals-grid{animation:ts-content-enter .42s .09s ease-out both;}
+    .ts-demo-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:16px;
+      padding:14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--line) 70%,#64c2a2 30%);
+      background:linear-gradient(110deg,color-mix(in srgb,var(--paper) 80%,#a4e8c5 20%),var(--paper));}
+    .ts-demo-bar strong{font-size:13px;color:var(--ink)}.ts-demo-bar span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+    .ts-demo-stage{position:relative;overflow:hidden;min-height:132px;border-radius:18px;margin:14px 0 18px;
+      background:linear-gradient(120deg,#194a3f,#276c63 65%,#315d84);display:flex;align-items:center;justify-content:center;}
+    .ts-demo-stage::before,.ts-demo-stage::after{content:'';position:absolute;border-radius:50%;filter:blur(3px)}
+    .ts-demo-stage::before{width:150px;height:150px;background:rgba(114,228,175,.16);left:-30px;top:-30px}
+    .ts-demo-stage::after{width:110px;height:110px;background:rgba(113,180,246,.20);right:-25px;bottom:-40px}
+    .ts-demo-stage img{position:relative;z-index:1;width:70px;height:70px;object-fit:cover;border-radius:20px;
+      box-shadow:0 10px 35px rgba(0,0,0,.26);transition:transform .32s cubic-bezier(.15,.9,.3,1.1)}
+    .ts-demo-stage.burst img{animation:ts-demo-burst .7s cubic-bezier(.15,.8,.25,1.1) both;}
+    .ts-preview-details{border:1px solid var(--line);padding:13px;border-radius:12px;margin-bottom:15px;color:var(--ink);}
+    .ts-preview-details summary{cursor:pointer;font-weight:750;font-size:13px;}
+    .ts-preview-details p{color:var(--ink2);font-size:12px;line-height:1.6;margin:12px 0 0;}
+    @keyframes ts-line-grow{from{transform:scaleX(.15);opacity:0}to{transform:scaleX(1);opacity:1}}
+    @keyframes ts-ripple-v811{0%{transform:translate(-50%,-50%) scale(.05);opacity:.95}100%{transform:translate(-50%,-50%) scale(16);opacity:0}}
+    @keyframes ts-backdrop-v811{from{background:rgba(8,34,30,.12)}to{background:rgba(8,34,30,.67)}}
+    @keyframes ts-modal-v811{0%{opacity:.15;transform:translateY(30px) scale(.92)}65%{opacity:1;transform:translateY(-3px) scale(1.014)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes ts-demo-burst{0%{transform:scale(.92) rotate(-7deg)}45%{transform:scale(1.20) rotate(6deg)}75%{transform:scale(.96) rotate(-2deg)}100%{transform:scale(1) rotate(0)}}
+    @media (prefers-reduced-motion:reduce){
+      html.default-mode *,html.default-mode *::before,html.default-mode *::after{
+        animation:none!important;transition:none!important;scroll-behavior:auto!important;
+      }
+      html.default-mode .ts-ripple{display:none!important;}
+    }
   </style>
 </head>
 <body>
 <section id="consentScreen" class="consent-screen" aria-labelledby="consentTitle">
   <div class="consent-card">
-    <div class="consent-logo"><img class="ts-consent-image" src="./icons/icon-192.png" alt="" aria-hidden="true"><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
+    <div class="consent-logo"><img class="ts-consent-image" src="./icons/icon-v812-192.png" alt="" aria-hidden="true"><div>tallysprig<span style="color:#7ebc94">.</span><div style="font-size:11px;color:#779482;font-weight:600;letter-spacing:0">Every meal in view. Every day in focus.</div></div></div>
     <h1 class="consent-title" id="consentTitle">Before you begin</h1>
     <p class="consent-desc">Review both documents and make your own choice. Tallysprig cannot be used until you separately agree to the Privacy Policy and Medical Disclaimer.</p>
     <div class="agreement-box"><h2>♧ Privacy Policy</h2><p>Learn what Tallysprig saves on this device and what information may be sent to the services used for product lookup and hosting.</p><a href="./privacy.html" target="_blank" rel="noopener noreferrer">Read the complete Privacy Policy ↗</a><label><input id="agreePrivacy" type="checkbox"> <span>I have read and agree to the Privacy Policy (version 1.8).</span></label></div>
@@ -611,7 +750,7 @@
 </section>
 <div class="app">
   <aside class="sidebar">
-    <div class="brand"><img class="ts-brand-image" src="./icons/icon-192.png" alt="" aria-hidden="true"> tallysprig<span style="color:#b8dfb8">.</span></div>
+    <div class="brand"><img class="ts-brand-image" src="./icons/icon-v812-192.png" alt="" aria-hidden="true"> tallysprig<span style="color:#b8dfb8">.</span></div>
     <div><div class="sidebar-label">WORKSPACE</div><nav aria-label="Main navigation">
       <button class="side-link active" data-view="today"><span class="nav-icon">◫</span> Today</button>
       <button class="side-link" data-view="history"><span class="nav-icon">▥</span> History</button>
@@ -620,7 +759,7 @@
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.1 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.1.2 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -1766,11 +1905,12 @@
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.1 · Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.1.2 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
       <div class="ts-mode-grid" role="group" aria-label="Display mode">
         ${[['default','✦','Default','Polished transitions and interaction effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
-      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating.</p></section>`+
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.1.2</strong></p>
+      ${prefs.uiMode==='default'?`<div class="ts-demo-bar"><div><strong>See the effects in action</strong><span>Preview the button, pop-up, and expandable-panel animations.</span></div><button class="button-primary" type="button" data-action="previewdefault">Try Default effects ↗</button></div>`:''}</section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Classic Mode macro chart</div><div class="preference-description">Classic tracking uses the original four cards by default. Switch on to use the daily doughnut chart in Classic Mode.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${prefs.macroChart}" aria-label="Show macro chart in Classic Mode" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
     <div class="preference-row"><div><div class="preference-name">Color theme</div><div class="preference-description">Choose light or dark mode for the entire app.</div></div></div>
@@ -2367,6 +2507,8 @@
     else if(action==='pickbarcodeimage'){document.getElementById('barcodeImageFile')?.click()}
     else if(action==='choose'){chooseFood(btn.dataset.id)}
     else if(action==='editentry'){editEntryModal(btn.dataset.id)}
+    else if(action==='previewdefault'){showDefaultEffectsPreview()}
+    else if(action==='previewburst'){const stage=document.getElementById('tsDemoStage');if(stage){stage.classList.remove('burst');void stage.offsetWidth;stage.classList.add('burst');setTimeout(()=>stage.classList.remove('burst'),740)}}
     else if(action==='setuimode'){const mode=btn.dataset.mode;if(['default','classic','simple'].includes(mode)){simpleOpen.clear();savePrefs({...prefs,uiMode:mode,simpleMode:mode==='simple'},mode[0].toUpperCase()+mode.slice(1)+' Mode selected.')}}
     else if(action==='togglemacro'){savePrefs({...prefs,macroChart:!prefs.macroChart},'Classic Mode chart '+(prefs.macroChart?'disabled.':'enabled.'))}
     else if(action==='togglehealth'){savePrefs({...prefs,healthMode:!prefs.healthMode},'Health Mode '+(prefs.healthMode?'disabled.':'enabled.'))}
@@ -2394,6 +2536,13 @@
     else if(action==='deletealllocal'){deleteAllLocalData()}
     else if(action==='import'){document.getElementById('importCsvFile').click()}
     else if(action==='clear'){if(confirm('Clear all logged meals? Your custom foods and favorites will remain. This cannot be undone.')){store.entries=[];save();render();showToast('Food log cleared.')}}
+  }
+  function showDefaultEffectsPreview(){
+    openModal(`<div class="modal-header"><h3 id="modalTitle">Default Mode preview</h3><button class="modal-close" data-action="close" aria-label="Close">×</button></div>
+      <div class="ts-demo-stage" id="tsDemoStage"><img src="./icons/icon-v812-192.png" alt="Tallysprig icon"></div>
+      <p class="helper" style="font-size:13px;line-height:1.6;margin-bottom:14px">Default Mode adds color accents, visible touch feedback, smoother pop-ups, and animated expandable sections. Classic and Simple keep their original layouts.</p>
+      <details class="ts-preview-details"><summary>Tap to expand a sample panel</summary><p>Expandable content opens with a short, gentle transition. No journal information is changed by this preview.</p></details>
+      <div class="dialog-actions"><button type="button" class="button-secondary" data-action="close">Close</button><button type="button" class="button-primary" data-action="previewburst">Try button effect</button></div>`);
   }
   // Default Mode's ripple is intentionally cosmetic and never captures events.
   document.addEventListener('pointerdown',e=>{
