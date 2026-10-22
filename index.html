@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#173e38">
   <meta name="description" content="A private food and fitness journal with offline workout and nutrition insights.">
-  <title>Tallysprig V8.3.3 — Food, Fitness & Insights</title>
+  <title>Tallysprig V8.3.4 — Food, Fitness & Insights</title>
   <script>
     try { if (JSON.parse(localStorage.getItem('tallysprig_preferences_v5')||'{}').theme==='dark') document.documentElement.dataset.theme='dark'; } catch (_) {}
   </script>
@@ -998,6 +998,43 @@ html.default-mode .v83-top-grid .stat .stat-number,html.default-mode .v83-top-gr
 html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
 @media(max-width:650px){html.default-mode .v83-top-grid .stats-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin:0}}
 
+
+/* V8.3.4: Food favorites and add actions share one centered row on every card. */
+.library-food-actions{
+  display:flex;align-items:center;justify-content:flex-end;gap:9px;
+  flex:0 0 auto;align-self:center;margin-left:auto;
+}
+.library-food .library-food-actions .fav{
+  position:static;inset:auto;flex:0 0 44px;width:44px;height:44px;
+  display:grid;place-items:center;margin:0;padding:0;line-height:1;
+  border-radius:50%;font-size:27px;border:1px solid #bfd6ca;
+  background:#fff;color:#2a6854;
+  box-shadow:0 4px 0 rgba(54,111,88,.13);cursor:pointer;
+}
+.library-food .library-food-actions .fav.active{color:#b17c18;background:#fff4d6}
+.library-food .library-food-actions .plus{
+  width:44px;height:44px;min-width:44px;align-self:center;
+  margin:0;padding:0;flex:0 0 44px;
+}
+html.default-mode .library-food .library-food-actions .fav{
+  background:#fff!important;color:#28604f!important;
+  border:2px solid rgba(255,255,255,.85);
+}
+html.default-mode .library-food .library-food-actions .fav.active{
+  color:#a76f06!important;background:#fff2c4!important;
+}
+html[data-theme="dark"]:not(.default-mode) .library-food .library-food-actions .fav{
+  background:#294238;color:#d3e4d9;border-color:#526c5d;
+}
+html[data-theme="dark"]:not(.default-mode) .library-food .library-food-actions .fav.active{
+  color:#f0cf82;background:#3f3b26;
+}
+@media(max-width:400px){
+ .library-food{gap:9px;padding-left:11px;padding-right:11px}
+ .library-food-actions{gap:7px}
+ .library-food .library-food-actions .fav{width:40px;height:40px;flex-basis:40px;font-size:24px}
+ .library-food .library-food-actions .plus{width:40px;height:40px;min-width:40px;flex-basis:40px}
+}
 </style>
 </head>
 <body>
@@ -1024,7 +1061,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       <button class="side-link" data-view="insights"><span class="nav-icon">✦</span> Insights</button>
       <button class="side-link" data-view="about"><span class="nav-icon">⚙</span> Settings &amp; data</button>
     </nav></div>
-    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3.3 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
+    <div class="sidebar-bottom"><span class="side-tag">Tallysprig V8.3.4 · Private by design</span><div>Your journal and V8 insights stay on this device. No account required.</div></div>
   </aside>
   <main id="main-content" aria-live="polite"></main>
   <aside class="right-panel" aria-label="Quick food search">
@@ -1310,7 +1347,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     return heading('Every meal in view.','Every day in focus. See your meals come together.',`<button class="button-primary" data-action="add">＋ Add food</button>`)+(vibrant?v83Banner:'')+healthLead+statsArea+(prefs.healthMode?healthProgressHtml(v):'')+`<div class="section-row"><h2>Meals & moments</h2><div class="section-meta">${entries.length} recorded</div></div><div class="meals-grid">${meals}</div>`;
   }
   function filterFoods(q,cat){let foods=allFoods().filter(f=>(!q||f.name.toLowerCase().includes(q.toLowerCase()))&&(cat==='All'||(cat==='Favorites'?store.favorites.includes(f.id):cat==='Mine'?f.custom:f.category===cat)));return foods}
-  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="align-self:end;flex-shrink:0">+</button></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Meals only · CSV</button><button class="button-secondary" data-action="import">↙ Import meals CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
+  function renderFoods(){const foods=filterFoods(libQuery,category),cats=['All','Favorites','Mine','Protein','Grains','Fruit','Produce','Dairy','Snacks','Drinks','Other'];return heading('Your food library.','Search familiar foods, save favorites, or add your own.',`<button class="button-primary" data-action="custom">＋ Create food</button>`)+`<div class="library-toolbar"><div class="category-filters">${cats.map(c=>`<button class="filter ${c===category?'active':''}" data-category="${c}">${c}</button>`).join('')}</div><input class="library-search" type="search" id="librarySearch" placeholder="⌕  Find a food..." aria-label="Search food library" value="${esc(libQuery)}"><button class="button-secondary scan-trigger" data-action="scan"><span aria-hidden="true">▣</span> Scan barcode</button></div><div class="library-grid">${foods.length?foods.map(f=>`<div class="library-food"><div class="food-icon">${esc(f.emoji)}</div><div class="food-info" style="padding-right:13px"><div class="food-name">${esc(f.name)}</div><div class="food-serving">${esc(f.serving)}</div><div class="food-kcal">${fmt(f.cal)} kcal / serving</div>${f.source==='Open Food Facts'?'<div class="scanned-library-source">↗ Originally from Open Food Facts · check the package</div>':''}${f.custom?`<div class="custom-actions"><button class="custom-link" data-action="editcustom" data-id="${esc(f.id)}" aria-label="Edit custom food ${esc(f.name)}">Edit</button><button class="custom-link danger" data-action="deletecustom" data-id="${esc(f.id)}" aria-label="Delete custom food ${esc(f.name)}">Delete</button></div>`:''}</div><div class="library-food-actions"><button data-action="favorite" data-id="${esc(f.id)}" class="fav ${store.favorites.includes(f.id)?'active':''}" aria-label="${store.favorites.includes(f.id)?'Unfavorite':'Favorite'} ${esc(f.name)}">${store.favorites.includes(f.id)?'★':'☆'}</button><button class="plus" data-action="choose" data-id="${esc(f.id)}" title="Add ${esc(f.name)}" aria-label="Add ${esc(f.name)}" style="flex-shrink:0">+</button></div></div>`).join(''):`<div class="empty-state">No foods found. Try another search or add a custom food.</div>`}</div><div class="settings-actions"><button class="button-secondary" data-action="export">↗ Meals only · CSV</button><button class="button-secondary" data-action="import">↙ Import meals CSV</button><button class="button-secondary" data-action="clear">Clear food log</button></div><p class="helper" style="margin-top:18px">Built-in values are approximate and vary by brand and preparation. Check labels for precise values.</p><p class="off-credit">Barcode product information: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener noreferrer">Open Food Facts contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL database license</a>. Community data may be incomplete; check the package.</p>`}
   function recentDays(){return Array.from({length:7},(_,i)=>addDays(selectedDate,i-6))}
   function renderHistory(){const dates=recentDays(),data=dates.map(d=>({date:d,total:sum(store.entries.filter(e=>e.date===d)).cal})),max=Math.max(1,...data.map(d=>d.total));return heading('Your food history.','Look back at what you logged. Every day is different.',`<button class="button-secondary" data-action="export">↗ Meals only · CSV</button>`)+(prefs.uiMode==='default'?`<div class="v83-history-banner"><span>✦ YOUR JOURNAL, AT A GLANCE</span><strong>Every day tells a story.</strong><p>Explore your records across the week, without pressure or targets.</p></div>`:'')+`<div class="history-wrap"><div class="section-row"><h2>Last 7 days</h2><div class="section-meta">Calories recorded</div></div><div class="history-visual">${data.map(d=>`<div class="history-bar-wrap"><div class="history-amount">${d.total?fmt(d.total):'–'}</div><div class="history-bar ${d.date===selectedDate?'active':''}" style="height:${Math.max(3,d.total/max*172)}px"></div><div class="history-day">${dateObj(d.date).toLocaleDateString(undefined,{weekday:'short'})}</div></div>`).join('')}</div></div><div class="history-list">${[...data].reverse().map(d=>`<button class="history-row" data-action="goday" data-date="${d.date}"><span><strong>${esc(shortDate(d.date))}</strong> <span style="color:#a7b5a8">· ${store.entries.filter(e=>e.date===d.date).length} entries</span></span><strong>${fmt(d.total)} kcal →</strong></button>`).join('')}</div>`}
   // I1: only the display units change; canonical saved height/weight remain cm/kg.
@@ -1534,7 +1571,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
         osc.type=kind==='record'?'sine':'triangle';osc.frequency.value=frequency;
         const start=t+delay;
         gain.gain.setValueAtTime(.0001,start);
-        gain.gain.exponentialRampToValueAtTime(kind==='record'?.125:.095,start+.025);
+        gain.gain.exponentialRampToValueAtTime(kind==='record'?.27:.205,start+.025);
         gain.gain.exponentialRampToValueAtTime(.0001,start+length);
         osc.connect(gain);gain.connect(ctx.destination);
         osc.start(start);osc.stop(start+length+.02);
@@ -2170,17 +2207,17 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
       `<p class="insights-note">Window: ${esc(prettyDate(insightCutoff()))}–${esc(prettyDate(localISO(new Date())))}. Only saved records are analyzed. Blank actual results, unfinished workouts, and unlogged meals are excluded rather than interpreted as zero.</p>`+
       `${insightsFocus!=='nutrition'?`<section class="insights-section" id="insights-training"><div class="insights-section-head"><h2>${insightIcon('training')}Training insights</h2><span class="fx-pill">Completed workouts</span></div>${insightsFitness()}</section>`:''}`+
       `${insightsFocus!=='training'?`<section class="insights-section" id="insights-nutrition"><div class="insights-section-head"><h2>${insightIcon('nutrition')}Nutrition insights</h2><span class="fx-pill">Optional food log</span></div>${insightsNutrition()}</section>`:''}`+
-      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3.3 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
+      `<div class="insights-footer"><strong>How it works:</strong> Tallysprig V8.3.4 uses explicit comparisons and category summaries, not machine-learning predictions or generative AI. Results change as you edit your journal. Personal records, meal details, and the optional health profile stay in your browser; this Insights feature does not transmit them anywhere. Food database estimates and user-entered workouts can be inaccurate. Results are descriptive, not dietary prescriptions or instructions to increase training. Follow applicable medical or dietary guidance. <a href="./medical.html" target="_blank" rel="noopener noreferrer">Read safety information ↗</a></div>`;
   }
 
   function renderAbout(){
     let date=null;try{date=localStorage.getItem(LAST_BACKUP_KEY)||null}catch(_){}
     const backupText=date&&!isNaN(Date.parse(date))?new Date(date).toLocaleDateString():'No full backup recorded on this device';
-    return heading('Settings & your data.','Tallysprig V8.3.3 · Choose how your journal looks, manage backups, and review your documents.')+
+    return heading('Settings & your data.','Tallysprig V8.3.4 · Choose how your journal looks, manage backups, and review your documents.')+
     `<section class="data-panel ts-mode-panel" aria-label="App display mode"><h2>Display mode</h2><p>Choose your preferred interface. This setting affects presentation only; your journal and workouts stay the same.</p>
       <div class="ts-mode-grid" role="group" aria-label="Display mode">
         ${[['default','✦','Default','Bright dashboard, vibrant cards and playful effects. Recommended.'],['classic','▦','Classic','The original full-detail interface, without added motion.'],['simple','▤','Simple','Larger targets and tap-to-expand sections, especially in Fitness.']].map(([id,icon,name,desc])=>`<button type="button" class="ts-mode-choice ${prefs.uiMode===id?'selected':''}" data-action="setuimode" data-mode="${id}" aria-pressed="${prefs.uiMode===id}"><span class="ts-mode-icon" aria-hidden="true">${icon}</span><span><strong>${name}</strong><small>${desc}</small></span><span class="ts-mode-check" aria-hidden="true">${prefs.uiMode===id?'✓':''}</span></button>`).join('')}
-      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3.3</strong></p>
+      </div><p class="data-detail">Default Mode is selected on new installations. Users of previous Simple Mode remain in Simple after updating. <strong>Current build: V8.3.4</strong></p>
       ${prefs.uiMode==='default'?`<div class="ts-demo-bar"><div><strong>See the effects in action</strong><span>Preview the button, pop-up, and expandable-panel animations.</span></div><button class="button-primary" type="button" data-action="previewdefault">Try Default effects ↗</button></div>`:''}</section>`+
     `<section class="data-panel" aria-label="Appearance settings"><h2>Appearance</h2><p>These settings apply on this device and do not change your food entries.</p>
     <div class="preference-row"><div><div class="preference-name">Today macro pie chart</div><div class="preference-description">Switch between the doughnut chart and four summary cards on Today. Currently controls ${prefs.healthMode?'Health Mode':'standard tracking'}; the other mode remembers its own display choice.</div></div><button type="button" class="pref-switch" role="switch" aria-checked="${isHealthChart()}" aria-label="Show macro pie chart on Today" data-action="togglemacro"><span class="pref-switch-knob" aria-hidden="true"></span></button></div>
@@ -2612,7 +2649,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
     if(save())recordLoggingDay();closeModal();view='today';render();showToast('Packaged food added to '+meal.toLowerCase()+'.');
   }
 
-  // V8.3.3: Portable JSON backups contain ALL user-facing saved data, unlike meal-only CSV.
+  // V8.3.4: Portable JSON backups contain ALL user-facing saved data, unlike meal-only CSV.
   // Legal acknowledgements, the most recent backup timestamp, and short-lived lookup rate
   // counters intentionally remain device-local. Re-acknowledgement is required on new installs.
   function readScannerCache(){
@@ -2643,7 +2680,7 @@ html.default-mode .v83-top-grid .stat .unit{color:#597567!important}
   function exportFullBackup(){
     try{
       const data=currentBackupData();
-      const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:2,appVersion:'V8.3.3',exportedAt:new Date().toISOString(),data};
+      const payload={app:'Tallysprig',format:'tallysprig-backup',formatVersion:2,appVersion:'V8.3.4',exportedAt:new Date().toISOString(),data};
       verifyBackup(payload); // Never label a damaged or partial file as a full backup.
       const content=JSON.stringify(payload,null,2);
       if(content.length>10000000)throw Error('Full backup exceeds the 10 MB import limit. Nothing was downloaded.');
